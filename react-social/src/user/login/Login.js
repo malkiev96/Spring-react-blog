@@ -35,17 +35,11 @@ class Login extends Component {
         }
 
         return (
-            <Container>
-                <Grid centered stackable columns={2}>
-                    <Grid.Column>
-                        <Segment raised>
-                            <SocialLogin/>
-                            <LoginForm {...this.props} />
-                            <span className="signup-link">или <Link to="/signup">зарегистрироваться</Link></span>
-                        </Segment>
-                    </Grid.Column>
-                </Grid>
-            </Container>
+            <Segment>
+                <SocialLogin/>
+                <LoginForm {...this.props} />
+                <span className="signup-link">или <Link to="/signup">зарегистрироваться</Link></span>
+            </Segment>
         );
     }
 }

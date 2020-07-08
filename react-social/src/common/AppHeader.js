@@ -29,7 +29,7 @@ class AppHeader extends Component {
                                    as={Link} to='/' name='Главная'/>
                         <Menu.Item active={window.location.pathname === '/posts'}
                                    as={Link} to='/posts' name='Статьи'/>
-                        <HeaderCategory/>
+                        <HeaderCategory categories={this.props.categories}/>
                         <Menu.Item active={window.location.pathname === '/about'}
                                    as={Link} to='/about' name='О проекте'/>
                         <Menu.Item active={window.location.pathname === '/contacts'}
@@ -66,7 +66,7 @@ class AppHeader extends Component {
                                        as={Link} to='/' name='Главная'/>
                             <Menu.Item active={window.location.pathname === '/posts'}
                                        as={Link} to='/posts' name='Статьи'/>
-                            <HeaderCategory/>
+                            <HeaderCategory categories={this.props.categories}/>
                             <Menu.Item active={window.location.pathname === '/about'}
                                        as={Link} to='/about' name='О проекте'/>
                             <Menu.Item active={window.location.pathname === '/contacts'}
@@ -98,29 +98,45 @@ class AppHeader extends Component {
     }
 }
 
-const HeaderCategory = (props) => {
+const HeaderCategory = ({categories}) => {
     return (
-        <Dropdown item text="Категории">
+        <Dropdown item simple text="Категории">
             <Dropdown.Menu>
-                <Dropdown.Item as="a" href="#root">
-                    Action
-                </Dropdown.Item>
-                <Dropdown.Item as="a" href="#root">
-                    Another Action
-                </Dropdown.Item>
-                <Dropdown.Item as="a" href="#root">
-                    Something else here
-                </Dropdown.Item>
-                <Dropdown.Divider/>
-                <Dropdown.Header>Navbar header</Dropdown.Header>
-                <Dropdown.Item as="a" href="#root">
-                    Separated link
-                </Dropdown.Item>
-                <Dropdown.Item as="a" href="#root">
-                    One more separated link
-                </Dropdown.Item>
+                {
+                    categories.map(cat => {
+                        if (cat.childs.length !== 0) {
+                            return (
+                                <Dropdown.Item key={cat.id} as={Link} to={'/category/'+cat.name} >
+                                    <Icon name="dropdown"/>
+                                    <span className="text">{cat.name}</span>
+                                    <CategoryChilds categories={cat.childs}/>
+                                </Dropdown.Item>
+                            )
+                        } else return (
+                            <Dropdown.Item as={Link} to={'/category/'+cat.name} key={cat.id}>
+                                {cat.name}
+                            </Dropdown.Item>
+                        )
+                    })
+                }
             </Dropdown.Menu>
         </Dropdown>
+    )
+}
+
+const CategoryChilds = ({categories}) => {
+    return (
+        <Dropdown.Menu>
+            {
+                categories.map(cat => {
+                    return (
+                        <Dropdown.Item as={Link} to={'/category/'+cat.name} key={cat.id}>
+                            {cat.name}
+                        </Dropdown.Item>
+                    )
+                })
+            }
+        </Dropdown.Menu>
     )
 }
 

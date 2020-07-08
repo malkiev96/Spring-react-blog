@@ -20,21 +20,14 @@ class Signup extends Component {
         }
 
         return (
-            <Container>
-                <Grid centered stackable columns={2}>
-                    <Grid.Column>
-                        <Segment raised>
-                            <SocialSignup />
-                            <SignupForm {...this.props} />
-                            <span className="login-link">Уже есть аккаунт? <Link to="/login">Войти!</Link></span>
-                        </Segment>
-                    </Grid.Column>
-                </Grid>
-            </Container>
+            <Segment>
+                <SocialSignup />
+                <SignupForm {...this.props} />
+                <span className="login-link">Уже есть аккаунт? <Link to="/login">Войти!</Link></span>
+            </Segment>
         )
     }
 }
-
 
 class SocialSignup extends Component {
     render() {
