@@ -14,9 +14,11 @@ import java.util.List;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Integer> {
 
-    Page<Post> findAllByCreatedBy(User user, Pageable pageable);
+    Page<Post> findAllByCreatedByAndPostedIsTrue(User user, Pageable pageable);
 
-    Page<Post> findAllByTagsIn(List<Tag> tags, Pageable pageable);
+    Page<Post> findAllByTagsInAndPostedIsTrue(List<Tag> tags, Pageable pageable);
 
-    Page<Post> findAllByCategoryIn(List<Category> categories, Pageable pageable);
+    Page<Post> findAllByCategoryInAndPostedIsTrue(List<Category> categories, Pageable pageable);
+
+    Page<Post> findAllByPostedIsTrue(Pageable pageable);
 }

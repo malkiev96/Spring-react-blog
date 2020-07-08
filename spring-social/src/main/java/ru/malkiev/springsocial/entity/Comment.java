@@ -38,6 +38,9 @@ public class Comment extends Auditable {
     @JsonIgnore
     private Comment parent;
 
+    @Column(name = "is_deleted")
+    private boolean deleted = false;
+
     @OneToMany(mappedBy = "parent")
     private List<Comment> childs;
 }

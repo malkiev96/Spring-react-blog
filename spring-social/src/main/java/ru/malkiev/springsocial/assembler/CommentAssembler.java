@@ -22,10 +22,15 @@ public class CommentAssembler implements RepresentationModelAssembler<Comment, C
     @Override
     public @NotNull CommentModel toModel(@NotNull Comment entity) {
         CommentModel model = new CommentModel(entity);
-        model.setChilds(toCollectionModel(entity.getChilds()));
+        if (entity.getChilds() != null) {
+            model.setChilds(toCollectionModel(entity.getChilds()));
+        }
+
+        User currentUser = getCurrentUser();
 
         model.add(createLinkToSelf(entity));
-        model.addIf(entity.canEdit(getCurrentUser()), createDeleteLink(entity));
+        model.addIf(entity.canEdit(currentUser), createDeleteLink(entity));
+        model.addIf(currentUser != null, createReplyLink(entity));
 
         return model;
     }
@@ -46,6 +51,13 @@ public class CommentAssembler implements RepresentationModelAssembler<Comment, C
         return () -> linkTo(methodOn(CommentController.class).deleteComment(entity.getId(), null))
                 .withRel("delete")
                 .withType("DELETE");
+    }
+
+    private Supplier<Link> createReplyLink(Comment entity) {
+        return () -> linkTo(methodOn(CommentController.class)
+                .replyComment(entity.getPost().getId(), entity.getId(), null))
+                .withRel("reply")
+                .withType("POST");
     }
 
 }

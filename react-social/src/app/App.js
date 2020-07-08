@@ -19,6 +19,7 @@ import Posts from "../post/Posts";
 import PostsCategory from "../post/PostsCategory";
 import PostsTag from "../post/PostsTag";
 import PostsDetail from "../post/PostsDetail";
+import UserDetail from "../user/UserDetail";
 
 class App extends Component {
     constructor(props) {
@@ -102,14 +103,17 @@ class App extends Component {
                            onLogout={this.handleLogout}/>
                 <Container>
                     <Grid columns={2} stackable>
-                        <Grid.Column width={11}>
+                        <Grid.Column width={12}>
                             <Switch>
-                                <Route exact path="/" component={Home}/>
+                                <Route exact path="/"
+                                       render={(props) => <Posts categories={categories}
+                                                                 currentUser={currentUser} {...props} />}/>
+
+                                <Route exact path="/user/:id" render={(props) =>
+                                    <UserDetail currentUser={currentUser} {...props}/>}/>
 
                                 <Route exact path="/posts/:id" render={(props) =>
-                                    <PostsDetail categories={categories}
-                                                 currentUser={currentUser} {...props} />}/>
-
+                                    <PostsDetail categories={categories} currentUser={currentUser} {...props} />}/>
                                 <Route exact path="/category/:categoryName"
                                        render={(props) => <PostsCategory categories={categories}
                                                                          currentUser={currentUser} {...props} />}/>
@@ -138,7 +142,7 @@ class App extends Component {
                                 <Route component={NotFound}/>
                             </Switch>
                         </Grid.Column>
-                        <Grid.Column width={5}>
+                        <Grid.Column width={4}>
                             <RightMenu tags={tags} categories={categories}/>
                         </Grid.Column>
                     </Grid>

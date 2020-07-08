@@ -14,6 +14,8 @@ import ru.malkiev.springsocial.entity.User;
 import ru.malkiev.springsocial.model.PostDetailModel;
 import ru.malkiev.springsocial.security.UserPrincipal;
 
+import java.util.function.Supplier;
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -33,8 +35,8 @@ public class PostDetailAssembler implements RepresentationModelAssembler<Post, P
             model.setImages(imageAssembler.toCollectionModel(entity.getImages()));
         }
         model.add(createLinkToSelf(entity));
-        model.add(linkTo(methodOn(CommentController.class).getAllOfPosts(entity.getId())).withRel("comments").withType("GET"));
-        //TODO add link
+        model.add(createGetCommentsLink(entity));
+        model.addIf(getCurrentUser()!=null,createAddCommentLink(entity));
         return model;
     }
 
@@ -42,7 +44,17 @@ public class PostDetailAssembler implements RepresentationModelAssembler<Post, P
         return linkTo(methodOn(PostController.class).getOne(entity.getId())).withSelfRel();
     }
 
+    private Link createGetCommentsLink(Post entity){
+        return linkTo(methodOn(CommentController.class).getAllOfPosts(entity.getId()))
+                .withRel("comments")
+                .withType("GET");
+    }
 
+    private Supplier<Link> createAddCommentLink(Post entity) {
+        return () -> linkTo(methodOn(CommentController.class).createComment(entity.getId(),null))
+                .withRel("addComment")
+                .withType("POST");
+    }
 
     private User getCurrentUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();

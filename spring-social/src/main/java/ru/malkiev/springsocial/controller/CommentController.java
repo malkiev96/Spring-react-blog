@@ -1,14 +1,12 @@
 package ru.malkiev.springsocial.controller;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.malkiev.springsocial.assembler.CommentAssembler;
 import ru.malkiev.springsocial.entity.Comment;
 import ru.malkiev.springsocial.entity.Post;
@@ -31,7 +29,37 @@ public class CommentController {
     public CollectionModel<CommentModel> getAllOfPosts(@PathVariable int id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
-        return assembler.toCollectionModel(repository.findAllByPost(post));
+        return assembler.toCollectionModel(repository.findAllByPostAndParentIsNull(post, Sort.by("createdDate").descending()));
+    }
+
+    @PostMapping("/comments/post/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public CommentModel createComment(@PathVariable int id,
+                                           @RequestBody String message) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
+        Comment comment = new Comment();
+        comment.setPost(post);
+        comment.setMessage(message);
+
+        return assembler.toModel(repository.save(comment));
+    }
+
+    @PostMapping("/comments/post/{id}/reply/{parentId}")
+    @PreAuthorize("isAuthenticated()")
+    public CommentModel replyComment(@PathVariable int id,
+                                          @PathVariable int parentId,
+                                          @RequestBody String message) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
+        Comment comment = new Comment();
+        Comment parent = repository.findById(parentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Comment", "id", parentId));
+        comment.setParent(parent);
+        comment.setPost(post);
+        comment.setMessage(message);
+
+        return assembler.toModel(repository.save(comment));
     }
 
     @GetMapping("/comments/{id}")
@@ -48,7 +76,9 @@ public class CommentController {
         Comment comment = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Comment", "id", id));
         if (comment.canEdit(principal.getUser())) {
-            repository.delete(comment);
+            comment.setMessage("Сообщено удалено");
+            comment.setDeleted(true);
+            repository.save(comment);
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }

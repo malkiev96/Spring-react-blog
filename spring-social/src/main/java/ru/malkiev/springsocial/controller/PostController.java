@@ -42,7 +42,7 @@ public class PostController {
 
     @GetMapping("/posts")
     public CollectionModel<PostModel> getPosts(@PageableDefault Pageable pageable) {
-        Page<Post> page = postRepository.findAll(pageable);
+        Page<Post> page = postRepository.findAllByPostedIsTrue(pageable);
         return postAssembler.toPagedModel(page);
     }
 
@@ -51,7 +51,7 @@ public class PostController {
                                                      @PageableDefault Pageable pageable) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
-        Page<Post> page = postRepository.findAllByCreatedBy(user, pageable);
+        Page<Post> page = postRepository.findAllByCreatedByAndPostedIsTrue(user, pageable);
         return postAssembler.toPagedModel(page);
     }
 
@@ -59,7 +59,7 @@ public class PostController {
     public CollectionModel<PostModel> getPostsByTags(@RequestParam("ids") List<Integer> ids,
                                                      @PageableDefault Pageable pageable) {
         List<Tag> tags = tagRepository.findAllById(ids);
-        Page<Post> page = postRepository.findAllByTagsIn(tags, pageable);
+        Page<Post> page = postRepository.findAllByTagsInAndPostedIsTrue(tags, pageable);
         return postAssembler.toPagedModel(page);
     }
 
@@ -67,7 +67,7 @@ public class PostController {
     public CollectionModel<PostModel> getPostsByCat(@RequestParam("ids") List<Integer> ids,
                                                     @PageableDefault Pageable pageable) {
         List<Category> categories = categoryRepository.findAllById(ids);
-        Page<Post> page = postRepository.findAllByCategoryIn(categories, pageable);
+        Page<Post> page = postRepository.findAllByCategoryInAndPostedIsTrue(categories, pageable);
         return postAssembler.toPagedModel(page);
     }
 
