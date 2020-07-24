@@ -38,7 +38,9 @@ class AppHeader extends Component {
                             this.props.authenticated ?
                                 <Menu.Menu position='right'>
                                     <Menu.Item active={window.location.pathname === '/profile'}
-                                               as={Link} to='/profile' name='Профиль'/>
+                                               as={Link}
+                                               to={'/user/'+this.props.currentUser.id}
+                                               name='Профиль'/>
                                     <Menu.Item onClick={this.props.onLogout} name='Выход'/>
                                 </Menu.Menu> :
                                 <Menu.Menu position='right'>
@@ -74,7 +76,9 @@ class AppHeader extends Component {
                             {
                                 this.props.authenticated &&
                                 <Menu.Item active={window.location.pathname === '/profile'}
-                                           as={Link} to='/profile' name='Профиль'/>
+                                           as={Link}
+                                           to={'/user/'+this.props.currentUser.id}
+                                           name='Профиль'/>
                             }
                             {
                                 this.props.authenticated &&

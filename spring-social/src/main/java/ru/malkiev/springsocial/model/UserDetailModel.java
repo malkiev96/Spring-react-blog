@@ -6,7 +6,7 @@ import ru.malkiev.springsocial.entity.Role;
 import ru.malkiev.springsocial.entity.User;
 
 @Getter
-public class UserModel extends RepresentationModel<UserModel> {
+public class UserDetailModel extends RepresentationModel<UserDetailModel> {
 
     private final int id;
     private final String name;
@@ -15,7 +15,7 @@ public class UserModel extends RepresentationModel<UserModel> {
     private final boolean emailVerified;
     private final boolean isAdmin;
 
-    public UserModel(User user){
+    public UserDetailModel(User user){
         this.id = user.getId();
         this.name = user.getName();
         this.email = user.getEmail();

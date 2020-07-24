@@ -17,7 +17,7 @@ public class ImageAssembler implements RepresentationModelAssembler<Image, Image
     @Override
     public @NotNull ImageModel toModel(@NotNull Image entity) {
         ImageModel model = new ImageModel(entity);
-        model.setUrl(getUrl(entity));
+        model.setUrl(createUrl(entity));
         model.add(createLinkToSelf(entity));
 
         return model;
@@ -27,7 +27,7 @@ public class ImageAssembler implements RepresentationModelAssembler<Image, Image
         return linkTo(methodOn(ImageController.class).getOne(entity.getId())).withSelfRel();
     }
 
-    private String getUrl(Image entity) {
+    private String createUrl(Image entity) {
         return linkTo(methodOn(ImageController.class).getFile(entity.getName(), null))
                 .toUri().toString();
     }

@@ -10,7 +10,7 @@ import ru.malkiev.springsocial.repository.TagRepository;
 
 @RestController
 @AllArgsConstructor
-public class FilterController {
+public class RootController {
 
     private final CategoryRepository categoryRepository;
     private final TagRepository tagRepository;
@@ -22,6 +22,5 @@ public class FilterController {
         tagRepository.findAll().forEach(filterModel::addTags);
 
         return ResponseEntity.ok(filterModel);
-
     }
 }

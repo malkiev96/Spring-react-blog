@@ -8,7 +8,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import ru.malkiev.springsocial.controller.CommentController;
 import ru.malkiev.springsocial.controller.PostController;
-import ru.malkiev.springsocial.entity.Comment;
 import ru.malkiev.springsocial.entity.Post;
 import ru.malkiev.springsocial.entity.User;
 import ru.malkiev.springsocial.model.PostDetailModel;
@@ -51,7 +50,7 @@ public class PostDetailAssembler implements RepresentationModelAssembler<Post, P
     }
 
     private Supplier<Link> createAddCommentLink(Post entity) {
-        return () -> linkTo(methodOn(CommentController.class).createComment(entity.getId(),null))
+        return () -> linkTo(methodOn(CommentController.class).create(entity.getId(),null))
                 .withRel("addComment")
                 .withType("POST");
     }

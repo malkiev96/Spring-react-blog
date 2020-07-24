@@ -35,10 +35,6 @@ public class CommentAssembler implements RepresentationModelAssembler<Comment, C
         return model;
     }
 
-    private Link createLinkToSelf(Comment entity) {
-        return linkTo(methodOn(CommentController.class).getOne(entity.getId())).withSelfRel();
-    }
-
     private User getCurrentUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal instanceof UserPrincipal) {
@@ -47,17 +43,19 @@ public class CommentAssembler implements RepresentationModelAssembler<Comment, C
         return null;
     }
 
+    private Link createLinkToSelf(Comment entity) {
+        return linkTo(methodOn(CommentController.class).getOne(entity.getId())).withSelfRel();
+    }
+
     private Supplier<Link> createDeleteLink(Comment entity) {
-        return () -> linkTo(methodOn(CommentController.class).deleteComment(entity.getId(), null))
+        return () -> linkTo(methodOn(CommentController.class).delete(entity.getId(), null))
                 .withRel("delete")
                 .withType("DELETE");
     }
 
     private Supplier<Link> createReplyLink(Comment entity) {
         return () -> linkTo(methodOn(CommentController.class)
-                .replyComment(entity.getPost().getId(), entity.getId(), null))
-                .withRel("reply")
+                .reply(entity.getPost().getId(), entity.getId(), null)).withRel("reply")
                 .withType("POST");
     }
-
 }

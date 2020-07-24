@@ -99,6 +99,7 @@ class App extends Component {
         return (
             <div>
                 <AppHeader authenticated={currentUser.authenticated}
+                           currentUser={currentUser.currentUser}
                            categories={categories}
                            onLogout={this.handleLogout}/>
                 <Container>

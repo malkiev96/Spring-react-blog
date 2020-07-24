@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import PostsView from "./PostsView";
 import {getPostsByCategory} from '../util/APIUtils';
-import {Loader, Pagination} from "semantic-ui-react";
+import {Loader, Pagination, Segment} from "semantic-ui-react";
 import NotFound from "../common/NotFound";
 
 class PostsCategory extends Component {
@@ -102,13 +102,15 @@ class PostsCategory extends Component {
                 <PostsView posts={posts}/>
                 {
                     posts.posts.length !== 0 &&
-                    <Pagination
-                        activePage={posts.page.number + 1}
-                        firstItem={null}
-                        lastItem={null}
-                        onPageChange={this.pageChange}
-                        totalPages={posts.page.totalPages}
-                    />
+                    <Segment>
+                        <Pagination
+                            activePage={posts.page.number + 1}
+                            firstItem={null}
+                            lastItem={null}
+                            onPageChange={this.pageChange}
+                            totalPages={posts.page.totalPages}
+                        />
+                    </Segment>
                 }
 
             </div>

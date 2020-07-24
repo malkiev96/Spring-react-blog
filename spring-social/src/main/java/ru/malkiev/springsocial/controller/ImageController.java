@@ -31,10 +31,11 @@ public class ImageController {
     private final ImageStorageService storageService;
 
     @GetMapping("/images/{id}")
-    public ImageModel getOne(@PathVariable int id) {
-        Image image = repository.findById(id)
+    public ResponseEntity<ImageModel> getOne(@PathVariable int id) {
+        return repository.findById(id)
+                .map(assembler::toModel)
+                .map(ResponseEntity::ok)
                 .orElseThrow(() -> new ResourceNotFoundException("Image", "id", id));
-        return assembler.toModel(image);
     }
 
     @PostMapping("/images")

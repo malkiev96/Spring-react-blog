@@ -1,14 +1,15 @@
 package ru.malkiev.springsocial.controller;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-import ru.malkiev.springsocial.assembler.UserAssembler;
+import ru.malkiev.springsocial.assembler.UserDetailAssembler;
 import ru.malkiev.springsocial.entity.User;
 import ru.malkiev.springsocial.exception.ResourceNotFoundException;
-import ru.malkiev.springsocial.model.UserModel;
+import ru.malkiev.springsocial.model.UserDetailModel;
 import ru.malkiev.springsocial.repository.UserRepository;
 import ru.malkiev.springsocial.security.CurrentUser;
 import ru.malkiev.springsocial.security.UserPrincipal;
@@ -18,7 +19,7 @@ import ru.malkiev.springsocial.security.UserPrincipal;
 public class UserController {
 
     private final UserRepository repository;
-    private final UserAssembler assembler;
+    private final UserDetailAssembler assembler;
 
     @GetMapping("/user/me")
     @PreAuthorize("isAuthenticated()")
@@ -27,9 +28,10 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}")
-    public UserModel getOne(@PathVariable int id){
-        User user = repository.findById(id)
+    public ResponseEntity<UserDetailModel> getOne(@PathVariable int id){
+        return repository.findById(id)
+                .map(assembler::toModel)
+                .map(ResponseEntity::ok)
                 .orElseThrow(()->new ResourceNotFoundException("User","id",id));
-        return assembler.toModel(user);
     }
 }
