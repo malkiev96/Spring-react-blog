@@ -7,7 +7,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.malkiev.springsocial.entity.Image;
-import ru.malkiev.springsocial.exception.ResourceNotFoundException;
+import ru.malkiev.springsocial.exception.ImageNotFoundException;
 import ru.malkiev.springsocial.repository.ImageRepository;
 
 import javax.imageio.ImageIO;
@@ -60,7 +60,7 @@ public class ImageStorageService {
             if (resource.exists() || resource.isReadable()) {
                 return resource;
             } else {
-                throw new ResourceNotFoundException("Image", "filename", filename);
+                throw new ImageNotFoundException(filename);
             }
         } catch (MalformedURLException e) {
             throw new RuntimeException("Error: " + e.getMessage());

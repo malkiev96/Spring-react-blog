@@ -8,7 +8,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.malkiev.springsocial.assembler.CommentAssembler;
 import ru.malkiev.springsocial.entity.Post;
-import ru.malkiev.springsocial.exception.ResourceNotFoundException;
+import ru.malkiev.springsocial.exception.CommentNotFoundException;
+import ru.malkiev.springsocial.exception.PostNotFoundException;
 import ru.malkiev.springsocial.model.CommentModel;
 import ru.malkiev.springsocial.security.CurrentUser;
 import ru.malkiev.springsocial.security.UserPrincipal;
@@ -28,7 +29,7 @@ public class CommentController {
         return postService.findById(id)
                 .map(post -> commentService.getComments(post, Sort.by("createdDate").descending()))
                 .map(assembler::toCollectionModel)
-                .orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
+                .orElseThrow(() -> new CommentNotFoundException(id));
     }
 
     @PostMapping("/comments/post/{id}")
@@ -38,7 +39,7 @@ public class CommentController {
                 .map(p -> commentService.create(p, message))
                 .map(assembler::toModel)
                 .map(ResponseEntity::ok)
-                .orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
+                .orElseThrow(() -> new CommentNotFoundException(id));
     }
 
     @PostMapping("/comments/post/{id}/reply/{parentId}")
@@ -47,12 +48,12 @@ public class CommentController {
                                               @PathVariable int parentId,
                                               @RequestBody String message) {
         Post post = postService.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
+                .orElseThrow(() -> new PostNotFoundException(id));
         return commentService.getComment(parentId)
                 .map(parent -> commentService.reply(post, message, parent))
                 .map(assembler::toModel)
                 .map(ResponseEntity::ok)
-                .orElseThrow(() -> new ResourceNotFoundException("Comment", "id", parentId));
+                .orElseThrow(() -> new CommentNotFoundException(parentId));
     }
 
     @GetMapping("/comments/{id}")
@@ -60,7 +61,7 @@ public class CommentController {
         return commentService.getComment(id)
                 .map(assembler::toModel)
                 .map(ResponseEntity::ok)
-                .orElseThrow(() -> new ResourceNotFoundException("Comment", "id", id));
+                .orElseThrow(() -> new CommentNotFoundException(id));
     }
 
     @DeleteMapping("/comments/{id}")
@@ -71,6 +72,6 @@ public class CommentController {
                 .map(commentService::delete)
                 .map(assembler::toModel)
                 .map(ResponseEntity::ok)
-                .orElseThrow(() -> new ResourceNotFoundException("Comment", "id", id));
+                .orElseThrow(() -> new CommentNotFoundException(id));
     }
 }

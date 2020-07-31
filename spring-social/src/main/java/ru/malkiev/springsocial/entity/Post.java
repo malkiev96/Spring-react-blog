@@ -68,10 +68,6 @@ public class Post extends Auditable {
          */
         CREATED,
         /**
-         * Пост ожидает подтверждения для публикации
-         */
-        PENDING,
-        /**
          * Пост опубликован
          */
         PUBLISHED,

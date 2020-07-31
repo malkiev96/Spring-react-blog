@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import ru.malkiev.springsocial.assembler.UserDetailAssembler;
 import ru.malkiev.springsocial.entity.User;
-import ru.malkiev.springsocial.exception.ResourceNotFoundException;
+import ru.malkiev.springsocial.exception.UserNotFoundException;
 import ru.malkiev.springsocial.model.UserDetailModel;
 import ru.malkiev.springsocial.repository.UserRepository;
 import ru.malkiev.springsocial.security.CurrentUser;
@@ -32,6 +32,6 @@ public class UserController {
         return repository.findById(id)
                 .map(assembler::toModel)
                 .map(ResponseEntity::ok)
-                .orElseThrow(()->new ResourceNotFoundException("User","id",id));
+                .orElseThrow(()->new UserNotFoundException(id));
     }
 }

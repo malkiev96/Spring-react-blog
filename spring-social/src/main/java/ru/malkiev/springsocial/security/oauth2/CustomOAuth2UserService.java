@@ -5,13 +5,12 @@ import org.springframework.security.authentication.InternalAuthenticationService
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
-import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import ru.malkiev.springsocial.entity.AuthProvider;
 import ru.malkiev.springsocial.entity.User;
-import ru.malkiev.springsocial.exception.OAuth2AuthenticationProcessingException;
+import ru.malkiev.springsocial.exception.OAuth2AuthenticationException;
 import ru.malkiev.springsocial.security.UserPrincipal;
 import ru.malkiev.springsocial.security.oauth2.user.OAuth2UserInfo;
 import ru.malkiev.springsocial.security.oauth2.user.OAuth2UserInfoFactory;
@@ -24,7 +23,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final UserService userService;
 
     @Override
-    public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
+    public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws org.springframework.security.oauth2.core.OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(oAuth2UserRequest);
         try {
             return processOAuth2User(oAuth2UserRequest, oAuth2User);
@@ -43,7 +42,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                         oAuth2User.getAttributes()
                 );
         if (StringUtils.isEmpty(oAuth2UserInfo.getEmail())) {
-            throw new OAuth2AuthenticationProcessingException("Email not found from OAuth2 provider");
+            throw new OAuth2AuthenticationException("Email not found from OAuth2 provider");
         }
 
         User current = userService.findByEmail(oAuth2UserInfo.getEmail()).map(user -> {
@@ -52,7 +51,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                             .getClientRegistration()
                             .getRegistrationId()
                             .toUpperCase()
-            ))) throw new OAuth2AuthenticationProcessingException("Looks like you're signed up with " +
+            ))) throw new OAuth2AuthenticationException("Looks like you're signed up with " +
                     user.getProvider() + " account. Please use your " + user.getProvider() + " account to login.");
             return userService.updateExistingUser(user, oAuth2UserInfo);
         }).orElseGet(() -> registerNewUser(oAuth2UserRequest, oAuth2UserInfo));

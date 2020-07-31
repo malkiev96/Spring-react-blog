@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.malkiev.springsocial.assembler.ImageAssembler;
 import ru.malkiev.springsocial.entity.Image;
-import ru.malkiev.springsocial.exception.ResourceNotFoundException;
+import ru.malkiev.springsocial.exception.ImageNotFoundException;
 import ru.malkiev.springsocial.model.ImageModel;
 import ru.malkiev.springsocial.repository.ImageRepository;
 import ru.malkiev.springsocial.service.ImageStorageService;
@@ -35,7 +35,7 @@ public class ImageController {
         return repository.findById(id)
                 .map(assembler::toModel)
                 .map(ResponseEntity::ok)
-                .orElseThrow(() -> new ResourceNotFoundException("Image", "id", id));
+                .orElseThrow(() -> new ImageNotFoundException(id));
     }
 
     @PostMapping("/images")
