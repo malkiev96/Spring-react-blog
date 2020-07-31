@@ -2,11 +2,11 @@ package ru.malkiev.springsocial.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.springframework.hateoas.CollectionModel;
 import ru.malkiev.springsocial.entity.Post;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -14,8 +14,8 @@ public class PostDetailModel extends PostModel {
 
     private String text;
     private List<DataItem> tags = new ArrayList<>();
-    private CollectionModel<FileModel> files;
-    private CollectionModel<ImageModel> images;
+    private List<FileModel> files = new ArrayList<>();
+    private List<ImageModel> images = new ArrayList<>();
 
     public PostDetailModel(Post post) {
         super(post);
@@ -23,5 +23,6 @@ public class PostDetailModel extends PostModel {
         post.getTags().forEach(tag -> {
             this.tags.add(new DataItem(tag.getId(), tag.getName(), tag.getDescription()));
         });
+        this.images.addAll(post.getImages().stream().map(ImageModel::new).collect(Collectors.toList()));
     }
 }

@@ -33,12 +33,12 @@ class PostsTag extends Component {
                 error: false,
                 tagName: tagName
             })
-            this.loadPosts(tagName,page)
+            this.loadPosts(tagName, page)
         }
     }
 
     componentDidMount() {
-        this.loadPosts(this.state.tagName,this.state.page)
+        this.loadPosts(this.state.tagName, this.state.page)
     }
 
     getIdByName(tagName) {
@@ -51,9 +51,9 @@ class PostsTag extends Component {
         return id
     }
 
-    loadPosts(tagName,page) {
+    loadPosts(tagName, page) {
         const tagId = this.getIdByName(tagName)
-        if (tagId){
+        if (tagId) {
             getPostsByTagIds(tagId, page, this.state.size, this.state.sort)
                 .then(response => {
                     this.setState({
@@ -71,7 +71,7 @@ class PostsTag extends Component {
                     }
                 })
             })
-        }else {
+        } else {
             this.setState({
                 error: true
             })
@@ -80,14 +80,14 @@ class PostsTag extends Component {
     }
 
     render() {
-        const {posts,error} = this.state
+        const {posts, error} = this.state
         if (error) return <NotFound/>
         if (posts.loading) return <Loader active inline='centered'/>
         return (
             <div>
                 <PostsView posts={posts}/>
                 {
-                    posts.posts.length !== 0 &&
+                    posts.posts.length !== 0 && posts.page.totalPages !== 1 &&
                     <Segment>
                         <Pagination
                             activePage={posts.page.number + 1}

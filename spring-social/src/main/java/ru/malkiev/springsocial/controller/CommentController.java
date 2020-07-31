@@ -1,6 +1,7 @@
 package ru.malkiev.springsocial.controller;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -9,23 +10,23 @@ import ru.malkiev.springsocial.assembler.CommentAssembler;
 import ru.malkiev.springsocial.entity.Post;
 import ru.malkiev.springsocial.exception.ResourceNotFoundException;
 import ru.malkiev.springsocial.model.CommentModel;
-import ru.malkiev.springsocial.repository.PostRepository;
 import ru.malkiev.springsocial.security.CurrentUser;
 import ru.malkiev.springsocial.security.UserPrincipal;
 import ru.malkiev.springsocial.service.CommentService;
+import ru.malkiev.springsocial.service.PostService;
 
 @RestController
 @AllArgsConstructor
 public class CommentController {
 
     private final CommentService commentService;
-    private final PostRepository postRepository;
+    private final PostService postService;
     private final CommentAssembler assembler;
 
     @GetMapping("/comments/post/{id}")
     public CollectionModel<CommentModel> getAllOfPosts(@PathVariable int id) {
-        return postRepository.findById(id)
-                .map(commentService::getComments)
+        return postService.findById(id)
+                .map(post -> commentService.getComments(post, Sort.by("createdDate").descending()))
                 .map(assembler::toCollectionModel)
                 .orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
     }
@@ -33,7 +34,7 @@ public class CommentController {
     @PostMapping("/comments/post/{id}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<CommentModel> create(@PathVariable int id, @RequestBody String message) {
-        return postRepository.findById(id)
+        return postService.findById(id)
                 .map(p -> commentService.create(p, message))
                 .map(assembler::toModel)
                 .map(ResponseEntity::ok)
@@ -45,7 +46,7 @@ public class CommentController {
     public ResponseEntity<CommentModel> reply(@PathVariable int id,
                                               @PathVariable int parentId,
                                               @RequestBody String message) {
-        Post post = postRepository.findById(id)
+        Post post = postService.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
         return commentService.getComment(parentId)
                 .map(parent -> commentService.reply(post, message, parent))

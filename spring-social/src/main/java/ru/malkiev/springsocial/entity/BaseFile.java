@@ -18,20 +18,19 @@ public abstract class BaseFile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "title")
+    @Column(name = "TITLE")
     private String title;
 
-    @Column(name = "file_name", nullable = false)
+    @Column(name = "FILE_NAME", nullable = false)
     private String name;
 
-    @Column(name = "file_path", nullable = false)
+    @Column(name = "FILE_PATH", nullable = false)
     private String path;
 
-    @Column(name = "file_type", nullable = false)
+    @Column(name = "FILE_TYPE", nullable = false)
     private String type;
 
     @CreatedDate
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "date_uploaded", nullable = false)
+    @Column(name = "UPLOADED_DATE", nullable = false)
     private Date uploadedDate;
 }

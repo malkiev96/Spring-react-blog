@@ -17,9 +17,9 @@ public class RootController {
 
     @GetMapping("/filters")
     private ResponseEntity<FilterModel> getFilters(){
-        FilterModel filterModel = new FilterModel();
-        categoryRepository.findAllByParentIsNull().forEach(filterModel::addCategories);
-        tagRepository.findAll().forEach(filterModel::addTags);
+        FilterModel filterModel = new FilterModel(
+                categoryRepository.findAllByParentIsNull(),
+                tagRepository.findAll());
 
         return ResponseEntity.ok(filterModel);
     }

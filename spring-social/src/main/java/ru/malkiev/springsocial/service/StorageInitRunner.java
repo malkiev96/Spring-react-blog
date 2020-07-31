@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 
 @Component
-public class StorageCommandLineRunner implements CommandLineRunner {
+public class StorageInitRunner implements CommandLineRunner {
 
     @Resource
     private ImageStorageService storageService;

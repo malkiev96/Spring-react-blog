@@ -1,9 +1,11 @@
-package ru.malkiev.springsocial.payload;
+package ru.malkiev.springsocial.model.payload;
 
 import lombok.Data;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -12,6 +14,7 @@ public class PostRequest {
     @NotNull
     @Size(max = 255)
     private String title;
+    @NotNull
     private String description;
     @NotNull
     private String text;
@@ -19,9 +22,8 @@ public class PostRequest {
     private Integer previewId;
     @NotNull
     private Integer categoryId;
-    @NotNull
-    private List<Integer> tagIds;
-    private List<Integer> fileIds;
-    private List<Integer> imageIds;
+    @NotEmpty
+    private List<Integer> tagIds = new ArrayList<>();
+    private List<Integer> imageIds = new ArrayList<>();
 
 }

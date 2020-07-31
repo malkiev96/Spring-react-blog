@@ -1,10 +1,8 @@
 import React, {Component} from 'react';
 import {Route, Switch} from 'react-router-dom';
 import AppHeader from '../common/AppHeader';
-import Home from '../home/Home';
-import Login from '../user/login/Login';
-import Signup from '../user/signup/Signup';
-import Profile from '../user/profile/Profile';
+import Login from '../user/Login';
+import Signup from '../user/Signup';
 import OAuth2RedirectHandler from '../user/oauth2/OAuth2RedirectHandler';
 import NotFound from '../common/NotFound';
 import {getCurrentUser, getFilters} from '../util/APIUtils';
@@ -20,6 +18,10 @@ import PostsCategory from "../post/PostsCategory";
 import PostsTag from "../post/PostsTag";
 import PostsDetail from "../post/PostsDetail";
 import UserDetail from "../user/UserDetail";
+import Contacts from "../contacts/Contacts";
+import About from "../about/About";
+import UserEdit from "../user/UserEdit";
+import Publish from "../post/Publish";
 
 class App extends Component {
     constructor(props) {
@@ -91,9 +93,7 @@ class App extends Component {
     }
 
     render() {
-
         const {currentUser, loading, categories, tags} = this.state
-
         if (currentUser.loading || loading) return <Loader/>
 
         return (
@@ -109,10 +109,17 @@ class App extends Component {
                                 <Route exact path="/"
                                        render={(props) => <Posts categories={categories}
                                                                  currentUser={currentUser} {...props} />}/>
-
                                 <Route exact path="/user/:id" render={(props) =>
                                     <UserDetail currentUser={currentUser} {...props}/>}/>
-
+                                <PrivateRoute path="/user/:id/edit" currentUser={currentUser} component={UserEdit}/>
+                                <PrivateRoute path="/publish"
+                                              categories={categories}
+                                              tags={tags}
+                                              currentUser={currentUser} component={Publish}/>
+                                <Route exact path="/contacts" render={(props) =>
+                                    <Contacts currentUser={currentUser} {...props}/>}/>
+                                <Route exact path="/about" render={(props) =>
+                                    <About currentUser={currentUser} {...props}/>}/>
                                 <Route exact path="/posts/:id" render={(props) =>
                                     <PostsDetail categories={categories} currentUser={currentUser} {...props} />}/>
                                 <Route exact path="/category/:categoryName"
@@ -133,8 +140,6 @@ class App extends Component {
                                 <Route exact path="/tags/:tagName/p/:page"
                                        render={(props) => <PostsTag tags={tags}
                                                                     currentUser={currentUser} {...props} />}/>
-
-                                <PrivateRoute path="/profile" currentUser={currentUser} component={Profile}/>
                                 <Route path="/login" render={(props) =>
                                     <Login authenticated={currentUser.authenticated} {...props} />}/>
                                 <Route path="/signup" render={(props) =>

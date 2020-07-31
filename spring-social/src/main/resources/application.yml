@@ -1,8 +1,8 @@
 spring:
     datasource:
-        url: jdbc:postgresql://localhost:5432/springreact
-        username: postgres
-        password: root
+#        url: jdbc:postgresql://localhost:5432/springreact
+        username: sa
+        password:
     jpa:
         show-sql: false
         hibernate:

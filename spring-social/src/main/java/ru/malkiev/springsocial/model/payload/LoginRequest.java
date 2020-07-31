@@ -1,4 +1,4 @@
-package ru.malkiev.springsocial.payload;
+package ru.malkiev.springsocial.model.payload;
 
 import lombok.Data;
 
@@ -7,11 +7,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Data
-public class SignUpRequest {
-
-    @NotNull
-    @Size(min = 3, max = 32)
-    private String name;
+public class LoginRequest {
 
     @NotNull
     @Email

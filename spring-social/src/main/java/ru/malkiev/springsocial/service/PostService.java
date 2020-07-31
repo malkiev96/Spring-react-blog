@@ -1,15 +1,13 @@
 package ru.malkiev.springsocial.service;
 
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.malkiev.springsocial.entity.*;
+import ru.malkiev.springsocial.entity.Post.Status;
 import ru.malkiev.springsocial.exception.ResourceNotFoundException;
-import ru.malkiev.springsocial.payload.PostRequest;
+import ru.malkiev.springsocial.model.payload.PostRequest;
 import ru.malkiev.springsocial.repository.*;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,9 +19,8 @@ public class PostService {
     private final ImageRepository imageRepository;
     private final CategoryRepository categoryRepository;
     private final TagRepository tagRepository;
-    private final FileRepository fileRepository;
 
-    public Post create(PostRequest postRequest) {
+    public Post create(PostRequest postRequest, User currentUser) {
         Post post = new Post();
         post.setTitle(postRequest.getTitle());
         post.setDescription(postRequest.getDescription());
@@ -31,11 +28,10 @@ public class PostService {
         if (postRequest.getPreviewId() != null) {
             Image image = imageRepository.findById(postRequest.getPreviewId())
                     .orElseThrow(() -> new ResourceNotFoundException("Image", "id", postRequest.getPreviewId()));
-            post.setImagePreview(image);
+            post.setPreview(image);
         }
-        if (postRequest.isPosted()) {
-            post.setPosted(true);
-            post.setPostedDate(new Date());
+        if (!postRequest.getImageIds().isEmpty()){
+            post.setImages(imageRepository.findAllById(postRequest.getImageIds()));
         }
         Category category = categoryRepository.findById(postRequest.getCategoryId())
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", postRequest.getCategoryId()));
@@ -44,31 +40,14 @@ public class PostService {
         List<Tag> tags = tagRepository.findAllById(postRequest.getTagIds());
         post.setTags(tags);
 
-        if (postRequest.getFileIds() != null) {
-            List<File> files = fileRepository.findAllById(postRequest.getFileIds());
-            post.setFiles(files);
-        }
+        if (currentUser.isAdmin()) post.setStatus(postRequest.isPosted() ? Status.PUBLISHED : Status.CREATED);
+        else post.setStatus(postRequest.isPosted() ? Status.PENDING : Status.CREATED);
 
         return postRepository.save(post);
     }
 
-    public Optional<Post> getPost(int id) {
+    public Optional<Post> findById(int id) {
         return postRepository.findById(id);
     }
 
-    public Page<Post> getPublishedPosts(Pageable pageable) {
-        return postRepository.findAllByPostedIsTrue(pageable);
-    }
-
-    public Page<Post> getPostsByUser(Pageable pageable, User createdBy) {
-        return postRepository.findAllByCreatedByAndPostedIsTrue(createdBy, pageable);
-    }
-
-    public Page<Post> getPostsByTags(Pageable pageable, List<Tag> tags) {
-        return postRepository.findAllByTagsInAndPostedIsTrue(tags, pageable);
-    }
-
-    public Page<Post> getPostsByCategories(Pageable pageable, List<Category> categories) {
-        return postRepository.findAllByCategoryInAndPostedIsTrue(categories, pageable);
-    }
 }

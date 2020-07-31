@@ -19,31 +19,25 @@ public abstract class Auditable {
 
     @CreatedBy
     @ManyToOne
-    @JoinColumn(name = "user_created_id")
+    @JoinColumn(name = "USER_CREATED_ID")
     private User createdBy;
 
     @LastModifiedBy
     @ManyToOne
-    @JoinColumn(name = "user_updated_id")
+    @JoinColumn(name = "USER_MODIFIED_ID")
     private User lastModifiedBy;
 
     @CreatedDate
-    @Column(name = "date_created")
-    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "CREATED_DATE")
     private Date createdDate;
 
     @LastModifiedDate
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "date_updated")
+    @Column(name = "MODIFIED_DATE")
     private Date lastModifiedDate;
 
-    public boolean canEdit(User user){
-        if (user == null) {
-            return false;
-        }
-        if (user.getRole()==Role.ROLE_ADMIN){
-            return true;
-        }
+    public boolean canEdit(User user) {
+        if (user == null) return false;
+        if (user.getRole() == Role.ROLE_ADMIN) return true;
         return createdBy.equals(user);
     }
 }

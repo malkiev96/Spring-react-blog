@@ -1,4 +1,4 @@
-package ru.malkiev.springsocial.payload;
+package ru.malkiev.springsocial.model.payload;
 
 import lombok.Data;
 

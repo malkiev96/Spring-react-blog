@@ -1,9 +1,11 @@
 import React, {Component} from 'react';
-import {getPostsByUser, getUser} from '../util/APIUtils';
-import {Button, Divider, Header, Icon, Image, Loader, Pagination, Segment, Table} from "semantic-ui-react";
+import {getUser} from '../util/APIUtils';
+import {Button, Divider, Header, Icon, Image, Loader, Segment, Table} from "semantic-ui-react";
 import NotFound from "../common/NotFound";
 import {Link} from "react-router-dom";
-import PostsView from "../post/PostsView";
+import {Tab, TabList, TabPanel, Tabs} from 'react-tabs';
+import 'react-tabs/style/react-tabs.css';
+import UserPosts from "./UserPosts";
 
 class UserDetail extends Component {
 
@@ -18,52 +20,24 @@ class UserDetail extends Component {
         }
         this.state = {
             id: id,
-            page: 1,
             profile: profile,
             user: {
                 user: null,
                 error: false,
                 loading: true
-            },
-            posts: {
-                posts: [],
-                loading: true
             }
         }
         this.loadUser = this.loadUser.bind(this);
-        this.loadPosts = this.loadPosts.bind(this);
-        this.pageChange = this.pageChange.bind(this);
     }
 
     componentDidUpdate(prevProps) {
         if (this.props.location.pathname !== prevProps.location.pathname) {
             this.loadUser(parseInt(this.props.match.params.id))
-            this.loadPosts(parseInt(this.props.match.params.id), this.state.page)
         }
     }
 
     componentDidMount() {
         this.loadUser(this.state.id)
-        this.loadPosts(this.state.id, this.state.page)
-    }
-
-    loadPosts(userId, page) {
-        getPostsByUser(userId, page, 10, 'createdDate').then(response => {
-            this.setState({
-                posts: {
-                    posts: response['content'],
-                    page: response['page'],
-                    loading: false
-                }
-            })
-        }).catch(error => {
-            this.setState({
-                posts: {
-                    posts: [],
-                    loading: false
-                }
-            })
-        })
     }
 
     loadUser(id) {
@@ -98,7 +72,7 @@ class UserDetail extends Component {
                         {user.user.name}
                         {
                             profile &&
-                            <Link to={'/profile/'}>
+                            <Link to={'/user/' + user.user.id + '/edit'}>
                                 <Button floated='right' size='mini' primary>Настроить профиль</Button>
                             </Link>
                         }
@@ -116,33 +90,60 @@ class UserDetail extends Component {
                                     }
                                 </Table.Cell>
                             </Table.Row>
+                            <Table.Row>
+                                <Table.Cell width={3}>Дата рождения</Table.Cell>
+                                <Table.Cell>{user.user.birthday}</Table.Cell>
+                            </Table.Row>
+                            <Table.Row>
+                                <Table.Cell width={3}>Город</Table.Cell>
+                                <Table.Cell>{user.user.city}</Table.Cell>
+                            </Table.Row>
+                            <Table.Row>
+                                <Table.Cell width={3}>О себе</Table.Cell>
+                                <Table.Cell>
+                                    {user.user.about}
+                                </Table.Cell>
+                            </Table.Row>
+
                         </Table.Body>
                     </Table>
                 </Segment>
-
-                <Header as='h1' dividing>Публикации</Header>
-                <PostsView posts={posts}/>
                 {
-                    posts.posts.length !== 0 &&
-                    <Pagination
-                        activePage={posts.page.number + 1}
-                        firstItem={null}
-                        lastItem={null}
-                        onPageChange={this.pageChange}
-                        totalPages={posts.page.totalPages}
-                    />
+                    !profile &&
+                    <div>
+                        <Header>Статьи</Header>
+                        <UserPosts id={user.user.id} status={'PUBLISHED'}/>
+                    </div>
                 }
-
+                {
+                    profile &&
+                    <div>
+                        <Header>Статьи</Header>
+                        <Tabs>
+                            <TabList>
+                                <Tab>Опубликованные</Tab>
+                                <Tab>Неопубликованное</Tab>
+                                <Tab>Ожидают подтверждения</Tab>
+                                <Tab>Удаленные</Tab>
+                            </TabList>
+                            <TabPanel>
+                                <UserPosts id={user.user.id} status={'PUBLISHED'}/>
+                            </TabPanel>
+                            <TabPanel>
+                                <UserPosts id={user.user.id} status={'CREATED'}/>
+                            </TabPanel>
+                            <TabPanel>
+                                <UserPosts id={user.user.id} status={'PENDING'}/>
+                            </TabPanel>
+                            <TabPanel>
+                                <UserPosts id={user.user.id} status={'DELETED'}/>
+                            </TabPanel>
+                        </Tabs>
+                    </div>
+                }
 
             </div>
         )
-    }
-
-    pageChange(e, {activePage}) {
-        this.setState({
-            page: activePage
-        })
-        this.loadPosts(this.state.id, activePage)
     }
 }
 

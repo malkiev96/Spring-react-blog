@@ -101,7 +101,7 @@ class PostsCategory extends Component {
             <div>
                 <PostsView posts={posts}/>
                 {
-                    posts.posts.length !== 0 &&
+                    posts.posts.length !== 0 && posts.page.totalPages!==1 &&
                     <Segment>
                         <Pagination
                             activePage={posts.page.number + 1}

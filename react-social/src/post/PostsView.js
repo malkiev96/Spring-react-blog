@@ -41,6 +41,7 @@ const PostsRow = ({post}) => {
                             </Link>
                             {' ' + createdDate}
                         </Item.Meta>
+                        <Item.Meta>{post.status}</Item.Meta>
                         <Item.Description>{post.description}</Item.Description>
                     </Item.Content>
                 </Item>

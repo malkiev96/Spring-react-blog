@@ -1,9 +1,8 @@
 package ru.malkiev.springsocial.security.oauth2;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -11,21 +10,18 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import ru.malkiev.springsocial.entity.AuthProvider;
-import ru.malkiev.springsocial.entity.Role;
 import ru.malkiev.springsocial.entity.User;
 import ru.malkiev.springsocial.exception.OAuth2AuthenticationProcessingException;
-import ru.malkiev.springsocial.repository.UserRepository;
 import ru.malkiev.springsocial.security.UserPrincipal;
 import ru.malkiev.springsocial.security.oauth2.user.OAuth2UserInfo;
 import ru.malkiev.springsocial.security.oauth2.user.OAuth2UserInfoFactory;
-
-import java.util.Optional;
+import ru.malkiev.springsocial.service.UserService;
 
 @Service
+@AllArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserService userService;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
@@ -46,42 +42,28 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                         oAuth2UserRequest.getClientRegistration().getRegistrationId(),
                         oAuth2User.getAttributes()
                 );
-        if(StringUtils.isEmpty(oAuth2UserInfo.getEmail())) {
+        if (StringUtils.isEmpty(oAuth2UserInfo.getEmail())) {
             throw new OAuth2AuthenticationProcessingException("Email not found from OAuth2 provider");
         }
 
-        Optional<User> userOptional = userRepository.findByEmail(oAuth2UserInfo.getEmail().toLowerCase());
-        User user;
-        if(userOptional.isPresent()) {
-            user = userOptional.get();
-            if(!user.getProvider().equals(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId().toUpperCase()))) {
-                throw new OAuth2AuthenticationProcessingException("Looks like you're signed up with " +
-                        user.getProvider() + " account. Please use your " + user.getProvider() +
-                        " account to login.");
-            }
-            user = updateExistingUser(user, oAuth2UserInfo);
-        } else {
-            user = registerNewUser(oAuth2UserRequest, oAuth2UserInfo);
-        }
+        User current = userService.findByEmail(oAuth2UserInfo.getEmail()).map(user -> {
+            if (!user.getProvider().equals(AuthProvider.valueOf(
+                    oAuth2UserRequest
+                            .getClientRegistration()
+                            .getRegistrationId()
+                            .toUpperCase()
+            ))) throw new OAuth2AuthenticationProcessingException("Looks like you're signed up with " +
+                    user.getProvider() + " account. Please use your " + user.getProvider() + " account to login.");
+            return userService.updateExistingUser(user, oAuth2UserInfo);
+        }).orElseGet(() -> registerNewUser(oAuth2UserRequest, oAuth2UserInfo));
 
-        return UserPrincipal.create(user, oAuth2User.getAttributes());
+        return UserPrincipal.create(current, oAuth2User.getAttributes());
     }
 
     private User registerNewUser(OAuth2UserRequest oAuth2UserRequest, OAuth2UserInfo oAuth2UserInfo) {
-        User user = new User();
-        user.setProvider(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId().toUpperCase()));
-        user.setRole(Role.ROLE_USER);
-        user.setName(oAuth2UserInfo.getName());
-        user.setPassword(new BCryptPasswordEncoder().encode(oAuth2UserInfo.getEmail()));
-        user.setEmail(oAuth2UserInfo.getEmail().toLowerCase());
-        user.setImageUrl(oAuth2UserInfo.getImageUrl());
-        return userRepository.save(user);
-    }
-
-    private User updateExistingUser(User existingUser, OAuth2UserInfo oAuth2UserInfo) {
-        existingUser.setName(oAuth2UserInfo.getName());
-        existingUser.setImageUrl(oAuth2UserInfo.getImageUrl());
-        return userRepository.save(existingUser);
+        AuthProvider provider = AuthProvider
+                .valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId().toUpperCase());
+        return userService.registerUser(oAuth2UserInfo, provider);
     }
 
 }

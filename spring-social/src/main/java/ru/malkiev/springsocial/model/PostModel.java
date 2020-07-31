@@ -8,8 +8,6 @@ import org.springframework.hateoas.RepresentationModel;
 import ru.malkiev.springsocial.entity.Category;
 import ru.malkiev.springsocial.entity.Post;
 
-import java.text.SimpleDateFormat;
-
 @EqualsAndHashCode(callSuper = false)
 @Data
 public class PostModel extends RepresentationModel<PostModel> {
@@ -17,24 +15,21 @@ public class PostModel extends RepresentationModel<PostModel> {
     private int id;
     private String title;
     private String description;
-    private ImageModel preview;
-    private boolean posted;
-    private String postedDate;
     private DataItem category;
+    private Post.Status status;
+    private ImageModel preview;
     private AuditorModel auditor;
 
     public PostModel(Post post) {
         this.id = post.getId();
         this.title = post.getTitle();
         this.description = post.getDescription();
-        this.posted = post.getPosted();
         this.auditor = new AuditorModel(post);
+        this.status = post.getStatus();
+        if (post.getPreview()!=null) this.preview = new ImageModel(post.getPreview());
+
         Category category = post.getCategory();
         this.category = new DataItem(category.getId(), category.getName(), category.getDescription());
-        if (posted) {
-            this.postedDate = new SimpleDateFormat("dd-MM-yyyy hh:mm")
-                    .format(post.getPostedDate());
-        }
     }
 
     @Getter

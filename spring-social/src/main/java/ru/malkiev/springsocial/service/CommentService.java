@@ -1,7 +1,6 @@
 package ru.malkiev.springsocial.service;
 
 import lombok.AllArgsConstructor;
-import lombok.NonNull;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.malkiev.springsocial.entity.Comment;
@@ -21,11 +20,11 @@ public class CommentService {
         return repository.findById(id);
     }
 
-    public List<Comment> getComments(Post post) {
-        return repository.findAllByPostAndParentIsNull(post, Sort.by("createdDate").descending());
+    public List<Comment> getComments(Post post, Sort sort) {
+        return repository.findAllByPostAndParentIsNull(post, sort);
     }
 
-    public Comment delete(@NonNull Comment comment) {
+    public Comment delete(Comment comment) {
         comment.setDeleted(true);
         comment.setMessage("Сообщение удалено");
         return repository.save(comment);

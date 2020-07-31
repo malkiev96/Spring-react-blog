@@ -37,9 +37,11 @@ class AppHeader extends Component {
                         {
                             this.props.authenticated ?
                                 <Menu.Menu position='right'>
+                                    <Menu.Item as={Link} to={'/publish'}
+                                               active={window.location.pathname === '/publish'}
+                                               name='Публикация' icon={'plus'}/>
                                     <Menu.Item active={window.location.pathname === '/profile'}
-                                               as={Link}
-                                               to={'/user/'+this.props.currentUser.id}
+                                               as={Link} to={'/user/'+this.props.currentUser.id}
                                                name='Профиль'/>
                                     <Menu.Item onClick={this.props.onLogout} name='Выход'/>
                                 </Menu.Menu> :
@@ -79,6 +81,11 @@ class AppHeader extends Component {
                                            as={Link}
                                            to={'/user/'+this.props.currentUser.id}
                                            name='Профиль'/>
+                            }
+                            {
+                                this.props.authenticated &&
+                                <Menu.Item active={window.location.pathname === '/publish'}
+                                           as={Link} to={'/publish'} name='Публикация' icon={'plus'}/>
                             }
                             {
                                 this.props.authenticated &&

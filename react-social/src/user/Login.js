@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
-import {ACCESS_TOKEN, FACEBOOK_AUTH_URL, GITHUB_AUTH_URL, GOOGLE_AUTH_URL} from '../../constants';
-import {login} from '../../util/APIUtils';
+import {ACCESS_TOKEN, FACEBOOK_AUTH_URL, GITHUB_AUTH_URL, GOOGLE_AUTH_URL} from '../constants';
+import {login} from '../util/APIUtils';
 import {Link, Redirect} from 'react-router-dom'
-import fbLogo from '../../img/fb-logo.png';
-import googleLogo from '../../img/google-logo.png';
-import githubLogo from '../../img/github-logo.png';
+import fbLogo from '../img/fb-logo.png';
+import googleLogo from '../img/google-logo.png';
+import githubLogo from '../img/github-logo.png';
 import Alert from 'react-s-alert';
-import {Container, Grid, Segment} from "semantic-ui-react";
+import {Segment} from "semantic-ui-react";
 
 class Login extends Component {
     componentDidMount() {

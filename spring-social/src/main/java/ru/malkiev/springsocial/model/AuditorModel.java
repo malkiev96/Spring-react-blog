@@ -5,8 +5,7 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import ru.malkiev.springsocial.entity.Auditable;
 import ru.malkiev.springsocial.entity.User;
-
-import java.text.SimpleDateFormat;
+import ru.malkiev.springsocial.util.DateFormatter;
 
 @Data
 public class AuditorModel {
@@ -18,11 +17,8 @@ public class AuditorModel {
 
     public AuditorModel(@NotNull Auditable auditable) {
         this.createdBy = new UserModel(auditable.getCreatedBy());
-        this.createdDate = new SimpleDateFormat("dd-MM-yyyy hh:mm").format(auditable.getCreatedDate());
-        if (auditable.getLastModifiedDate() != null) {
-            this.lastModifiedDate = new SimpleDateFormat("dd-MM-yyyy hh:mm")
-                    .format(auditable.getLastModifiedDate());
-        }
+        this.createdDate = new DateFormatter(auditable.getCreatedDate()).get();
+        this.lastModifiedDate = new DateFormatter(auditable.getLastModifiedDate()).get();
         if (auditable.getLastModifiedBy() != null) {
             this.lastModifiedBy = new UserModel(auditable.getLastModifiedBy());
         }

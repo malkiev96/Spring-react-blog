@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "files")
+@Table(name = "FILES")
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class File extends BaseFile{
