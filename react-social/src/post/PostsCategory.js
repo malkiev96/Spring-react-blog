@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import PostsView from "./PostsView";
-import {getPostsByCategory} from '../util/APIUtils';
-import {Loader, Pagination, Segment} from "semantic-ui-react";
+import {getPostsByCategory} from '../util/PostService'
+import {Header, Loader, Pagination, Segment} from "semantic-ui-react";
 import NotFound from "../common/NotFound";
 
 class PostsCategory extends Component {
@@ -10,7 +10,7 @@ class PostsCategory extends Component {
         super(props);
 
         this.state = {
-            page: parseInt(this.props.match.params.page) || 1,
+            page: parseInt(this.props.match.params.page, 10) || 1,
             size: 10,
             sort: "createdDate,desc",
             categoryName: this.props.match.params.categoryName,
@@ -27,7 +27,7 @@ class PostsCategory extends Component {
 
     componentDidUpdate(prevProps) {
         if (this.props.location.pathname !== prevProps.location.pathname) {
-            const page = parseInt(this.props.match.params.page) || 1
+            const page = parseInt(this.props.match.params.page, 10) || 1
             const categoryName = this.props.match.params.categoryName
             const exist = this.getIds(categoryName)
             this.setState({
@@ -35,15 +35,15 @@ class PostsCategory extends Component {
                 error: !exist,
                 categoryName: categoryName
             })
-            this.loadPosts(categoryName,page)
+            this.loadPosts(categoryName, page)
         }
     }
 
     componentDidMount() {
-        this.loadPosts(this.state.categoryName,this.state.page)
+        this.loadPosts(this.state.categoryName, this.state.page)
     }
 
-    loadPosts(categoryName,page) {
+    loadPosts(categoryName, page) {
         const ids = this.getIds(categoryName);
         if (ids) {
             getPostsByCategory(ids, page, this.state.size, this.state.sort)
@@ -87,32 +87,28 @@ class PostsCategory extends Component {
                 }
             })
         })
-        if (exist){
+        if (exist) {
             return ids.toString().split(",")
         }
         return false
     }
 
     render() {
-        const {posts, error} = this.state
+        const {posts, error, categoryName} = this.state
         if (error) return <NotFound/>
         if (posts.loading) return <Loader active inline='centered'/>
         return (
             <div>
+                <Segment>
+                    <Header>{categoryName}</Header>
+                </Segment>
                 <PostsView posts={posts}/>
-                {
-                    posts.posts.length !== 0 && posts.page.totalPages!==1 &&
-                    <Segment>
-                        <Pagination
+                <Pagination style={{marginTop: '15px'}}
                             activePage={posts.page.number + 1}
                             firstItem={null}
                             lastItem={null}
                             onPageChange={this.pageChange}
-                            totalPages={posts.page.totalPages}
-                        />
-                    </Segment>
-                }
-
+                            totalPages={posts.page.totalPages}/>
             </div>
         )
     }

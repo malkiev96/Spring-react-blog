@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import ru.malkiev.springsocial.entity.*;
 import ru.malkiev.springsocial.repository.*;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -81,6 +82,9 @@ public class DataGen implements CommandLineRunner {
                 .provider(AuthProvider.LOCAL)
                 .role(Role.ROLE_ADMIN)
                 .imageUrl("https://html5css.ru/w3css/img_avatar3.png")
+                .about("About user")
+                .city("Yekaterinburg")
+                .birthDate(LocalDate.of(1996,11,23))
                 .build());
         userRepository.save(User.builder()
                 .email("test@gmail.com")

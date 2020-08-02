@@ -11,6 +11,7 @@ import java.util.List;
 @Data
 public class PostRequest {
 
+    private Integer id;
     @NotNull
     @Size(max = 255)
     private String title;

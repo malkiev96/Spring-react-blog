@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "USERS")
@@ -48,6 +49,15 @@ public class User {
     @Column(name = "ROLE")
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Column(name = "CITY")
+    private String city;
+
+    @Column(name = "ABOUT")
+    private String about;
+
+    @Column(name = "BIRTH_DATE")
+    private LocalDate birthDate;
 
     public boolean isAdmin(){
         return role.equals(Role.ROLE_ADMIN);

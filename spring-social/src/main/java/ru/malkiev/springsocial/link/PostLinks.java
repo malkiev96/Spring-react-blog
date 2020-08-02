@@ -3,6 +3,7 @@ package ru.malkiev.springsocial.link;
 import org.springframework.hateoas.Link;
 import ru.malkiev.springsocial.controller.CommentController;
 import ru.malkiev.springsocial.controller.PostController;
+import ru.malkiev.springsocial.controller.PostOperationController;
 import ru.malkiev.springsocial.entity.Post;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -24,5 +25,23 @@ public class PostLinks {
                 .withType("POST");
     }
 
+    public static Link linkToHidePost(Post entity) {
+        return linkTo(methodOn(PostOperationController.class).hide(entity.getId())).withRel("hide");
+    }
 
+    public static Link linkToPublishPost(Post entity) {
+        return linkTo(methodOn(PostOperationController.class).publish(entity.getId())).withRel("publish");
+    }
+
+    public static Link linkToDeletePost(Post entity) {
+        return linkTo(methodOn(PostOperationController.class).delete(entity.getId())).withRel("delete");
+    }
+
+    public static Link linkToLikePost(Post entity) {
+        return linkTo(methodOn(PostOperationController.class).like(entity.getId())).withRel("like");
+    }
+
+    public static Link linkToAddRatingPost(Post entity) {
+        return linkTo(methodOn(PostOperationController.class).rating(entity.getId(),5)).withRel("star");
+    }
 }

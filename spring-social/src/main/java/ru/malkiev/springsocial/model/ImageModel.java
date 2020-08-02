@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.hateoas.RepresentationModel;
 import ru.malkiev.springsocial.entity.Image;
-import ru.malkiev.springsocial.operation.CreateImageUrl;
+import ru.malkiev.springsocial.util.CreateImageUrl;
 import ru.malkiev.springsocial.util.DateFormatter;
 
 @EqualsAndHashCode(callSuper = false)
@@ -28,6 +28,6 @@ public class ImageModel extends RepresentationModel<ImageModel> {
         this.uploadedDate = new DateFormatter(image.getUploadedDate()).get();
         this.height = image.getHeight();
         this.width = image.getWidth();
-        this.url = new CreateImageUrl().apply(image);
+        this.url = new CreateImageUrl(image).get();
     }
 }

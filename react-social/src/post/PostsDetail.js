@@ -1,19 +1,23 @@
 import React, {Component} from 'react';
 import {Button, Comment, Form, Header, Icon, Item, List, Loader, Segment} from "semantic-ui-react";
-import {addComment, deleteComment, getComments, getPostById} from "../util/APIUtils";
+import {getPostById} from "../util/PostService";
+import {addComment, deleteComment, getComments} from '../util/CommentService'
 import moment from "moment";
 import {locale} from "moment/locale/ru";
 import NotFound from "../common/NotFound";
 import './posts.css'
 import {Link} from "react-router-dom";
 import Alert from "react-s-alert";
+import "pure-react-carousel/dist/react-carousel.es.css";
+import {CarouselProvider, Dot, Image, Slide, Slider} from "pure-react-carousel";
+import ReactMarkdown from "react-markdown";
 
 class PostsDetail extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            id: parseInt(this.props.match.params.id),
+            id: parseInt(this.props.match.params.id, 10),
             post: {
                 post: null,
                 error: false,
@@ -146,7 +150,6 @@ class PostsDetail extends Component {
         const {comments} = this.state
         if (loading) return <Loader active inline='centered'/>
         if (error) return <NotFound/>
-
         const createdDate = moment(post.auditor.createdDate, "DD-MM-YYYY hh:mm", locale).fromNow()
 
         return (
@@ -155,10 +158,32 @@ class PostsDetail extends Component {
                     <Header as='h1' dividing>{post.title}</Header>
                     {
                         post.preview !== null &&
-                        <Item.Image src={post.preview.url} size='massive' bordered/>
+                        <Item.Image src={post.preview.url} size='large' bordered/>
                     }
-                    <p id={'post-text'}>{post.text}</p>
+                    <p id={'post-text'}>
+                        <ReactMarkdown source={post.text}/>
+                    </p>
                 </Segment>
+                {
+                    post.images.length!==0 &&
+                    <Segment>
+                        <Header as='h3' dividing>Прикрепленные изображения</Header>
+                        <CarouselProvider
+                            naturalSlideWidth={100}
+                            naturalSlideHeight={50}
+                            totalSlides={post.images.length}>
+                            <Slider>
+                                {
+                                    post.images.map((img, index) =>
+                                        <Slide index={index}>
+                                            <Image src={img.url} hasMasterSpinner/>
+                                        </Slide>)
+                                }
+                            </Slider>
+
+                        </CarouselProvider>
+                    </Segment>
+                }
                 <Segment>
                     <Item.Group>
                         <Item>
@@ -227,10 +252,7 @@ class PostsDetail extends Component {
                     createdBy.imageUrl && !comment.deleted &&
                     <Comment.Avatar src={createdBy.imageUrl}/>
                 }
-                {
-                    comment.deleted &&
-                    <Comment.Avatar src={'https://zaborkin.ru/img/calend/ava-no.png'}/>
-                }
+
 
 
                 <Comment.Content>

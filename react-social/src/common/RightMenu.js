@@ -4,7 +4,7 @@ import {Link} from "react-router-dom";
 
 
 const RightMenu = (props) => {
-    const {tags,categories} = props
+    const {tags} = props
     return (
         <div>
             <Menu vertical fluid>

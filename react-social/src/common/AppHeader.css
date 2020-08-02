@@ -6,7 +6,12 @@ body {
 }
 
 .app-header {
-    margin-bottom: 20px;
+    background-color: #175e6b;
+    margin-bottom: 15px;
+}
+
+.app-info {
+    margin-bottom: 15px;
 }
 
 .ui.borderless.menu {

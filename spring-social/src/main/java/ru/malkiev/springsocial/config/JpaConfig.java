@@ -35,8 +35,11 @@ public class JpaConfig {
             if (authentication == null || !authentication.isAuthenticated()) {
                 return Optional.empty();
             }
-            UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-            return userRepository.findById(userPrincipal.getId());
+            if (authentication.getPrincipal() instanceof UserPrincipal) {
+                UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+                return userRepository.findById(userPrincipal.getId());
+            }
+            return Optional.empty();
         }
     }
 }

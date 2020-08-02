@@ -36,7 +36,8 @@ public class ImageStorageService {
 
     public Image save(MultipartFile file) {
         try {
-            String name = UUID.randomUUID() + "_" + file.getOriginalFilename();
+            String name = UUID.randomUUID() + "." + file.getOriginalFilename()
+                            .substring(file.getOriginalFilename().lastIndexOf(".") + 1);
             Files.copy(file.getInputStream(), this.root.resolve(name));
             Image image = new Image();
             image.setType(file.getContentType());

@@ -34,6 +34,9 @@ public class Post extends Auditable {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @Column(name = "VIEW_COUNT")
+    private int viewCount;
+
     @ManyToOne
     @JoinColumn(name = "CATEGORY_ID", nullable = false)
     private Category category;
@@ -54,6 +57,12 @@ public class Post extends Auditable {
     )
     private List<Tag> tags = new ArrayList<>();
 
+    @OneToMany(mappedBy = "post")
+    private List<PostRating> postRatings = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post")
+    private List<PostLike> postLikes = new ArrayList<>();
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "POST_IMAGES",
@@ -61,6 +70,11 @@ public class Post extends Auditable {
             inverseJoinColumns = @JoinColumn(name = "IMAGE_ID")
     )
     private List<Image> images = new ArrayList<>();
+
+    public static Post incrementView(Post post) {
+        post.setViewCount(post.getViewCount() + 1);
+        return post;
+    }
 
     public enum Status {
         /**

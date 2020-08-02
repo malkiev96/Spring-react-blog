@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {getUser} from '../util/APIUtils';
+import {getUser} from '../util/UserService';
 import {Button, Divider, Header, Icon, Image, Loader, Segment, Table} from "semantic-ui-react";
 import NotFound from "../common/NotFound";
 import {Link} from "react-router-dom";
@@ -11,7 +11,7 @@ class UserDetail extends Component {
 
     constructor(props) {
         super(props);
-        const id = parseInt(this.props.match.params.id)
+        const id = parseInt(this.props.match.params.id, 10)
         let profile
         try {
             profile = id === props.currentUser.currentUser.id
@@ -32,7 +32,7 @@ class UserDetail extends Component {
 
     componentDidUpdate(prevProps) {
         if (this.props.location.pathname !== prevProps.location.pathname) {
-            this.loadUser(parseInt(this.props.match.params.id))
+            this.loadUser(parseInt(this.props.match.params.id, 10))
         }
     }
 
@@ -61,7 +61,7 @@ class UserDetail extends Component {
     }
 
     render() {
-        const {user, profile, posts} = this.state
+        const {user, profile} = this.state
         if (user.loading) return <Loader active inline='centered'/>
         if (user.error) return <NotFound/>
         return (
@@ -73,7 +73,10 @@ class UserDetail extends Component {
                         {
                             profile &&
                             <Link to={'/user/' + user.user.id + '/edit'}>
-                                <Button floated='right' size='mini' primary>Настроить профиль</Button>
+                                <Button style={{backgroundColor: '#175e6b'}}
+                                        floated='right'
+                                        size='mini' primary>Настроить профиль
+                                </Button>
                             </Link>
                         }
                     </Header>
@@ -92,7 +95,7 @@ class UserDetail extends Component {
                             </Table.Row>
                             <Table.Row>
                                 <Table.Cell width={3}>Дата рождения</Table.Cell>
-                                <Table.Cell>{user.user.birthday}</Table.Cell>
+                                <Table.Cell>{user.user.birthDate}</Table.Cell>
                             </Table.Row>
                             <Table.Row>
                                 <Table.Cell width={3}>Город</Table.Cell>
@@ -111,32 +114,28 @@ class UserDetail extends Component {
                 {
                     !profile &&
                     <div>
-                        <Header>Статьи</Header>
-                        <UserPosts id={user.user.id} status={'PUBLISHED'}/>
+                        <Header>Публикации</Header>
+                        <UserPosts profile={false} id={user.user.id} status={'PUBLISHED'}/>
                     </div>
                 }
                 {
                     profile &&
                     <div>
-                        <Header>Статьи</Header>
+                        <Header>Публикации</Header>
                         <Tabs>
                             <TabList>
                                 <Tab>Опубликованные</Tab>
                                 <Tab>Неопубликованное</Tab>
-                                <Tab>Ожидают подтверждения</Tab>
                                 <Tab>Удаленные</Tab>
                             </TabList>
                             <TabPanel>
-                                <UserPosts id={user.user.id} status={'PUBLISHED'}/>
+                                <UserPosts profile id={user.user.id} status={'PUBLISHED'}/>
                             </TabPanel>
                             <TabPanel>
-                                <UserPosts id={user.user.id} status={'CREATED'}/>
+                                <UserPosts profile id={user.user.id} status={'CREATED'}/>
                             </TabPanel>
                             <TabPanel>
-                                <UserPosts id={user.user.id} status={'PENDING'}/>
-                            </TabPanel>
-                            <TabPanel>
-                                <UserPosts id={user.user.id} status={'DELETED'}/>
+                                <UserPosts profile id={user.user.id} status={'DELETED'}/>
                             </TabPanel>
                         </Tabs>
                     </div>

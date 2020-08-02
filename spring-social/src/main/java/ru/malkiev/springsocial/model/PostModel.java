@@ -15,6 +15,10 @@ public class PostModel extends RepresentationModel<PostModel> {
     private int id;
     private String title;
     private String description;
+    private int viewCount;
+    private boolean liked;
+    private Integer myStar;
+    private Double rating;
     private DataItem category;
     private Post.Status status;
     private ImageModel preview;
@@ -24,9 +28,10 @@ public class PostModel extends RepresentationModel<PostModel> {
         this.id = post.getId();
         this.title = post.getTitle();
         this.description = post.getDescription();
+        this.viewCount = post.getViewCount();
         this.auditor = new AuditorModel(post);
         this.status = post.getStatus();
-        if (post.getPreview()!=null) this.preview = new ImageModel(post.getPreview());
+        if (post.getPreview() != null) this.preview = new ImageModel(post.getPreview());
 
         Category category = post.getCategory();
         this.category = new DataItem(category.getId(), category.getName(), category.getDescription());

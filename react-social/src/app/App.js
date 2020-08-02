@@ -5,13 +5,14 @@ import Login from '../user/Login';
 import Signup from '../user/Signup';
 import OAuth2RedirectHandler from '../user/oauth2/OAuth2RedirectHandler';
 import NotFound from '../common/NotFound';
-import {getCurrentUser, getFilters} from '../util/APIUtils';
+import {getFilters} from '../util/APIUtils';
+import {getCurrentUser} from "../util/UserService";
 import {ACCESS_TOKEN} from '../constants';
 import PrivateRoute from '../common/PrivateRoute';
 import Alert from 'react-s-alert';
 import 'react-s-alert/dist/s-alert-default.css';
 import 'react-s-alert/dist/s-alert-css-effects/slide.css';
-import {Container, Grid, Loader} from "semantic-ui-react";
+import {Container, Grid, Header, Loader} from "semantic-ui-react";
 import RightMenu from "../common/RightMenu";
 import Posts from "../post/Posts";
 import PostsCategory from "../post/PostsCategory";
@@ -22,6 +23,7 @@ import Contacts from "../contacts/Contacts";
 import About from "../about/About";
 import UserEdit from "../user/UserEdit";
 import Publish from "../post/Publish";
+import AppFooter from "../common/AppFooter";
 
 class App extends Component {
     constructor(props) {
@@ -153,6 +155,7 @@ class App extends Component {
                         </Grid.Column>
                     </Grid>
                 </Container>
+                <AppFooter/>
                 <Alert stack={{limit: 3}} timeout={3000} position='top-right' effect='slide' offset={65}/>
             </div>
         );

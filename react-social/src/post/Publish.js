@@ -4,7 +4,8 @@ import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import Select from 'react-select'
 import ImageUploader from "react-images-upload";
-import {saveImages, createPost} from '../util/APIUtils';
+import {saveImages} from '../util/ImageService';
+import {createPost} from '../util/PostService';
 import Alert from "react-s-alert";
 import {Redirect} from "react-router-dom";
 
@@ -13,7 +14,13 @@ class Publish extends Component {
     constructor(props) {
         super(props);
 
-        const allCategories = props.categories.map(({id, name}) => ({id: id, value: id, label: name}))
+        let allCategories = []
+        props.categories.map(cat => {
+            allCategories.push({id: cat.id, value: cat.id, label: cat.name})
+            let childs = cat.childs;
+            if (childs !== null && childs.length !== 0)
+                childs.map(ch => allCategories.push({id: ch.id, value: ch.id, label: ch.name}))
+        })
         const allTags = props.tags.map(({id, name}) => ({id: id, value: id, label: name}))
 
         this.state = {
@@ -180,6 +187,7 @@ class Publish extends Component {
                         <Form.Field required error={categoryError}>
                             <label>Категория</label>
                             <Select onChange={(value) => this.setState({category: value, categoryError: false})}
+                                    placeholder={'Выберите категорию'}
                                     options={allCategories}/>
                         </Form.Field>
                         <Form.Field required error={tagsError}>
@@ -187,6 +195,7 @@ class Publish extends Component {
                             <Select isMulti
                                     onChange={(values) => this.setState({tags: values, tagsError: false})}
                                     options={allTags}
+                                    placeholder={'Выберите теги'}
                                     closeMenuOnSelect={false}/>
                         </Form.Field>
                         <Form.Field>
@@ -200,30 +209,13 @@ class Publish extends Component {
                                 maxFileSize={5242880}
                             />
                         </Form.Field>
-                        {
-                            currentUser.role === 'ROLE_ADMIN' &&
-                            <Button onClick={() => this.setState({posted: false})}>
-                                Сохранить без публикации
-                            </Button>
-                        }
-                        {
-                            currentUser.role === 'ROLE_ADMIN' &&
-                            <Button primary onClick={() => this.setState({posted: true})}>
-                                Опубликовать
-                            </Button>
-                        }
-                        {
-                            currentUser.role === 'ROLE_USER' &&
-                            <Button onClick={() => this.setState({posted: false})}>
-                                Сохранить без публикации
-                            </Button>
-                        }
-                        {
-                            currentUser.role === 'ROLE_USER' &&
-                            <Button primary onClick={() => this.setState({posted: true})}>
-                                Опубликовать после проверки
-                            </Button>
-                        }
+                        <Button onClick={() => this.setState({posted: false})}>
+                            Сохранить без публикации
+                        </Button>
+                        <Button style={{backgroundColor: '#175e6b'}}
+                                primary onClick={() => this.setState({posted: true})}>
+                            Опубликовать
+                        </Button>
                     </Form>
                 </Segment>
             </div>

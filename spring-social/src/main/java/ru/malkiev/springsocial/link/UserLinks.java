@@ -20,12 +20,11 @@ public class UserLinks {
         PostSpecification specification = new PostSpecification();
         specification.setUserId(entity.getId());
         return linkTo(methodOn(PostController.class).getPosts(specification, Pageable.unpaged()))
-                .withRel("posts")
-                .withType("GET");
+                .withRel("posts");
     }
 
     public static Link linkToEditUser(User entity) {
-        return linkTo(methodOn(UserController.class).getOne(entity.getId()))
+        return linkTo(methodOn(UserController.class).edit(entity.getId(), null))
                 .withRel("edit")
                 .withType("POST");
     }

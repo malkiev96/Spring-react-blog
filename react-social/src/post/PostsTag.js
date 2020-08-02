@@ -1,18 +1,20 @@
 import React, {Component} from 'react';
 import PostsView from "./PostsView";
-import {getPostsByTagIds} from '../util/APIUtils';
-import {Loader, Pagination, Segment} from "semantic-ui-react";
+import {getPostsByTagIds} from '../util/PostService';
+import {Button, List, Loader, Pagination, Segment} from "semantic-ui-react";
 import NotFound from "../common/NotFound";
 
 class PostsTag extends Component {
 
     constructor(props) {
         super(props);
+        let name = this.props.match.params.tagName;
         this.state = {
-            page: parseInt(this.props.match.params.page) || 1,
+            page: parseInt(this.props.match.params.page, 10) || 1,
             size: 10,
             sort: "createdDate,desc",
-            tagName: this.props.match.params.tagName,
+            tagName: name,
+            tagId: this.getIdByName(name),
             posts: {
                 posts: [],
                 page: null,
@@ -22,16 +24,18 @@ class PostsTag extends Component {
         this.loadPosts = this.loadPosts.bind(this);
         this.getIdByName = this.getIdByName.bind(this);
         this.pageChange = this.pageChange.bind(this);
+        this.onTagClick = this.onTagClick.bind(this);
     }
 
     componentDidUpdate(prevProps) {
         if (this.props.location.pathname !== prevProps.location.pathname) {
-            const page = parseInt(this.props.match.params.page) || 1
+            const page = parseInt(this.props.match.params.page, 10) || 1
             const tagName = this.props.match.params.tagName
             this.setState({
                 page: page,
                 error: false,
-                tagName: tagName
+                tagName: tagName,
+                tagId: this.getIdByName(tagName)
             })
             this.loadPosts(tagName, page)
         }
@@ -79,25 +83,46 @@ class PostsTag extends Component {
 
     }
 
+    onTagClick = (e, {id, tagName}) => {
+        this.setState({
+            id: id,
+            tagName: tagName
+        })
+        this.props.history.push("/tags/" + tagName)
+    }
+
     render() {
-        const {posts, error} = this.state
+        const {posts, error, tagId} = this.state
+        const {tags} = this.props
         if (error) return <NotFound/>
         if (posts.loading) return <Loader active inline='centered'/>
         return (
             <div>
+                <Segment raised textAlign={'center'}>
+                    <List size='mini' selection horizontal>
+                        {
+                            tags.map((tag, i) => (
+                                <List.Item key={i}>
+                                    <Button compact active size='small'
+                                            id={tag.id}
+                                            tagName={tag.name}
+                                            onClick={this.onTagClick}
+                                            content={tag.name}
+                                            style={{backgroundColor:'#175e6b'}}
+                                            primary={tagId === tag.id}
+                                            basic={tagId !== tag.id}/>
+                                </List.Item>
+                            ))
+                        }
+                    </List>
+                </Segment>
                 <PostsView posts={posts}/>
-                {
-                    posts.posts.length !== 0 && posts.page.totalPages !== 1 &&
-                    <Segment>
-                        <Pagination
+                <Pagination style={{marginTop: '15px'}}
                             activePage={posts.page.number + 1}
                             firstItem={null}
                             lastItem={null}
                             onPageChange={this.pageChange}
-                            totalPages={posts.page.totalPages}
-                        />
-                    </Segment>
-                }
+                            totalPages={posts.page.totalPages}/>
             </div>
         )
     }

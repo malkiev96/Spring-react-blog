@@ -13,7 +13,6 @@ public class DateFormatter implements Supplier<String> {
 
     @Override
     public String get() {
-        if (date != null) return new SimpleDateFormat("dd-MM-yyyy hh:mm").format(date);
-        return "";
+        return date != null ? new SimpleDateFormat("dd-MM-yyyy HH:mm").format(date) : "";
     }
 }

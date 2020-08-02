@@ -1,19 +1,28 @@
 package ru.malkiev.springsocial.model;
 
-import lombok.Getter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import org.springframework.hateoas.RepresentationModel;
 import ru.malkiev.springsocial.entity.Role;
 import ru.malkiev.springsocial.entity.User;
 
-@Getter
+import java.time.LocalDate;
+
+@EqualsAndHashCode(callSuper = false)
+@Data
+@NoArgsConstructor
 public class UserDetailModel extends RepresentationModel<UserDetailModel> {
 
-    private final int id;
-    private final String name;
-    private final String email;
-    private final String imageUrl;
-    private final boolean emailVerified;
-    private final boolean isAdmin;
+    private int id;
+    private String name;
+    private String email;
+    private String imageUrl;
+    private boolean emailVerified;
+    private boolean isAdmin;
+    private String city;
+    private String about;
+    private LocalDate birthDate;
 
     public UserDetailModel(User user){
         this.id = user.getId();
@@ -22,5 +31,8 @@ public class UserDetailModel extends RepresentationModel<UserDetailModel> {
         this.imageUrl = user.getImageUrl();
         this.emailVerified = user.getEmailVerified();
         this.isAdmin = user.getRole().equals(Role.ROLE_ADMIN);
+        this.city = user.getCity();
+        this.about = user.getAbout();
+        this.birthDate = user.getBirthDate();
     }
 }
