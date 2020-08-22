@@ -5,35 +5,23 @@ export function getPostById(id) {
     return hateoasRequest(HOST + "/posts/" + id)
 }
 
-export function getPostsByUserAndStatus(userId, status = 'PUBLISHED', page = 1, size = 10, sort = "createdDate") {
+export function getPosts(page = 1,
+                         size = 10,
+                         sort = "createdDate",
+                         tagNames,
+                         catIds,
+                         statuses = 'PUBLISHED',
+                         userId) {
     page -= 1
-    const url = HOST + "/posts?userId=" + userId + "&statuses=" + status + "&page=" + page + "&size=" + size + "&sort=" + sort
+    let url = HOST + "/posts?page=" + page + "&size=" + size + "&sort=" + sort + "&statuses=" + statuses
+    if (tagNames) url += "&tagNames=" + tagNames
+    if (catIds) url += "&catIds=" + catIds
+    if (userId) url += "&userId=" + userId
     return hateoasRequest(url)
 }
 
-export function getPostsByStatus(status = 'PUBLISHED', page = 1, size = 10, sort = "createdDate") {
-    page -= 1
-    const url = HOST + "/posts?statuses=" + status + "&page=" + page + "&size=" + size + "&sort=" + sort
-    return hateoasRequest(url)
-}
-
-export function getPosts(page = 1, size = 10, sort = "createdDate") {
-    page -= 1
-    const url = HOST + "/posts?page=" + page + "&size=" + size + "&sort=" + sort
-    return hateoasRequest(url)
-}
-
-export function getPostsByTagIds(ids, page = 1, size = 10, sort = "createdDate") {
-    page -= 1
-    const url = HOST + "/posts?tagIds=" + ids + "&page=" + page + "&size=" + size + "&sort=" + sort
-    return hateoasRequest(url)
-}
-
-
-export function getPostsByCategory(ids, page = 1, size = 10, sort = "createdDate") {
-    page -= 1
-    const url = HOST + "/posts?catIds=" + ids + "&page=" + page + "&size=" + size + "&sort=" + sort
-    return hateoasRequest(url)
+export function addStar(postId, star) {
+    return hateoasRequest(HOST + "/posts/" + postId + "/rating?star=" + star)
 }
 
 export function getPostsByUrl(url) {
@@ -42,9 +30,7 @@ export function getPostsByUrl(url) {
 
 export function createPost(postRequest) {
     return jsonRequest({
-        url: HOST + "/posts",
-        method: "POST",
-        body: JSON.stringify(postRequest)
+        url: HOST + "/posts", method: "POST", body: JSON.stringify(postRequest)
     })
 }
 

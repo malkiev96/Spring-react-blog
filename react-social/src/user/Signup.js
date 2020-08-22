@@ -1,46 +1,29 @@
 import React, {Component} from 'react';
 import {Link, Redirect} from 'react-router-dom'
-import './Signup.css'
-import {FACEBOOK_AUTH_URL, GITHUB_AUTH_URL, GOOGLE_AUTH_URL} from '../constants';
-import {signup} from '../util/UserService';
-import fbLogo from '../img/fb-logo.png';
-import googleLogo from '../img/google-logo.png';
-import githubLogo from '../img/github-logo.png';
+import {login, signup} from '../util/UserService';
 import Alert from 'react-s-alert';
-import {Segment} from "semantic-ui-react";
+import {Button, Form, Segment} from "semantic-ui-react";
+import OauthButtons from "./OauthButtons";
+import {ACCESS_TOKEN} from "../constants";
 
 class Signup extends Component {
     render() {
-        if(this.props.authenticated) {
+        if (this.props.authenticated) {
             return <Redirect
                 to={{
-                pathname: "/",
-                state: { from: this.props.location }
-            }}/>;            
+                    pathname: "/",
+                    state: {from: this.props.location}
+                }}/>;
         }
-
         return (
             <Segment>
-                <SocialSignup />
+                <OauthButtons title='Зарегистрироваться через'/>
                 <SignupForm {...this.props} />
-                <span className="login-link">Уже есть аккаунт? <Link to="/login">Войти!</Link></span>
+                <div style={{paddingTop: '15px'}}>
+                    Уже есть аккаунт? <Link to="/login">Войти!</Link>
+                </div>
             </Segment>
         )
-    }
-}
-
-class SocialSignup extends Component {
-    render() {
-        return (
-            <div className="social-signup">
-                <a className="btn btn-block social-btn google" href={GOOGLE_AUTH_URL}>
-                    <img src={googleLogo} alt="Google" /> Зарегистрироваться с помощью Google</a>
-                <a className="btn btn-block social-btn facebook" href={FACEBOOK_AUTH_URL}>
-                    <img src={fbLogo} alt="Facebook" /> Зарегистрироваться с помощью Facebook</a>
-                <a className="btn btn-block social-btn github" href={GITHUB_AUTH_URL}>
-                    <img src={githubLogo} alt="Github" /> Зарегистрироваться с помощью Github</a>
-            </div>
-        );
     }
 }
 
@@ -62,47 +45,69 @@ class SignupForm extends Component {
         const inputValue = target.value;
 
         this.setState({
-            [inputName] : inputValue
-        });        
+            [inputName]: inputValue
+        });
     }
 
     handleSubmit(event) {
-        event.preventDefault();   
-
+        event.preventDefault();
         const signUpRequest = Object.assign({}, this.state);
-
-        signup(signUpRequest)
-        .then(response => {
-            Alert.success("Регистрация прошла успешно. Для продолжения войти на сайт!");
-            this.props.history.push("/login");
+        signup(signUpRequest).then(response => {
+            login(signUpRequest).then(response => {
+                localStorage.setItem(ACCESS_TOKEN, response.accessToken);
+                Alert.success("Регистрация прошла успешно");
+                this.setState({
+                    authenticated: true
+                })
+            }).catch(error => {
+                Alert.error((error && error.message) || 'Что-то пошло не так, попробуйте еще раз');
+            });
         }).catch(error => {
-            Alert.error((error && error.message) || 'Что-то пошло не так, попробуйте еще раз');
+            if (error && error.errors) {
+                error.errors.map(msg => Alert.error(msg.defaultMessage))
+            }
         });
     }
 
     render() {
+        const {name, email, password, authenticated} = this.state
+        if (authenticated) {
+            window.location.reload()
+        }
         return (
-            <form onSubmit={this.handleSubmit}>
-                <div className="form-item">
-                    <input type="text" name="name" 
-                        className="form-control" placeholder="Имя"
-                        value={this.state.name} onChange={this.handleInputChange} required/>
-                </div>
-                <div className="form-item">
-                    <input type="email" name="email" 
-                        className="form-control" placeholder="Email"
-                        value={this.state.email} onChange={this.handleInputChange} required/>
-                </div>
-                <div className="form-item">
-                    <input type="password" name="password" 
-                        className="form-control" placeholder="Пароль"
-                        value={this.state.password} onChange={this.handleInputChange} required/>
-                </div>
-                <div className="form-item">
-                    <button type="submit" className="btn btn-block btn-primary" >Зарегистрироваться</button>
-                </div>
-            </form>                    
-
+            <Form style={{paddingTop: '10px'}} onSubmit={this.handleSubmit}>
+                <Form.Field>
+                    <label>Имя</label>
+                    <Form.Input type='text'
+                                name='name'
+                                placeholder='Имя'
+                                value={name}
+                                onChange={this.handleInputChange}
+                                required
+                    />
+                </Form.Field>
+                <Form.Field>
+                    <label>Email</label>
+                    <Form.Input type='email'
+                                name='email'
+                                placeholder='Email'
+                                value={email}
+                                onChange={this.handleInputChange}
+                                required
+                    />
+                </Form.Field>
+                <Form.Field>
+                    <label>Пароль</label>
+                    <Form.Input type='password'
+                                name='password'
+                                placeholder='Пароль'
+                                value={password}
+                                onChange={this.handleInputChange}
+                                required
+                    />
+                </Form.Field>
+                <Button primary style={{backgroundColor: '#175e6b'}}>Зарегистрироваться</Button>
+            </Form>
         );
     }
 }

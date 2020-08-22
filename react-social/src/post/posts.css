@@ -1,12 +1,21 @@
-#post-text{
+#post-text {
     padding-top: 25px;
 }
-#post-desc{
 
+#post-text img {
+    max-width: 100%;
+    display: block;
+    padding: 20px 0;
 }
 
-.post-date{
+.post-date {
     color: gray;
     font-size: small;
 }
 
+a {
+    color: #175e6b;
+}
+a:hover {
+    color: #222222;
+}

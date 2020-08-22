@@ -4,16 +4,14 @@ import lombok.Data;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 @Data
 public class LoginRequest {
 
-    @NotNull
+    @NotNull(message = "Email не должен быть пустым")
     @Email
     private String email;
 
-    @NotNull
-    @Size(min = 5, max = 32)
+    @NotNull(message = "Пароль не должен быть пустым")
     private String password;
 }

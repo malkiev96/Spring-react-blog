@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
 import moment from "moment";
 import {locale} from "moment/locale/ru";
-import {hidePost, publishPost, deletePost, getPostsByUrl, getPostsByUserAndStatus} from "../util/PostService"
-import {Button, ButtonGroup, Icon, Item, Label, Message, Segment} from "semantic-ui-react";
+import {deletePost, getPostsByUrl, hidePost, publishPost} from "../util/PostService"
+import {Button, ButtonGroup, Divider, Header, Image, Segment} from "semantic-ui-react";
 import {Link} from "react-router-dom";
 import Alert from 'react-s-alert';
+import './posts.css'
 
 class PostsView extends Component {
 
@@ -21,7 +22,7 @@ class PostsView extends Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if (prevProps.posts !== this.props.posts){
+        if (prevProps.posts !== this.props.posts) {
             this.setState({
                 posts: this.props.posts
             })
@@ -30,14 +31,20 @@ class PostsView extends Component {
 
     render() {
         const {posts, showActions} = this.state
-        if (posts.posts.length === 0) return<Segment>Статей нет</Segment>
+        if (posts.posts.length === 0) return <Segment>Статей нет</Segment>
         return (
-            <div>{posts.posts.map(post => <PostsRow
-                showActions={showActions}
-                onHidePost={this.onHidePost}
-                onPublishPost={this.onPublishPost}
-                onDeletePost={this.onDeletePost}
-                post={post}/>)}</div>
+            <div>
+                {
+                    posts.posts.map(post =>
+                        <PostsRow key={post.id}
+                                  showActions={showActions}
+                                  onHidePost={this.onHidePost}
+                                  onPublishPost={this.onPublishPost}
+                                  onDeletePost={this.onDeletePost}
+                                  post={post}/>
+                    )
+                }
+            </div>
         )
     }
 
@@ -97,7 +104,7 @@ class PostsView extends Component {
     }
 }
 
-const PostsRow = ({post, onHidePost, onPublishPost, onDeletePost,showActions}) => {
+const PostsRow = ({post, onHidePost, onPublishPost, onDeletePost, showActions}) => {
     let canHide, canPublish, canDelete;
     const createdDate = moment(post.auditor.createdDate, "DD-MM-YYYY hh:mm", locale).fromNow()
     if (showActions) {
@@ -107,58 +114,55 @@ const PostsRow = ({post, onHidePost, onPublishPost, onDeletePost,showActions}) =
     }
     return (
         <Segment key={post.id}>
-            <Item.Group>
-                <Item>
-                    {
-                        post.preview !== null &&
-                        <Item.Image as={Link} to={'/posts/' + post.id} src={post.preview.url}/>
-                    }
-                    <Item.Content>
-                        <Item.Header as={Link} to={'/posts/' + post.id}>{post.title}</Item.Header>
-                        <Item.Meta>
-                            <Link to={'/category/' + post.category.name}>
-                                <Icon name='folder'/>
-                                {' ' + post.category.name}
-                            </Link>
-                        </Item.Meta>
-                        <Item.Meta>
-                            <Link to={'/user/' + post.auditor.createdBy.id}>
-                                <Icon name='user'/>
-                                {' ' + post.auditor.createdBy.name}
-                            </Link>
-                            {' ' + createdDate}
-                        </Item.Meta>
+            <Header size="larger" as="h2">
+                <Header.Content style={{paddingBottom: '10px'}}>
+                    <Link to={'/post/' + post.id}>{post.title}</Link>
+                </Header.Content>
+                <Header.Subheader>
+                    <Link to={'/user/' + post.auditor.createdBy.id}>
+                        {' ' + post.auditor.createdBy.name}
+                    </Link>
+                    {' ' + createdDate}
+                </Header.Subheader>
+                <Header.Subheader>
+                    <span>{post.viewCount === 0 ? 'Нет' : post.viewCount} просмотров</span>
+                </Header.Subheader>
+            </Header>
+            {
+                post.preview !== null &&
+                <Image size={"large"} src={post.preview.url}/>
+            }
+            <Divider hidden/>
+            <p>{post.description}</p>
+            <Link to={'/post/' + post.id}>Подробнее</Link>
+            <div>
+                {
+                    showActions &&
+                    <ButtonGroup style={{marginTop: '10px'}} basic size={'mini'} compact>
                         {
-                            showActions &&
-                            <ButtonGroup basic size={'mini'} compact>
-                                {
-                                    canDelete &&
-                                    <Item.Meta>
-                                        <Button onClick={() => onDeletePost(post.id)}
-                                                size={'mini'} compact>Удалить</Button>
-                                    </Item.Meta>
-                                }
-                                {
-                                    canHide &&
-                                    <Item.Meta>
-                                        <Button onClick={() => onHidePost(post.id)}
-                                                size={'mini'} compact>Cкрыть</Button>
-                                    </Item.Meta>
-                                }
-                                {
-                                    canPublish &&
-                                    <Item.Meta>
-                                        <Button onClick={() => onPublishPost(post.id)}
-                                                size={'mini'} compact>Опубликовать</Button>
-                                    </Item.Meta>
-                                }
-                            </ButtonGroup>
-                        }
-                        <Item.Description>{post.description}</Item.Description>
-                    </Item.Content>
-                </Item>
+                            canDelete &&
 
-            </Item.Group>
+                            <Button onClick={() => onDeletePost(post.id)}
+                                    size={'mini'} compact>Удалить</Button>
+
+                        }
+                        {
+                            canHide &&
+
+                            <Button onClick={() => onHidePost(post.id)}
+                                    size={'mini'} compact>Cкрыть</Button>
+
+                        }
+                        {
+                            canPublish &&
+
+                            <Button onClick={() => onPublishPost(post.id)}
+                                    size={'mini'} compact>Опубликовать</Button>
+
+                        }
+                    </ButtonGroup>
+                }
+            </div>
         </Segment>
     )
 }

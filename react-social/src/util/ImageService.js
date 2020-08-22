@@ -6,7 +6,7 @@ export function saveImages(files) {
         Authorization: 'Bearer ' + localStorage.getItem('accessToken')
     })
     const formData = new FormData();
-    files.map(file => {
+    files.forEach(file => {
         formData.append('files', file)
     })
     const options = {

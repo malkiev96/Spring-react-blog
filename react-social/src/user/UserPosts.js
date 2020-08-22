@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Loader, Pagination} from "semantic-ui-react";
-import {getPostsByUserAndStatus} from "../util/PostService";
+import {getPosts} from "../util/PostService";
 import PostsView from "../post/PostsView";
 
 class UserPosts extends Component {
@@ -23,11 +23,12 @@ class UserPosts extends Component {
     }
 
     componentDidMount() {
-        this.loadPosts(this.state.id,this.state.page,this.state.status)
+        this.loadPosts(this.state.id, this.state.page, this.state.status)
     }
 
     loadPosts(userId, page, status) {
-        getPostsByUserAndStatus(userId,status, page, 10, 'createdDate').then(response => {
+        getPosts(page, 10, 'createdDate', null, null, status, userId)
+            .then(response => {
             this.setState({
                 posts: {
                     posts: response['content'],
@@ -53,7 +54,7 @@ class UserPosts extends Component {
             <div>
                 <PostsView showActions={profile} posts={posts}/>
                 {
-                    posts.posts.length !== 0 && posts.page.totalPages!==1 &&
+                    posts.posts.length !== 0 && posts.page.totalPages !== 1 &&
                     <Pagination
                         activePage={posts.page.number + 1}
                         firstItem={null}
@@ -70,7 +71,7 @@ class UserPosts extends Component {
         this.setState({
             page: activePage
         })
-        this.loadPosts(this.state.id, activePage,this.state.status)
+        this.loadPosts(this.state.id, activePage, this.state.status)
     }
 }
 

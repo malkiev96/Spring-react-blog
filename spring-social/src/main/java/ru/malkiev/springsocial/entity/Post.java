@@ -43,14 +43,6 @@ public class Post extends Auditable {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "POST_FILES",
-            joinColumns = @JoinColumn(name = "POST_ID"),
-            inverseJoinColumns = @JoinColumn(name = "FILE_ID")
-    )
-    private List<File> files = new ArrayList<>();
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
             name = "POST_TAGS",
             joinColumns = @JoinColumn(name = "POST_ID"),
             inverseJoinColumns = @JoinColumn(name = "TAG_ID")

@@ -1,17 +1,13 @@
 import React, {Component} from 'react';
-import {ACCESS_TOKEN, FACEBOOK_AUTH_URL, GITHUB_AUTH_URL, GOOGLE_AUTH_URL} from '../constants';
+import {ACCESS_TOKEN} from '../constants';
 import {login} from '../util/UserService';
 import {Link, Redirect} from 'react-router-dom'
-import fbLogo from '../img/fb-logo.png';
-import googleLogo from '../img/google-logo.png';
-import githubLogo from '../img/github-logo.png';
 import Alert from 'react-s-alert';
-import {Segment} from "semantic-ui-react";
+import {Button, Form, Segment} from "semantic-ui-react";
+import OauthButtons from "./OauthButtons";
 
 class Login extends Component {
     componentDidMount() {
-        // If the OAuth2 login encounters an error, the user is redirected to the /login page with an error.
-        // Here we display the error and then remove the error query parameter from the location.
         if (this.props.location.state && this.props.location.state.error) {
             setTimeout(() => {
                 Alert.error(this.props.location.state.error, {
@@ -36,25 +32,12 @@ class Login extends Component {
 
         return (
             <Segment>
-                <SocialLogin/>
+                <OauthButtons title={'Войти с помощью'}/>
                 <LoginForm {...this.props} />
-                <span className="signup-link">или <Link to="/signup">зарегистрироваться</Link></span>
+                <div style={{paddingTop: '15px'}}>
+                    или <Link to="/signup">зарегистрироваться</Link>
+                </div>
             </Segment>
-        );
-    }
-}
-
-class SocialLogin extends Component {
-    render() {
-        return (
-            <div className="social-login">
-                <a className="btn btn-block social-btn google" href={GOOGLE_AUTH_URL}>
-                    <img src={googleLogo} alt="Google"/> Войти с помощью Google</a>
-                <a className="btn btn-block social-btn facebook" href={FACEBOOK_AUTH_URL}>
-                    <img src={fbLogo} alt="Facebook"/> Войти с помощью Facebook</a>
-                <a className="btn btn-block social-btn github" href={GITHUB_AUTH_URL}>
-                    <img src={githubLogo} alt="Github"/> Войти с помощью Github</a>
-            </div>
         );
     }
 }
@@ -97,27 +80,34 @@ class LoginForm extends Component {
     }
 
     render() {
-
-        if (this.state.authenticated) {
+        const {authenticated, email, password} = this.state;
+        if (authenticated) {
             window.location.reload()
         }
-
         return (
-            <form onSubmit={this.handleSubmit}>
-                <div className="form-item">
-                    <input type="email" name="email"
-                           className="form-control" placeholder="Email"
-                           value={this.state.email} onChange={this.handleInputChange} required/>
-                </div>
-                <div className="form-item">
-                    <input type="password" name="password"
-                           className="form-control" placeholder="Пароль"
-                           value={this.state.password} onChange={this.handleInputChange} required/>
-                </div>
-                <div className="form-item">
-                    <button type="submit" className="btn btn-block btn-primary">Войти</button>
-                </div>
-            </form>
+            <Form style={{paddingTop: '10px'}} onSubmit={this.handleSubmit}>
+                <Form.Field>
+                    <label>Email</label>
+                    <Form.Input type='email'
+                                name='email'
+                                placeholder='Email'
+                                value={email}
+                                onChange={this.handleInputChange}
+                                required
+                    />
+                </Form.Field>
+                <Form.Field>
+                    <label>Пароль</label>
+                    <Form.Input type='password'
+                                name='password'
+                                placeholder='Пароль'
+                                value={password}
+                                onChange={this.handleInputChange}
+                                required
+                    />
+                </Form.Field>
+                <Button primary style={{backgroundColor: '#175e6b'}}>Войти</Button>
+            </Form>
         );
     }
 }

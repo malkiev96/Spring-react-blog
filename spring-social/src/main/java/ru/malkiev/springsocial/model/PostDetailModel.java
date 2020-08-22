@@ -14,7 +14,6 @@ public class PostDetailModel extends PostModel {
 
     private String text;
     private List<DataItem> tags = new ArrayList<>();
-    private List<FileModel> files = new ArrayList<>();
     private List<ImageModel> images = new ArrayList<>();
 
     public PostDetailModel(Post post) {

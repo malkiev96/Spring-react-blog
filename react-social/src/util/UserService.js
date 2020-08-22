@@ -15,6 +15,18 @@ export function getCurrentUser() {
     });
 }
 
+export function getAdmins() {
+    return hateoasRequest(HOST + "/users/admins")
+}
+
+export function sendContactMessage(msg) {
+    return jsonRequest({
+        url: HOST + "/contacts",
+        method: "POST",
+        body: JSON.stringify(msg)
+    })
+}
+
 export function login(loginRequest) {
     return jsonRequest({
         url: HOST + "/auth/login",

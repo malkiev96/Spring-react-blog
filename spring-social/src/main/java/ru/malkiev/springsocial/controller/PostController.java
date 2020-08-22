@@ -29,6 +29,7 @@ public class PostController {
     public ResponseEntity<PostDetailModel> getOne(@PathVariable int id) {
         return repository.findById(id)
                 .map(Post::incrementView)
+                .map(repository::save)
                 .map(detailAssembler::toModel)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new PostNotFoundException(id));

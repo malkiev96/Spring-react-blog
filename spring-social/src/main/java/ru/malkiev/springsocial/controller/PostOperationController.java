@@ -40,12 +40,11 @@ public class PostOperationController {
 
     @GetMapping("/posts/{id}/rating")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Link> rating(@PathVariable int id,
+    public ResponseEntity<Double> rating(@PathVariable int id,
                                        @RequestParam int star) {
         return repository.findById(id)
                 .map(post -> Pair.of(post, star))
                 .map(starOperation)
-                .map(PostLinks::linkToAddRatingPost)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new PostNotFoundException(id));
     }

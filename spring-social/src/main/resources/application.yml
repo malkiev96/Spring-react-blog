@@ -1,8 +1,9 @@
 spring:
     datasource:
-#        url: jdbc:postgresql://localhost:5432/springreact
-        username: sa
-        password:
+        url: jdbc:postgresql://localhost:5432/springreact
+        username: postgres
+        password: root
+        driver-class-name: org.postgresql.Driver
     jpa:
         show-sql: false
         hibernate:
@@ -19,8 +20,8 @@ spring:
                 - email
                 - profile
             facebook:
-              clientId: 121189305185277
-              clientSecret: 42ffe5aa7379e8326387e0fe16f34132
+              clientId: 939970443154332
+              clientSecret: ddb7715a49e16291dbf6e2f2ddb54cbb
               redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
               scope:
                 - email
@@ -30,8 +31,7 @@ spring:
               clientSecret: 776065bdadbf99ba834efdfd3053c9c8a8651c4c
               redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
               scope:
-                - user:email
-                - read:user
+                - user
           provider:
             facebook:
               authorizationUri: https://www.facebook.com/v3.0/dialog/oauth
@@ -42,11 +42,4 @@ app:
     tokenSecret: 926D96C90030DD58429D2751AC1BDBBC
     tokenExpirationMsec: 864000000
   oauth2:
-    # After successfully authenticating with the OAuth2 Provider,
-    # we'll be generating an auth token for the user and sending the token to the
-    # redirectUri mentioned by the client in the /oauth2/authorize request.
-    # We're not using cookies because they won't work well in mobile clients.
-    authorizedRedirectUris:
-      - http://localhost:3000/oauth2/redirect
-      - myandroidapp://oauth2/redirect
-      - myiosapp://oauth2/redirect
+    authorizedRedirectUris: http://localhost:3000/oauth2/redirect

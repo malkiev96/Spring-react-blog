@@ -39,14 +39,12 @@ public class PostCreateOperation implements Function<PostRequest, Post> {
         post.setTitle(postRequest.getTitle());
         post.setDescription(postRequest.getDescription());
         post.setText(postRequest.getText());
-        if (postRequest.getPreviewId() != null) {
-            post.setPreview(imageRepository.findById(postRequest.getPreviewId())
-                            .orElseThrow(() -> new ImageNotFoundException(postRequest.getPreviewId())));
-        }
-        if (!postRequest.getImageIds().isEmpty()) {
-            post.setImages(imageRepository.findAllById(postRequest.getImageIds()));
-        }
-        post.setCategory(categoryRepository.findById(postRequest.getCategoryId())
+        post.setPreview(postRequest.getPreviewId() != null ? imageRepository
+                .findById(postRequest.getPreviewId())
+                .orElseThrow(() -> new ImageNotFoundException(postRequest.getPreviewId())) : null);
+        post.setImages(imageRepository.findAllById(postRequest.getImageIds()));
+        post.setCategory(categoryRepository
+                .findById(postRequest.getCategoryId())
                 .orElseThrow(() -> new CategoryNotFoundException(postRequest.getCategoryId())));
 
         List<Tag> tags = tagRepository.findAllById(postRequest.getTagIds());

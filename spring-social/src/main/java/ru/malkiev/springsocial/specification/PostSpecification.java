@@ -18,6 +18,7 @@ public class PostSpecification implements Supplier<Optional<Specification<Post>>
     private Integer fromView;
     private Boolean liked;
     private List<Integer> catIds;
+    private List<String> tagNames;
     private List<Status> statuses = Collections.singletonList(Status.PUBLISHED);
 
     @Override
@@ -27,6 +28,7 @@ public class PostSpecification implements Supplier<Optional<Specification<Post>>
         Optional.ofNullable(userId).ifPresent(p -> specBuilder.accept(byUserId(p)));
         Optional.ofNullable(tagId).ifPresent(p -> specBuilder.accept(byTagId(p)));
         Optional.ofNullable(catIds).ifPresent(p -> specBuilder.accept(byCatIds(p)));
+        Optional.ofNullable(tagNames).ifPresent(p -> specBuilder.accept(byTagNames(p)));
         Optional.ofNullable(statuses).ifPresent(p -> specBuilder.accept(byStatuses(p)));
         Optional.ofNullable(fromView).ifPresent(p -> specBuilder.accept(byViewMore(p)));
         if (userId != null && liked != null) specBuilder.accept(byLiked(userId));
@@ -45,6 +47,10 @@ public class PostSpecification implements Supplier<Optional<Specification<Post>>
 
     private Specification<Post> byCatIds(List<Integer> ids) {
         return (root, query, cb) -> root.join(Post_.CATEGORY).get(Category_.ID).in(ids);
+    }
+
+    private Specification<Post> byTagNames(List<String> names) {
+        return (root, query, cb) -> root.join(Post_.TAGS).get(Tag_.DESCRIPTION).in(names);
     }
 
     private Specification<Post> byStatuses(List<Status> statuses) {

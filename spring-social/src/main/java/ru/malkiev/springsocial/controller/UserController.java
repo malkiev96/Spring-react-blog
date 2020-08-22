@@ -1,23 +1,31 @@
 package ru.malkiev.springsocial.controller;
 
 import lombok.AllArgsConstructor;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import ru.malkiev.springsocial.assembler.UserAssembler;
 import ru.malkiev.springsocial.assembler.UserDetailAssembler;
 import ru.malkiev.springsocial.entity.User;
 import ru.malkiev.springsocial.exception.UserNotFoundException;
 import ru.malkiev.springsocial.model.UserDetailModel;
+import ru.malkiev.springsocial.model.UserModel;
 import ru.malkiev.springsocial.repository.UserRepository;
 import ru.malkiev.springsocial.security.CurrentUser;
 import ru.malkiev.springsocial.security.UserPrincipal;
+
+import java.util.Optional;
+
+import static ru.malkiev.springsocial.entity.Role.ROLE_ADMIN;
 
 @RestController
 @AllArgsConstructor
 public class UserController {
 
     private final UserRepository repository;
-    private final UserDetailAssembler assembler;
+    private final UserDetailAssembler detailAssembler;
+    private final UserAssembler userAssembler;
 
     @GetMapping("/user/me")
     @PreAuthorize("isAuthenticated()")
@@ -28,9 +36,17 @@ public class UserController {
     @GetMapping("/users/{id}")
     public ResponseEntity<UserDetailModel> getOne(@PathVariable int id) {
         return repository.findById(id)
-                .map(assembler::toModel)
+                .map(detailAssembler::toModel)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new UserNotFoundException(id));
+    }
+
+    @GetMapping("users/admins")
+    public ResponseEntity<CollectionModel<UserModel>> getAdmins() {
+        return Optional.ofNullable(repository.findAllByRole(ROLE_ADMIN))
+                .map(userAssembler::toCollectionModel)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping("/users/{id}")
@@ -47,8 +63,8 @@ public class UserController {
                     return user;
                 })
                 .map(repository::save)
-                .map(assembler::toModel)
+                .map(detailAssembler::toModel)
                 .map(ResponseEntity::ok)
-                .orElseThrow(()-> new UserNotFoundException(id));
+                .orElseThrow(() -> new UserNotFoundException(id));
     }
 }

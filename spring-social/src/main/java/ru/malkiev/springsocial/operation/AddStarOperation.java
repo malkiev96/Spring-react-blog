@@ -16,13 +16,13 @@ import java.util.function.Function;
 
 @Component
 @AllArgsConstructor
-public class AddStarOperation implements Function<Pair<Post, Integer>, Post> {
+public class AddStarOperation implements Function<Pair<Post, Integer>, Double> {
 
     private final PostRatingRepository repository;
     private final UserService userService;
 
     @Override
-    public Post apply(Pair<Post, Integer> pair) {
+    public Double apply(Pair<Post, Integer> pair) {
         Post post = pair.getFirst();
         Objects.requireNonNull(post);
         int star = pair.getSecond();
@@ -33,7 +33,7 @@ public class AddStarOperation implements Function<Pair<Post, Integer>, Post> {
                 Optional<PostRating> rating = repository.findByCreatedByAndPost(currentUser.get(), post);
                 if (rating.isPresent()) throw new IllegalArgumentException("Can't star post again");
                 repository.save(PostRating.of(post, star));
-                return post;
+                return repository.getAvgRatingByPost(post);
             } else throw new UserNotFoundException();
         } else throw new IllegalArgumentException("Star can't be " + star);
     }

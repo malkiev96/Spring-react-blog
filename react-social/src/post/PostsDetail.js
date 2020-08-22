@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import {Button, Comment, Form, Header, Icon, Item, List, Loader, Segment} from "semantic-ui-react";
-import {getPostById} from "../util/PostService";
+import {Button, Comment, Confirm, Form, Header, Icon, Item, List, Loader, Rating, Segment} from "semantic-ui-react";
+import {addStar, deletePost, getPostById, hidePost, publishPost} from "../util/PostService";
 import {addComment, deleteComment, getComments} from '../util/CommentService'
 import moment from "moment";
 import {locale} from "moment/locale/ru";
@@ -9,7 +9,7 @@ import './posts.css'
 import {Link} from "react-router-dom";
 import Alert from "react-s-alert";
 import "pure-react-carousel/dist/react-carousel.es.css";
-import {CarouselProvider, Dot, Image, Slide, Slider} from "pure-react-carousel";
+import {CarouselProvider, Image, Slide, Slider} from "pure-react-carousel";
 import ReactMarkdown from "react-markdown";
 
 class PostsDetail extends Component {
@@ -23,40 +23,57 @@ class PostsDetail extends Component {
                 error: false,
                 loading: true
             },
+            currentUser: props.currentUser,
             comments: {
                 comments: [],
                 error: false,
                 loading: true
             },
-            message: ''
+            message: '',
+            openDel: false,
+            openHide: false,
+            openPublish: false
         }
-        this.LoadData = this.LoadData.bind(this);
+        this.loadData = this.loadData.bind(this);
         this.loadComments = this.loadComments.bind(this);
         this.deleteHandler = this.deleteHandler.bind(this);
         this.createHandler = this.createHandler.bind(this);
         this.replyClick = this.replyClick.bind(this);
         this.replyHandler = this.replyHandler.bind(this);
         this.createComment = this.createComment.bind(this);
+        this.onRatePost = this.onRatePost.bind(this);
+        this.onDeletePost = this.onDeletePost.bind(this)
+        this.onHidePost = this.onHidePost.bind(this)
+        this.onPublishPost = this.onPublishPost.bind(this)
     }
+
+    openDel = () => this.setState({openDel: true})
+    closeDel = () => this.setState({openDel: false})
+    openHide = () => this.setState({openHide: true})
+    closeHide = () => this.setState({openHide: false})
+    openPublish = () => this.setState({openPublish: true})
+    closePublish = () => this.setState({openPublish: false})
 
     componentDidUpdate(prevProps) {
         if (this.props.location.pathname !== prevProps.location.pathname) {
-            this.LoadData()
+            this.loadData(parseInt(this.props.match.params.id, 10))
         }
     }
 
     componentDidMount() {
-        this.LoadData()
+        this.loadData(this.state.id)
     }
 
-    LoadData() {
-        getPostById(this.state.id).then(response => {
+    loadData(id) {
+        getPostById(id).then(response => {
             this.setState({
                 post: {
                     post: response,
                     error: false,
                     loading: false
-                }
+                },
+                rating: response.rating,
+                postStarred: response.myStar !== null
             })
         }).catch(error => {
             this.setState({
@@ -67,7 +84,7 @@ class PostsDetail extends Component {
                 }
             })
         })
-        this.loadComments(this.state.id)
+        this.loadComments(id)
     }
 
     createComment(postId, parentId = 0, message) {
@@ -124,7 +141,6 @@ class PostsDetail extends Component {
         })
     }
 
-
     loadComments(postId) {
         getComments(postId).then(response => {
             this.setState({
@@ -145,27 +161,109 @@ class PostsDetail extends Component {
         })
     }
 
+    onRatePost(e, {rating}) {
+        addStar(this.state.id, rating).then(result => {
+            this.setState({postStarred: true, rating: result})
+            Alert.success("Оценка успешно добавлена");
+        }).catch(error => {
+            Alert.error((error && error.message) || 'Что-то пошло не так, попробуйте еще раз');
+        })
+    }
+
+    onHidePost() {
+        this.setState({openHide: false})
+        hidePost(this.state.id).then(() => {
+            Alert.success("Публикация скрыта")
+            this.loadData(this.state.id)
+        }).catch((error) => {
+            Alert.error((error && error.message) || 'Не удалось скрыть публикацию, попробуйте еще раз');
+        })
+    }
+
+    onPublishPost() {
+        this.setState({openPublish: false})
+        publishPost(this.state.id).then(() => {
+            Alert.success("Статья опубликована")
+            this.loadData(this.state.id)
+        }).catch((error) => {
+            Alert.error((error && error.message) || 'Не удалось опубликовать статью, попробуйте еще раз');
+        })
+    }
+
+    onDeletePost() {
+        this.setState({openDel: false})
+        deletePost(this.state.id).then(() => {
+            Alert.success("Публикация удалена")
+            this.loadData(this.state.id)
+        }).catch((error) => {
+            Alert.error((error && error.message) || 'Не удалось удалить публикацию, попробуйте еще раз');
+        })
+    }
+
     render() {
         const {loading, error, post} = this.state.post
-        const {comments} = this.state
+        const {comments, postStarred, rating, openDel, openPublish, openHide, currentUser} = this.state
         if (loading) return <Loader active inline='centered'/>
         if (error) return <NotFound/>
         const createdDate = moment(post.auditor.createdDate, "DD-MM-YYYY hh:mm", locale).fromNow()
-
+        const canEdit = post.links.find(link => link.rel === 'edit')
+        const canHide = post.links.find(link => link.rel === 'hide')
+        const canPublish = post.links.find(link => link.rel === 'publish')
+        const canDelete = post.links.find(link => link.rel === 'delete')
         return (
             <div>
                 <Segment>
+                    {
+                        canEdit &&
+                        <Link to={'/post/' + post.id + '/edit'}>
+                            <Button style={{backgroundColor: '#175e6b'}} floated='right'
+                                    size='mini' primary>Редактировать
+                            </Button>
+                        </Link>
+                    }
+                    {
+                        canHide &&
+                        <span>
+                            <Button style={{backgroundColor: '#175e6b'}} floated='right'
+                                    onClick={this.openHide} size='mini' primary>Скрыть
+                        </Button>
+                        <Confirm open={openHide} size='mini'
+                                 content='Вы уверены что хотите скрыть публикацию?'
+                                 onCancel={this.closeHide} onConfirm={this.onHidePost}/>
+                        </span>
+                    }
+                    {
+                        canPublish &&
+                        <span>
+                            <Button style={{backgroundColor: '#175e6b'}} floated='right'
+                                    onClick={this.openPublish} size='mini' primary>Опубликовать
+                            </Button>
+                            <Confirm open={openPublish} size='mini'
+                                     content='Вы уверены что хотите опубликовать статью?'
+                                     onCancel={this.closePublish} onConfirm={this.onPublishPost}/>
+                        </span>
+                    }
+                    {
+                        canDelete &&
+                        <span>
+                            <Button style={{backgroundColor: '#175e6b'}} floated='right'
+                                    onClick={this.openDel} size='mini' primary>Удалить
+                            </Button>
+                              <Confirm open={openDel} content='Вы уверены что хотите удалить публикацию?'
+                                       size='mini' onCancel={this.closeDel} onConfirm={this.onDeletePost}/>
+                        </span>
+                    }
                     <Header as='h1' dividing>{post.title}</Header>
                     {
                         post.preview !== null &&
                         <Item.Image src={post.preview.url} size='large' bordered/>
                     }
-                    <p id={'post-text'}>
+                    <div id={'post-text'}>
                         <ReactMarkdown source={post.text}/>
-                    </p>
+                    </div>
                 </Segment>
                 {
-                    post.images.length!==0 &&
+                    post.images.length !== 0 &&
                     <Segment>
                         <Header as='h3' dividing>Прикрепленные изображения</Header>
                         <CarouselProvider
@@ -180,7 +278,6 @@ class PostsDetail extends Component {
                                         </Slide>)
                                 }
                             </Slider>
-
                         </CarouselProvider>
                     </Segment>
                 }
@@ -189,7 +286,7 @@ class PostsDetail extends Component {
                         <Item>
                             <Item.Content>
                                 <Item.Meta>
-                                    <Link to={'/category/' + post.category.name}>
+                                    <Link to={'/category/' + post.category.description}>
                                         <Icon name='folder'/>
                                         {' ' + post.category.name}
                                     </Link>
@@ -201,16 +298,30 @@ class PostsDetail extends Component {
                                     </Link>
                                     {' ' + createdDate}
                                 </Item.Meta>
+                                <Item.Meta>
+                                    <Icon color='grey' name='eye'/>
+                                    <span>{post.viewCount} просмотров</span>
+                                </Item.Meta>
+                                <Item.Meta>
+                                    <Icon color='grey' name='star'/>
+                                    <span>{rating === null ? 'Нет оценок' : rating}</span>
+                                </Item.Meta>
                             </Item.Content>
                         </Item>
                     </Item.Group>
+
+                    <Rating icon='star' onRate={this.onRatePost}
+                            rating={rating} maxRating={5}
+                            disabled={
+                                this.props.currentUser.currentUser === null || postStarred
+                            }/>
 
                     <Header as='h3' dividing>Теги</Header>
                     <List selection horizontal>
                         {post.tags.map(tag => {
                             return (
                                 <List.Item key={tag.id}>
-                                    <Link to={'/tags/' + tag.name}>
+                                    <Link to={'/tags/' + tag.description}>
                                         <Button compact active size={'tiny'} basic>{tag.name}</Button>
                                     </Link>
                                 </List.Item>
@@ -229,11 +340,16 @@ class PostsDetail extends Component {
                             })
                         }
                     </Comment.Group>
-                    <Form reply onSubmit={this.createHandler}>
-                        <Form.TextArea value={this.state.message}
-                                       onChange={event => this.setState({message: event.target.value})}/>
-                        <Button content='Добавить комментарий' labelPosition='left' icon='edit' primary/>
-                    </Form>
+                    {
+                        currentUser.authenticated ?
+                            <Form reply onSubmit={this.createHandler}>
+                                <Form.TextArea value={this.state.message}
+                                               onChange={event => this.setState({message: event.target.value})}/>
+                                <Button style={{backgroundColor: '#175e6b'}} content='Добавить комментарий'
+                                        labelPosition='left' icon='edit' primary/>
+                            </Form>
+                            : <h4><Link to={'/login'}>Авторизуйтесь</Link>, чтобы оставить комментарий</h4>
+                    }
                 </Segment>
             </div>
         )
@@ -252,7 +368,6 @@ class PostsDetail extends Component {
                     createdBy.imageUrl && !comment.deleted &&
                     <Comment.Avatar src={createdBy.imageUrl}/>
                 }
-
 
 
                 <Comment.Content>

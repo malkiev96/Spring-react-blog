@@ -36,6 +36,7 @@ public class PostDetailAssembler implements RepresentationModelAssembler<Post, P
             ratingRepository.findByCreatedByAndPost(user, entity)
                     .ifPresent(rating -> model.setMyStar(rating.getStar()));
             model.add(linkToAddComment(entity));
+            model.addIf(canDeletePost(entity, user), () -> linkToEditPost(entity));
             model.addIf(canHidePost(entity, user), () -> linkToHidePost(entity));
             model.addIf(canPublishPost(entity, user), () -> linkToPublishPost(entity));
             model.addIf(canDeletePost(entity, user), () -> linkToDeletePost(entity));

@@ -41,6 +41,12 @@ public class PostLinks {
         return linkTo(methodOn(PostOperationController.class).like(entity.getId())).withRel("like");
     }
 
+    public static Link linkToEditPost(Post entity) {
+        return linkTo(methodOn(PostOperationController.class).createPost(null))
+                .withRel("edit")
+                .withType("POST");
+    }
+
     public static Link linkToAddRatingPost(Post entity) {
         return linkTo(methodOn(PostOperationController.class).rating(entity.getId(),5)).withRel("star");
     }
