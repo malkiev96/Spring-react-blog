@@ -1,4 +1,5 @@
 import {HOST} from "../constants";
+import {hateoasRequest} from "./APIUtils";
 
 export function saveImages(files) {
     const headers = new Headers({
@@ -22,4 +23,12 @@ export function saveImages(files) {
             return json;
         })
     )
+}
+
+export function getImages(page = 1,
+                          size = 10,
+                          sort = "uploadedDate") {
+    page -= 1
+    const url = HOST + "/images?page=" + page + "&size=" + size + "&sort=" + sort
+    return hateoasRequest(url)
 }

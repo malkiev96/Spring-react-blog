@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Button, Comment, Confirm, Form, Header, Icon, Item, List, Loader, Rating, Segment} from "semantic-ui-react";
-import {addStar, deletePost, getPostById, hidePost, publishPost} from "../util/PostService";
+import {addStar, deletePost, getPostById, hidePost, likePost, publishPost} from "../util/PostService";
 import {addComment, deleteComment, getComments} from '../util/CommentService'
 import moment from "moment";
 import {locale} from "moment/locale/ru";
@@ -23,6 +23,8 @@ class PostsDetail extends Component {
                 error: false,
                 loading: true
             },
+            likedCount: 0,
+            liked: false,
             currentUser: props.currentUser,
             comments: {
                 comments: [],
@@ -72,6 +74,8 @@ class PostsDetail extends Component {
                     error: false,
                     loading: false
                 },
+                likedCount: response.likedCount,
+                liked: response.liked,
                 rating: response.rating,
                 postStarred: response.myStar !== null
             })
@@ -93,6 +97,19 @@ class PostsDetail extends Component {
             this.setState({message: '', messageReply: ''})
             this.loadComments(postId)
         }).catch(error => {
+            Alert.error((error && error.message) || 'Что-то пошло не так, попробуйте еще раз');
+        })
+    }
+
+    addLike(id, likedCount) {
+        likePost(id).then((response) => {
+            const msg = response ? 'Публикация сохранена в закладки' : 'Публикация удалена из закладок'
+            Alert.success(msg)
+            this.setState({
+                liked: response,
+                likedCount: response ? likedCount + 1 : likedCount - 1
+            })
+        }).catch((error) => {
             Alert.error((error && error.message) || 'Что-то пошло не так, попробуйте еще раз');
         })
     }
@@ -202,7 +219,10 @@ class PostsDetail extends Component {
 
     render() {
         const {loading, error, post} = this.state.post
-        const {comments, postStarred, rating, openDel, openPublish, openHide, currentUser} = this.state
+        const {
+            comments, postStarred, rating, openDel, openPublish,
+            openHide, currentUser, liked, likedCount
+        } = this.state
         if (loading) return <Loader active inline='centered'/>
         if (error) return <NotFound/>
         const createdDate = moment(post.auditor.createdDate, "DD-MM-YYYY hh:mm", locale).fromNow()
@@ -210,6 +230,7 @@ class PostsDetail extends Component {
         const canHide = post.links.find(link => link.rel === 'hide')
         const canPublish = post.links.find(link => link.rel === 'publish')
         const canDelete = post.links.find(link => link.rel === 'delete')
+        const canLike = post.links.find(link => link.rel === 'like')
         return (
             <div>
                 <Segment>
@@ -305,6 +326,17 @@ class PostsDetail extends Component {
                                 <Item.Meta>
                                     <Icon color='grey' name='star'/>
                                     <span>{rating === null ? 'Нет оценок' : rating}</span>
+                                </Item.Meta>
+                                <Item.Meta>
+                                    {
+                                        canLike
+                                            ? <Icon link onClick={() => this.addLike(post.id, likedCount)}
+                                                    color={liked ? 'blue' : 'grey'}
+                                                    name='bookmark'/>
+                                            : <Icon color={liked ? 'blue' : 'grey'}
+                                                    name='bookmark'/>
+                                    }
+                                    <span>{likedCount}</span>
                                 </Item.Meta>
                             </Item.Content>
                         </Item>

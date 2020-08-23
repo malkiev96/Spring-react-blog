@@ -22,6 +22,7 @@ import UserEdit from "../user/UserEdit";
 import Publish from "../post/Publish";
 import AppFooter from "../common/AppFooter";
 import Home from "../home/Home";
+import ImgGallery from "../gallery/ImgGallery";
 
 class App extends Component {
     constructor(props) {
@@ -112,6 +113,8 @@ class App extends Component {
                             <Contacts currentUser={currentUser} {...props}/>}/>
                         <Route exact path="/about" render={(props) =>
                             <About currentUser={currentUser} {...props}/>}/>
+                        <Route exact path="/gallery" render={(props) =>
+                            <ImgGallery currentUser={currentUser} {...props}/>}/>
                         <Route exact path="/post/:id" render={(props) =>
                             <PostsDetail categories={categories} currentUser={currentUser} {...props} />}/>
                         <PrivateRoute path="/post/:id/edit" categories={categories} tags={tags}

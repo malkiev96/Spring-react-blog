@@ -1,11 +1,9 @@
 import React, {Component} from 'react';
-import moment from "moment";
-import {locale} from "moment/locale/ru";
 import {deletePost, getPostsByUrl, hidePost, publishPost} from "../util/PostService"
-import {Button, ButtonGroup, Divider, Header, Image, Segment} from "semantic-ui-react";
-import {Link} from "react-router-dom";
+import {Segment} from "semantic-ui-react";
 import Alert from 'react-s-alert';
 import './posts.css'
+import PostItem from "./PostItem";
 
 class PostsView extends Component {
 
@@ -36,7 +34,7 @@ class PostsView extends Component {
             <div>
                 {
                     posts.posts.map(post =>
-                        <PostsRow key={post.id}
+                        <PostItem key={post.id}
                                   showActions={showActions}
                                   onHidePost={this.onHidePost}
                                   onPublishPost={this.onPublishPost}
@@ -71,100 +69,31 @@ class PostsView extends Component {
     }
 
     onHidePost(id) {
-        hidePost(id)
-            .then(() => {
-                Alert.success("Публикация скрыта")
-                this.updatePosts(this.props.posts.self)
-            })
-            .catch((error) => {
-                Alert.error((error && error.message) || 'Не удалось скрыть публикацию, попробуйте еще раз');
-            })
+        hidePost(id).then(() => {
+            Alert.success("Публикация скрыта")
+            this.updatePosts(this.props.posts.self)
+        }).catch((error) => {
+            Alert.error((error && error.message) || 'Не удалось скрыть публикацию, попробуйте еще раз');
+        })
     }
 
     onPublishPost(id) {
-        publishPost(id)
-            .then(() => {
-                Alert.success("Статья опубликована")
-                this.updatePosts(this.props.posts.self)
-            })
-            .catch((error) => {
-                Alert.error((error && error.message) || 'Не удалось опубликовать статью, попробуйте еще раз');
-            })
+        publishPost(id).then(() => {
+            Alert.success("Статья опубликована")
+            this.updatePosts(this.props.posts.self)
+        }).catch((error) => {
+            Alert.error((error && error.message) || 'Не удалось опубликовать статью, попробуйте еще раз');
+        })
     }
 
     onDeletePost(id) {
-        deletePost(id)
-            .then(() => {
-                Alert.success("Публикация удалена")
-                this.updatePosts(this.props.posts.self)
-            })
-            .catch((error) => {
-                Alert.error((error && error.message) || 'Не удалось удалить публикацию, попробуйте еще раз');
-            })
+        deletePost(id).then(() => {
+            Alert.success("Публикация удалена")
+            this.updatePosts(this.props.posts.self)
+        }).catch((error) => {
+            Alert.error((error && error.message) || 'Не удалось удалить публикацию, попробуйте еще раз');
+        })
     }
-}
-
-const PostsRow = ({post, onHidePost, onPublishPost, onDeletePost, showActions}) => {
-    let canHide, canPublish, canDelete;
-    const createdDate = moment(post.auditor.createdDate, "DD-MM-YYYY hh:mm", locale).fromNow()
-    if (showActions) {
-        canHide = post.links.find(link => link.rel === 'hide');
-        canPublish = post.links.find(link => link.rel === 'publish');
-        canDelete = post.links.find(link => link.rel === 'delete');
-    }
-    return (
-        <Segment key={post.id}>
-            <Header size="larger" as="h2">
-                <Header.Content style={{paddingBottom: '10px'}}>
-                    <Link to={'/post/' + post.id}>{post.title}</Link>
-                </Header.Content>
-                <Header.Subheader>
-                    <Link to={'/user/' + post.auditor.createdBy.id}>
-                        {' ' + post.auditor.createdBy.name}
-                    </Link>
-                    {' ' + createdDate}
-                </Header.Subheader>
-                <Header.Subheader>
-                    <span>{post.viewCount === 0 ? 'Нет' : post.viewCount} просмотров</span>
-                </Header.Subheader>
-            </Header>
-            {
-                post.preview !== null &&
-                <Image size={"large"} src={post.preview.url}/>
-            }
-            <Divider hidden/>
-            <p>{post.description}</p>
-            <Link to={'/post/' + post.id}>Подробнее</Link>
-            <div>
-                {
-                    showActions &&
-                    <ButtonGroup style={{marginTop: '10px'}} basic size={'mini'} compact>
-                        {
-                            canDelete &&
-
-                            <Button onClick={() => onDeletePost(post.id)}
-                                    size={'mini'} compact>Удалить</Button>
-
-                        }
-                        {
-                            canHide &&
-
-                            <Button onClick={() => onHidePost(post.id)}
-                                    size={'mini'} compact>Cкрыть</Button>
-
-                        }
-                        {
-                            canPublish &&
-
-                            <Button onClick={() => onPublishPost(post.id)}
-                                    size={'mini'} compact>Опубликовать</Button>
-
-                        }
-                    </ButtonGroup>
-                }
-            </div>
-        </Segment>
-    )
 }
 
 export default PostsView;

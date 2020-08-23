@@ -34,6 +34,10 @@ export function createPost(postRequest) {
     })
 }
 
+export function likePost(id) {
+    return hateoasRequest(HOST + "/posts/" + id + "/like")
+}
+
 export function publishPost(id) {
     return hateoasRequest(HOST + "/posts/" + id + "/publish")
 }

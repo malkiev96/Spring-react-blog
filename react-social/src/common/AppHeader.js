@@ -34,6 +34,8 @@ class AppHeader extends Component {
                                 <Menu.Item active={window.location.pathname === '/posts'}
                                            as={Link} to='/posts' name='Статьи'/>
                                 <HeaderCategory categories={this.props.categories}/>
+                                <Menu.Item active={window.location.pathname === '/gallery'}
+                                           as={Link} to='/gallery' name='Галерея'/>
                                 <Menu.Item active={window.location.pathname === '/about'}
                                            as={Link} to='/about' name='О проекте'/>
                                 <Menu.Item active={window.location.pathname === '/contacts'}
@@ -83,6 +85,8 @@ class AppHeader extends Component {
                                     <Menu.Item active={window.location.pathname === '/posts'}
                                                as={Link} to='/posts' name='Статьи'/>
                                     <HeaderCategory categories={this.props.categories}/>
+                                    <Menu.Item active={window.location.pathname === '/gallery'}
+                                               as={Link} to='/gallery' name='Галерея'/>
                                     <Menu.Item active={window.location.pathname === '/about'}
                                                as={Link} to='/about' name='О проекте'/>
                                     <Menu.Item active={window.location.pathname === '/contacts'}
