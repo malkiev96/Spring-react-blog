@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.malkiev.blog.exception.BadRequestException;
 import ru.malkiev.blog.model.payload.ApiResponse;
 import ru.malkiev.blog.model.payload.AuthResponse;
-import ru.malkiev.blog.model.payload.LoginRequest;
-import ru.malkiev.blog.model.payload.SignUpRequest;
+import ru.malkiev.blog.model.payload.LoginDto;
+import ru.malkiev.blog.model.payload.SignUpDto;
 import ru.malkiev.blog.security.TokenProvider;
 import ru.malkiev.blog.service.UserService;
 
@@ -30,12 +30,12 @@ public class AuthController {
     private final TokenProvider tokenProvider;
 
     @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginDto loginDto) {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        loginRequest.getEmail(),
-                        loginRequest.getPassword()
+                        loginDto.getEmail(),
+                        loginDto.getPassword()
                 )
         );
 
@@ -46,12 +46,12 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
-        userService.findByEmail(signUpRequest.getEmail()).ifPresent(s -> {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpDto signUpDto) {
+        userService.findByEmail(signUpDto.getEmail()).ifPresent(s -> {
             throw new BadRequestException("Пользователь с данным Email уже зарегистрирован");
         });
 
-        return userService.registerUser(signUpRequest)
+        return userService.registerUser(signUpDto)
                 .map(user -> ResponseEntity
                         .accepted()
                         .body(new ApiResponse(true, "Пользователь успешно зарегистрирован")))

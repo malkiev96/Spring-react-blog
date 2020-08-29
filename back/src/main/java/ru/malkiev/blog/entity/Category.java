@@ -1,9 +1,6 @@
 package ru.malkiev.blog.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
@@ -15,9 +12,6 @@ import java.util.List;
 @Entity
 @Table(name = "CATEGORIES")
 @Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class Category {
 
     @Id

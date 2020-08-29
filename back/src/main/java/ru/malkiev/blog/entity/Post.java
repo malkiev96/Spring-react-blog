@@ -23,7 +23,7 @@ public class Post extends Auditable {
     @Column(name = "DESCRIPTION")
     private String description;
 
-    @Column(name = "POST_TEXT", nullable = false, length = 4000)
+    @Column(name = "POST_TEXT", nullable = false)
     private String text;
 
     @ManyToOne
@@ -83,12 +83,5 @@ public class Post extends Auditable {
         DELETED;
 
         public static final List<Status> all = Arrays.asList(values());
-        public static int SIZE = all.size();
-        private static final Random random = new Random();
-
-        public static Status randomStatus() {
-            return all.get(random.nextInt(SIZE));
-        }
     }
-
 }

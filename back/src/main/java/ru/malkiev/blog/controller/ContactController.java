@@ -9,14 +9,14 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.malkiev.blog.assembler.ContactMessageAssembler;
 import ru.malkiev.blog.model.ContactMessageModel;
-import ru.malkiev.blog.model.payload.ContactMessageRequest;
+import ru.malkiev.blog.model.payload.ContactMessageDto;
 import ru.malkiev.blog.repository.ContactMessageRepository;
 
 import javax.validation.Valid;
 
 import java.util.Optional;
 
-import static ru.malkiev.blog.model.payload.ContactMessageRequest.from;
+import static ru.malkiev.blog.model.payload.ContactMessageDto.from;
 
 @RestController
 @AllArgsConstructor
@@ -43,7 +43,7 @@ public class ContactController {
 
     @PostMapping("/contacts")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<ContactMessageModel> create(@RequestBody @Valid ContactMessageRequest request) {
+    public ResponseEntity<ContactMessageModel> create(@RequestBody @Valid ContactMessageDto request) {
         return ResponseEntity.ok(assembler.toModel(repository.save(from(request))));
     }
 }

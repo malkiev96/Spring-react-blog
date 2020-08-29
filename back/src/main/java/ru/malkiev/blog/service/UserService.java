@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import ru.malkiev.blog.entity.AuthProvider;
 import ru.malkiev.blog.entity.Role;
 import ru.malkiev.blog.entity.User;
-import ru.malkiev.blog.model.payload.SignUpRequest;
+import ru.malkiev.blog.model.payload.SignUpDto;
 import ru.malkiev.blog.repository.UserRepository;
 import ru.malkiev.blog.security.UserPrincipal;
 import ru.malkiev.blog.security.oauth2.user.OAuth2UserInfo;
@@ -43,13 +43,13 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
-    public Optional<User> registerUser(SignUpRequest request) {
+    public Optional<User> registerUser(SignUpDto dto) {
         User user = new User();
-        user.setName(request.getName().toLowerCase());
-        user.setEmail(request.getEmail().toLowerCase());
+        user.setName(dto.getName().toLowerCase());
+        user.setEmail(dto.getEmail().toLowerCase());
         user.setProvider(AuthProvider.LOCAL);
         user.setRole(Role.ROLE_USER);
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
         return Optional.ofNullable(userRepository.save(user));
     }
 

@@ -24,7 +24,6 @@ public class PostAssembler implements RepresentationModelAssembler<Post, PostMod
 
     private final UserService userService;
     private final PostLikeRepository likeRepository;
-    private final PostRatingRepository ratingRepository;
     private final PagedResourcesAssembler<Post> pagedAssembler;
 
     public PagedModel<PostModel> toPagedModel(Page<Post> page) {
@@ -34,15 +33,12 @@ public class PostAssembler implements RepresentationModelAssembler<Post, PostMod
     @Override
     public @NotNull PostModel toModel(@NotNull Post entity) {
         PostModel model = new PostModel(entity);
-        model.setRating(ratingRepository.getAvgRatingByPost(entity));
         model.setLikedCount(likeRepository.countByPost(entity));
 
         model.add(linkToDetailPost(entity));
         model.add(linkToUser(entity.getCreatedBy()).withRel("createdBy"));
         userService.getCurrentUser().ifPresent(user -> {
             model.setLiked(likeRepository.findByCreatedByAndPost(user, entity).isPresent());
-            ratingRepository.findByCreatedByAndPost(user, entity)
-                    .ifPresent(rating -> model.setMyStar(rating.getStar()));
             model.add(linkToLikePost(entity));
             model.add(linkToAddRatingPost(entity));
             model.addIf(canHidePost(entity, user), () -> linkToHidePost(entity));

@@ -10,7 +10,7 @@ import ru.malkiev.blog.assembler.PostDetailAssembler;
 import ru.malkiev.blog.exception.PostNotFoundException;
 import ru.malkiev.blog.link.PostLinks;
 import ru.malkiev.blog.model.PostDetailModel;
-import ru.malkiev.blog.model.payload.PostRequest;
+import ru.malkiev.blog.model.payload.PostDto;
 import ru.malkiev.blog.operation.*;
 import ru.malkiev.blog.repository.PostRepository;
 
@@ -18,6 +18,7 @@ import javax.validation.Valid;
 
 @RestController
 @AllArgsConstructor
+@PreAuthorize("isAuthenticated()")
 public class PostOperationController {
 
     private final PostRepository repository;
@@ -30,7 +31,6 @@ public class PostOperationController {
     private final PostDetailAssembler detailAssembler;
 
     @GetMapping("/posts/{id}/like")
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Boolean> like(@PathVariable int id) {
         return repository.findById(id)
                 .map(likeOperation)
@@ -39,7 +39,6 @@ public class PostOperationController {
     }
 
     @GetMapping("/posts/{id}/rating")
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Double> rating(@PathVariable int id,
                                        @RequestParam int star) {
         return repository.findById(id)
@@ -50,7 +49,6 @@ public class PostOperationController {
     }
 
     @GetMapping("/posts/{id}/hide")
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Link> hide(@PathVariable int id) {
         return repository.findById(id)
                 .map(hideOperation)
@@ -60,7 +58,6 @@ public class PostOperationController {
     }
 
     @GetMapping("/posts/{id}/publish")
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Link> publish(@PathVariable int id) {
         return repository.findById(id)
                 .map(publishOperation)
@@ -70,7 +67,6 @@ public class PostOperationController {
     }
 
     @GetMapping("/posts/{id}/delete")
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Link> delete(@PathVariable int id) {
         return repository.findById(id)
                 .map(deleteOperation)
@@ -80,8 +76,7 @@ public class PostOperationController {
     }
 
     @PostMapping("/posts")
-    @PreAuthorize("isAuthenticated()")
-    public PostDetailModel createPost(@Valid @RequestBody PostRequest postRequest) {
-        return detailAssembler.toModel(createOperation.apply(postRequest));
+    public PostDetailModel createPost(@Valid @RequestBody PostDto postDto) {
+        return detailAssembler.toModel(createOperation.apply(postDto));
     }
 }

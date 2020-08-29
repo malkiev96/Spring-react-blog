@@ -2,13 +2,14 @@ package ru.malkiev.blog.specification;
 
 import lombok.Data;
 import org.springframework.data.jpa.domain.Specification;
-import ru.malkiev.blog.entity.*;
+import ru.malkiev.blog.entity.Post;
 import ru.malkiev.blog.entity.Post.Status;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
+
+import static java.util.Collections.singletonList;
 
 @Data
 public class PostSpecification implements Supplier<Optional<Specification<Post>>> {
@@ -19,7 +20,7 @@ public class PostSpecification implements Supplier<Optional<Specification<Post>>
     private Boolean liked;
     private List<Integer> catIds;
     private List<String> tagNames;
-    private List<Status> statuses = Collections.singletonList(Status.PUBLISHED);
+    private List<Status> statuses = singletonList(Status.PUBLISHED);
 
     @Override
     public Optional<Specification<Post>> get() {

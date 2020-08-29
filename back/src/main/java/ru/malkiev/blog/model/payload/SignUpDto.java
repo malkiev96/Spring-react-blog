@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Data
-public class SignUpRequest {
+public class SignUpDto {
 
     @NotNull(message = "Имя не должно быть пустым")
     @Size(min = 3, max = 32, message = "Длина имени должна быть от 3 до 32 символов")

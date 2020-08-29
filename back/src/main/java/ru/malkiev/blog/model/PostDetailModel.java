@@ -12,6 +12,9 @@ import java.util.stream.Collectors;
 @Data
 public class PostDetailModel extends PostModel {
 
+    private Integer myStar;
+    private Double rating;
+    private DataItem category;
     private String text;
     private List<DataItem> tags = new ArrayList<>();
     private List<ImageModel> images = new ArrayList<>();
@@ -19,6 +22,7 @@ public class PostDetailModel extends PostModel {
     public PostDetailModel(Post post) {
         super(post);
         this.text = post.getText();
+        this.category = new DataItem(post.getCategory());
         post.getTags().forEach(tag -> {
             this.tags.add(new DataItem(tag.getId(), tag.getName(), tag.getDescription()));
         });

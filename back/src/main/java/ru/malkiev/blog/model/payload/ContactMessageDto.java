@@ -7,7 +7,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 
 @Getter
-public class ContactMessageRequest {
+public class ContactMessageDto {
 
     @NotEmpty
     private String name;
@@ -18,12 +18,12 @@ public class ContactMessageRequest {
     @NotEmpty
     private String message;
 
-    public static ContactMessage from(ContactMessageRequest request) {
+    public static ContactMessage from(ContactMessageDto dto) {
         return new ContactMessage(
                 null,
-                request.getName(),
-                request.getEmail(),
-                request.getMessage()
+                dto.getName(),
+                dto.getEmail(),
+                dto.getMessage()
         );
     }
 }

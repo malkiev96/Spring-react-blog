@@ -7,7 +7,7 @@ import ru.malkiev.blog.entity.Tag;
 import ru.malkiev.blog.exception.CategoryNotFoundException;
 import ru.malkiev.blog.exception.ImageNotFoundException;
 import ru.malkiev.blog.exception.PostNotFoundException;
-import ru.malkiev.blog.model.payload.PostRequest;
+import ru.malkiev.blog.model.payload.PostDto;
 import ru.malkiev.blog.repository.CategoryRepository;
 import ru.malkiev.blog.repository.ImageRepository;
 import ru.malkiev.blog.repository.PostRepository;
@@ -22,7 +22,7 @@ import static ru.malkiev.blog.entity.Post.Status.PUBLISHED;
 
 @Component
 @AllArgsConstructor
-public class PostCreateOperation implements Function<PostRequest, Post> {
+public class PostCreateOperation implements Function<PostDto, Post> {
 
     private final PostRepository repository;
     private final ImageRepository imageRepository;
@@ -30,26 +30,26 @@ public class PostCreateOperation implements Function<PostRequest, Post> {
     private final TagRepository tagRepository;
 
     @Override
-    public Post apply(@Valid PostRequest postRequest) {
+    public Post apply(@Valid PostDto postDto) {
         Post post;
-        if (postRequest.getId() != null) post = repository.findById(postRequest.getId())
-                .orElseThrow(() -> new PostNotFoundException(postRequest.getId()));
+        if (postDto.getId() != null) post = repository.findById(postDto.getId())
+                .orElseThrow(() -> new PostNotFoundException(postDto.getId()));
         else post = new Post();
 
-        post.setTitle(postRequest.getTitle());
-        post.setDescription(postRequest.getDescription());
-        post.setText(postRequest.getText());
-        post.setPreview(postRequest.getPreviewId() != null ? imageRepository
-                .findById(postRequest.getPreviewId())
-                .orElseThrow(() -> new ImageNotFoundException(postRequest.getPreviewId())) : null);
-        post.setImages(imageRepository.findAllById(postRequest.getImageIds()));
+        post.setTitle(postDto.getTitle());
+        post.setDescription(postDto.getDescription());
+        post.setText(postDto.getText());
+        post.setPreview(postDto.getPreviewId() != null ? imageRepository
+                .findById(postDto.getPreviewId())
+                .orElseThrow(() -> new ImageNotFoundException(postDto.getPreviewId())) : null);
+        post.setImages(imageRepository.findAllById(postDto.getImageIds()));
         post.setCategory(categoryRepository
-                .findById(postRequest.getCategoryId())
-                .orElseThrow(() -> new CategoryNotFoundException(postRequest.getCategoryId())));
+                .findById(postDto.getCategoryId())
+                .orElseThrow(() -> new CategoryNotFoundException(postDto.getCategoryId())));
 
-        List<Tag> tags = tagRepository.findAllById(postRequest.getTagIds());
+        List<Tag> tags = tagRepository.findAllById(postDto.getTagIds());
         post.setTags(tags);
-        post.setStatus(postRequest.isPosted() ? PUBLISHED : CREATED);
+        post.setStatus(postDto.isPosted() ? PUBLISHED : CREATED);
 
         return repository.save(post);
     }

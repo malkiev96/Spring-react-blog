@@ -19,8 +19,8 @@ public class RootController {
     private ResponseEntity<FilterModel> getFilters(){
         FilterModel filterModel = new FilterModel(
                 categoryRepository.findAllByParentIsNull(),
-                tagRepository.findAll());
-
+                tagRepository.findAll()
+        );
         return ResponseEntity.ok(filterModel);
     }
 }

@@ -1,6 +1,7 @@
 package ru.malkiev.blog.controller;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.util.Pair;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,10 +12,13 @@ import ru.malkiev.blog.entity.User;
 import ru.malkiev.blog.exception.UserNotFoundException;
 import ru.malkiev.blog.model.UserDetailModel;
 import ru.malkiev.blog.model.UserModel;
+import ru.malkiev.blog.model.payload.UserEditDto;
+import ru.malkiev.blog.operation.UserEditOperation;
 import ru.malkiev.blog.repository.UserRepository;
 import ru.malkiev.blog.security.CurrentUser;
 import ru.malkiev.blog.security.UserPrincipal;
 
+import javax.validation.Valid;
 import java.util.Optional;
 
 import static ru.malkiev.blog.entity.Role.ROLE_ADMIN;
@@ -26,6 +30,7 @@ public class UserController {
     private final UserRepository repository;
     private final UserDetailAssembler detailAssembler;
     private final UserAssembler userAssembler;
+    private final UserEditOperation editOperation;
 
     @GetMapping("/user/me")
     @PreAuthorize("isAuthenticated()")
@@ -52,16 +57,10 @@ public class UserController {
     @PostMapping("/users/{id}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<UserDetailModel> edit(@PathVariable int id,
-                                                @RequestBody UserDetailModel model) {
+                                                @Valid @RequestBody UserEditDto dto) {
         return repository.findById(id)
-                .map(user -> {
-                    if (model.getName() != null) user.setName(model.getName());
-                    if (model.getImageUrl() != null) user.setImageUrl(model.getImageUrl());
-                    if (model.getBirthDate() != null) user.setBirthDate(model.getBirthDate());
-                    if (model.getCity() != null) user.setCity(model.getCity());
-                    if (model.getAbout() != null) user.setAbout(model.getAbout());
-                    return user;
-                })
+                .map(user -> Pair.of(dto, user))
+                .map(editOperation)
                 .map(repository::save)
                 .map(detailAssembler::toModel)
                 .map(ResponseEntity::ok)

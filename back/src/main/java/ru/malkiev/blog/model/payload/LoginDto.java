@@ -6,7 +6,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class LoginRequest {
+public class LoginDto {
 
     @NotNull(message = "Email не должен быть пустым")
     @Email

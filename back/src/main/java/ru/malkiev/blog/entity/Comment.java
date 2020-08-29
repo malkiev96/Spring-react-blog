@@ -1,6 +1,5 @@
 package ru.malkiev.blog.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.NotFound;
@@ -30,13 +29,11 @@ public class Comment extends Auditable {
     @ManyToOne(fetch = FetchType.EAGER)
     @NotNull
     @JoinColumn(name = "POST_ID", nullable = false)
-    @JsonIgnore
     private Post post;
 
     @ManyToOne
     @JoinColumn(name = "PARENT_ID")
     @NotFound(action = NotFoundAction.IGNORE)
-    @JsonIgnore
     private Comment parent;
 
     @Column(name = "COMMENT_DELETED")
