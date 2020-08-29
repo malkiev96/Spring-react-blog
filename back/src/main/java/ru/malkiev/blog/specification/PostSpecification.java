@@ -51,7 +51,15 @@ public class PostSpecification implements Supplier<Optional<Specification<Post>>
     }
 
     private Specification<Post> byTagNames(List<String> names) {
-        return (root, query, cb) -> root.join(Post_.TAGS).get(Tag_.DESCRIPTION).in(names);
+        Specification<Post> spec = (root, query, cb) -> root.join(Post_.TAGS).get(Tag_.DESCRIPTION).in(names);
+        return spec.and(distinct());
+    }
+
+    private Specification<Post> distinct() {
+        return (root, query, cb) -> {
+            query.distinct(true);
+            return null;
+        };
     }
 
     private Specification<Post> byStatuses(List<Status> statuses) {

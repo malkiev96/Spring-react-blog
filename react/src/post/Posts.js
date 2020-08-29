@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import PostsView from "./PostsView";
 import {getPosts} from "../service/PostService";
-import {Button, Loader, Pagination, Segment} from "semantic-ui-react";
+import {Button, Pagination, Segment} from "semantic-ui-react";
 import {SORT_DATE, SORT_POPULAR, SORT_TYPE, SORT_VIEW} from "../util/Constants";
 
 class Posts extends Component {
@@ -17,12 +17,14 @@ class Posts extends Component {
             categoryCode: categoryCode,
             size: 10,
             sort: localStorage.getItem(SORT_TYPE) || SORT_DATE,
+            selectedTags: tagCode ? [tagCode] : [],
             posts: {
                 posts: [],
                 page: null,
                 loading: true
             }
         }
+        this.onTagClick = this.onTagClick.bind(this);
         this.loadPosts = this.loadPosts.bind(this);
         this.pageChange = this.pageChange.bind(this);
         this.onPopularClick = this.onPopularClick.bind(this);
@@ -67,7 +69,26 @@ class Posts extends Component {
         this.loadPosts(1, size, SORT_VIEW, tagCode, categoryCode)
     }
 
+    onTagClick(code) {
+        const {page, size, sort, categoryCode} = this.state;
+        const tags = this.state.selectedTags;
+        const selectedTags = tags.includes(code)
+            ? tags.filter(i => i !== code)
+            : tags.concat(code);
+        this.setState({
+            selectedTags: selectedTags
+        })
+
+        this.loadPosts(page, size, sort, selectedTags.length === 0 ? null : selectedTags, categoryCode)
+    }
+
     loadPosts(page, size, sort, tagCode, categoryCode) {
+        this.setState({
+            posts: {
+                posts: [],
+                loading: true
+            }
+        })
         const catIds = this.getIds(categoryCode)
         getPosts(page, size, sort, tagCode, catIds).then(response => {
             this.setState({
@@ -113,23 +134,35 @@ class Posts extends Component {
     }
 
     render() {
-        const {posts, sort} = this.state
-        if (posts.loading) return <Loader active inline='centered'/>
+        const {posts, sort, selectedTags} = this.state
         return (
             <div>
                 <Segment textAlign={'center'}>
-                    <Button primary={sort === 'createdDate,desc'}
-                            basic={sort !== 'createdDate,desc'}
+                    <Button primary={sort === SORT_DATE}
+                            basic={sort !== SORT_DATE}
                             size={"tiny"} onClick={this.onNewClick}
                             style={{backgroundColor: '#175e6b'}}>Сначала новые</Button>
-                    <Button primary={sort === 'postRatings.star,desc'}
-                            basic={sort !== 'postRatings.star,desc'}
+                    <Button primary={sort === SORT_POPULAR}
+                            basic={sort !== SORT_POPULAR}
                             size={"tiny"} onClick={this.onPopularClick}
                             style={{backgroundColor: '#175e6b'}}>Популярное</Button>
-                    <Button primary={sort === 'viewCount,desc'}
-                            basic={sort !== 'viewCount,desc'}
+                    <Button primary={sort === SORT_VIEW}
+                            basic={sort !== SORT_VIEW}
                             size={"tiny"} onClick={this.onViewClick}
                             style={{backgroundColor: '#175e6b'}}>Просматриваемое</Button>
+                </Segment>
+                <Segment>
+                    {
+                        this.props.tags.map(tag => {
+                            const selected = selectedTags.includes(tag.description)
+                            return (
+                                <Button primary={selected} basic={!selected} size={"tiny"}
+                                        style={{backgroundColor: '#175e6b'}}
+                                        onClick={() => this.onTagClick(tag.description)}>{tag.name}
+                                </Button>
+                            )
+                        })
+                    }
                 </Segment>
                 <PostsView posts={posts}/>
                 {

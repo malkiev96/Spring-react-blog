@@ -22,7 +22,7 @@ public class Category {
     @Size(min = 3, max = 255)
     private String name;
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION", nullable = false, unique = true)
     private String description;
 
     @ManyToOne

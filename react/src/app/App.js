@@ -17,7 +17,6 @@ import Posts from "../post/Posts";
 import PostsDetail from "../post/PostsDetail";
 import UserDetail from "../user/UserDetail";
 import Contacts from "./Contacts";
-import About from "./About";
 import UserEdit from "../user/UserEdit";
 import Publish from "../post/Publish";
 import AppFooter from "../common/footer/AppFooter";
@@ -117,8 +116,6 @@ class App extends Component {
                                       currentUser={currentUser} component={Publish}/>
                         <Route exact path="/contacts" render={(props) =>
                             <Contacts currentUser={currentUser} {...props}/>}/>
-                        <Route exact path="/about" render={(props) =>
-                            <About currentUser={currentUser} {...props}/>}/>
                         <Route exact path="/gallery" render={(props) =>
                             <ImgGallery currentUser={currentUser} {...props}/>}/>
                         <Route exact path="/post/:id" render={(props) =>
@@ -127,9 +124,9 @@ class App extends Component {
                                       currentUser={currentUser} component={Publish}/>
 
                         <Route exact path="/category/:categoryCode/:page?" render={(props) =>
-                            <Posts categories={categories} currentUser={currentUser} {...props} />}/>
+                            <Posts categories={categories} tags={tags} currentUser={currentUser} {...props} />}/>
                         <Route exact path="/posts/:page?" render={(props) =>
-                            <Posts categories={categories} currentUser={currentUser} {...props} />}/>
+                            <Posts categories={categories} tags={tags} currentUser={currentUser} {...props} />}/>
                         <Route exact path="/tags/:tagCode/:page?" render={(props) =>
                             <Posts tags={tags} currentUser={currentUser} {...props} />}/>
 

@@ -18,7 +18,7 @@ public class Tag {
     @Column(name = "NAME", nullable = false, unique = true)
     private String name;
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION", nullable = false, unique = true)
     private String description;
 
     @ManyToMany(mappedBy = "tags")

@@ -37,8 +37,6 @@ class AppHeader extends Component {
                                 <HeaderCategory categories={this.props.categories}/>
                                 <Menu.Item active={pathname === '/gallery'}
                                            as={Link} to='/gallery' name='Галерея'/>
-                                <Menu.Item active={pathname === '/about'}
-                                           as={Link} to='/about' name='О проекте'/>
                                 <Menu.Item active={pathname === '/contacts'}
                                            as={Link} to='/contacts' name='Контакты'/>
                                 {
@@ -94,8 +92,6 @@ class AppHeader extends Component {
                                     <HeaderCategory categories={this.props.categories}/>
                                     <Menu.Item active={pathname === '/gallery'}
                                                as={Link} to='/gallery' name='Галерея'/>
-                                    <Menu.Item active={pathname === '/about'}
-                                               as={Link} to='/about' name='О проекте'/>
                                     <Menu.Item active={pathname === '/contacts'}
                                                as={Link} to='/contacts' name='Контакты'/>
                                     {
