@@ -45,7 +45,7 @@ class PostsItem extends Component {
 
         return (
             <Segment key={post.id}>
-                <Header size="larger" as="h2">
+                <Header size="large" as="h2">
                     <Header.Content style={{paddingBottom: '10px'}}>
                         <Link to={'/post/' + post.id}>{post.title}</Link>
                     </Header.Content>

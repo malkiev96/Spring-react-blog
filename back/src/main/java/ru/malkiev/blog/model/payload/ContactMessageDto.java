@@ -5,6 +5,7 @@ import ru.malkiev.blog.entity.ContactMessage;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import java.util.Date;
 
 @Getter
 public class ContactMessageDto {
@@ -23,7 +24,8 @@ public class ContactMessageDto {
                 null,
                 dto.getName(),
                 dto.getEmail(),
-                dto.getMessage()
+                dto.getMessage(),
+                new Date()
         );
     }
 }

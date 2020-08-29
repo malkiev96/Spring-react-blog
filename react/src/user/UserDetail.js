@@ -12,12 +12,7 @@ class UserDetail extends Component {
     constructor(props) {
         super(props);
         const id = parseInt(this.props.match.params.id, 10)
-        let profile
-        try {
-            profile = id === props.currentUser.currentUser.id
-        } catch (e) {
-            profile = false
-        }
+        const profile = props.currentUser.authenticated && props.currentUser.currentUser.id === id
         this.state = {
             id: id,
             profile: profile,
@@ -64,6 +59,7 @@ class UserDetail extends Component {
         const {user, profile} = this.state
         if (user.loading) return <Loader active inline='centered'/>
         if (user.error) return <NotFound/>
+        const admin = this.props.currentUser.admin;
         return (
             <div>
                 <Segment>
@@ -112,7 +108,7 @@ class UserDetail extends Component {
                     </Table>
                 </Segment>
                 {
-                    !profile &&
+                    !profile && !admin &&
                     <Tabs>
                         <TabList>
                             <Tab>Публикации</Tab>
@@ -127,7 +123,7 @@ class UserDetail extends Component {
                     </Tabs>
                 }
                 {
-                    profile &&
+                    (profile || admin) &&
                     <Tabs>
                         <TabList>
                             <Tab>Опубликованные</Tab>

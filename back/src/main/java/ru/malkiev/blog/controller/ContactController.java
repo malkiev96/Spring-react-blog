@@ -34,7 +34,7 @@ public class ContactController {
                 .orElse(ResponseEntity.noContent().build());
     }
 
-    @GetMapping("/contacts/{id}")
+    @PostMapping("/contacts/{id}/delete")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<?> delete(@PathVariable Integer id) {
         repository.deleteById(id);

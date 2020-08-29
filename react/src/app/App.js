@@ -23,6 +23,8 @@ import Publish from "../post/Publish";
 import AppFooter from "../common/footer/AppFooter";
 import Home from "./Home";
 import ImgGallery from "./ImgGallery";
+import Admin from "../admin/Admin";
+import AdminRoute from "../common/AdminRoute";
 
 class App extends Component {
     constructor(props) {
@@ -31,7 +33,8 @@ class App extends Component {
             currentUser: {
                 authenticated: false,
                 currentUser: null,
-                loading: false
+                loading: false,
+                admin: false
             },
             loading: true,
             categories: [],
@@ -48,7 +51,8 @@ class App extends Component {
                 currentUser: {
                     currentUser: response,
                     authenticated: true,
-                    loading: false
+                    loading: false,
+                    admin: response.admin
                 }
             })
         }).catch(error => {
@@ -56,7 +60,8 @@ class App extends Component {
                 currentUser: {
                     currentUser: null,
                     authenticated: false,
-                    loading: false
+                    loading: false,
+                    admin: false
                 }
             })
         })
@@ -84,7 +89,7 @@ class App extends Component {
                 authenticated: false
             }
         })
-        Alert.success("You're safely logged out!");
+        // Alert.success("You're safely logged out!");
     }
 
     componentDidMount() {
@@ -107,6 +112,7 @@ class App extends Component {
                         <Route exact path="/user/:id" render={(props) =>
                             <UserDetail currentUser={currentUser} {...props}/>}/>
                         <PrivateRoute path="/user/:id/edit" currentUser={currentUser} component={UserEdit}/>
+                        <AdminRoute path="/admin" currentUser={currentUser} component={Admin}/>
                         <PrivateRoute path="/publish" categories={categories} tags={tags}
                                       currentUser={currentUser} component={Publish}/>
                         <Route exact path="/contacts" render={(props) =>

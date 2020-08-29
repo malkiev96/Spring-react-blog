@@ -375,7 +375,7 @@ class PostsDetail extends Component {
                     {
                         currentUser.authenticated ?
                             <Form reply onSubmit={this.createHandler}>
-                                <Form.TextArea value={this.state.message}
+                                <Form.TextArea value={this.state.message} rows={10}
                                                onChange={event => this.setState({message: event.target.value})}/>
                                 <Button style={{backgroundColor: '#175e6b'}} content='Добавить комментарий'
                                         labelPosition='left' icon='edit' primary/>
@@ -429,7 +429,8 @@ class PostsDetail extends Component {
                         <Form onSubmit={() => this.replyHandler(comment.id)}>
                             <Form.TextArea value={this.state.messageReply}
                                            onChange={event => this.setState({messageReply: event.target.value})}/>
-                            <Button content='Добавить комментарий' labelPosition='left' icon='edit' primary/>
+                            <Button style={{backgroundColor: '#175e6b'}} content='Добавить комментарий'
+                                    labelPosition='left' icon='edit' primary/>
                         </Form>
                     }
                 </Comment.Content>

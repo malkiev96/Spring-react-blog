@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import PostsView from "./PostsView";
 import {getPosts} from "../service/PostService";
 import {Button, Loader, Pagination, Segment} from "semantic-ui-react";
+import {SORT_DATE, SORT_POPULAR, SORT_TYPE, SORT_VIEW} from "../util/Constants";
 
 class Posts extends Component {
 
@@ -15,7 +16,7 @@ class Posts extends Component {
             tagCode: tagCode,
             categoryCode: categoryCode,
             size: 10,
-            sort: "createdDate,desc",
+            sort: localStorage.getItem(SORT_TYPE) || SORT_DATE,
             posts: {
                 posts: [],
                 page: null,
@@ -46,21 +47,24 @@ class Posts extends Component {
     }
 
     onPopularClick() {
-        this.setState({sort: 'postRatings.star,desc', page: 1})
+        localStorage.setItem(SORT_TYPE, SORT_POPULAR)
+        this.setState({sort: SORT_POPULAR, page: 1})
         const {size, tagCode, categoryCode} = this.state;
-        this.loadPosts(1, size, 'postRatings.star,desc', tagCode, categoryCode)
+        this.loadPosts(1, size, SORT_POPULAR, tagCode, categoryCode)
     }
 
     onNewClick() {
-        this.setState({sort: 'createdDate,desc', page: 1})
+        localStorage.setItem(SORT_TYPE, SORT_DATE)
+        this.setState({sort: SORT_DATE, page: 1})
         const {size, tagCode, categoryCode} = this.state;
-        this.loadPosts(1, size, 'createdDate,desc', tagCode, categoryCode)
+        this.loadPosts(1, size, SORT_DATE, tagCode, categoryCode)
     }
 
     onViewClick() {
-        this.setState({sort: 'viewCount,desc', page: 1})
+        localStorage.setItem(SORT_TYPE, SORT_VIEW)
+        this.setState({sort: SORT_VIEW, page: 1})
         const {size, tagCode, categoryCode} = this.state;
-        this.loadPosts(1, size, 'viewCount,desc', tagCode, categoryCode)
+        this.loadPosts(1, size, SORT_VIEW, tagCode, categoryCode)
     }
 
     loadPosts(page, size, sort, tagCode, categoryCode) {
@@ -128,10 +132,12 @@ class Posts extends Component {
                             style={{backgroundColor: '#175e6b'}}>Просматриваемое</Button>
                 </Segment>
                 <PostsView posts={posts}/>
-
-                <Pagination style={{marginTop: '15px'}} activePage={posts.page.number + 1}
-                            firstItem={null} lastItem={null} onPageChange={this.pageChange}
-                            totalPages={posts.page.totalPages}/>
+                {
+                    posts.page && posts.page.totalPages > 1 &&
+                    <Pagination style={{marginTop: '15px'}} activePage={posts.page.number + 1}
+                                firstItem={null} lastItem={null} onPageChange={this.pageChange}
+                                totalPages={posts.page.totalPages}/>
+                }
             </div>
         )
     }

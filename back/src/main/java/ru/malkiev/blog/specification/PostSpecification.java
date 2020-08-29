@@ -2,7 +2,7 @@ package ru.malkiev.blog.specification;
 
 import lombok.Data;
 import org.springframework.data.jpa.domain.Specification;
-import ru.malkiev.blog.entity.Post;
+import ru.malkiev.blog.entity.*;
 import ru.malkiev.blog.entity.Post.Status;
 
 import java.util.List;
