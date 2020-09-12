@@ -68,6 +68,7 @@ class PostsDetail extends Component {
 
     loadData(id) {
         getPostById(id).then(response => {
+            document.title = response.title
             this.setState({
                 post: {
                     post: response,

@@ -37,6 +37,7 @@ class UserDetail extends Component {
 
     loadUser(id) {
         getUser(id).then(response => {
+            document.title = 'Профиль - '+ response.name
             this.setState({
                 user: {
                     user: response,

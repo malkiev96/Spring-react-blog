@@ -88,7 +88,6 @@ class App extends Component {
                 authenticated: false
             }
         })
-        // Alert.success("You're safely logged out!");
     }
 
     componentDidMount() {

@@ -22,6 +22,7 @@ class Admin extends Component {
     }
 
     componentDidMount() {
+        document.title = 'Админка'
         this.loadMessages(this.state.page)
     }
 

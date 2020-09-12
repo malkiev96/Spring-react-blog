@@ -19,6 +19,7 @@ class Contacts extends Component {
     }
 
     componentDidMount() {
+        document.title = 'Контакты'
         this.loadAdmins()
     }
 

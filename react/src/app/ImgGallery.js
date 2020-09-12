@@ -17,6 +17,7 @@ class ImgGallery extends Component {
     }
 
     componentDidMount() {
+        document.title = 'Галерея'
         this.loadImages()
     }
 

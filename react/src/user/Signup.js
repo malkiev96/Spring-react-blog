@@ -15,6 +15,7 @@ class Signup extends Component {
                     state: {from: this.props.location}
                 }}/>;
         }
+        document.title = 'Регистрация'
         return (
             <Segment>
                 <OauthButtons title='Зарегистрироваться через'/>

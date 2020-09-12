@@ -74,6 +74,7 @@ class Publish extends Component {
     }
 
     componentDidMount() {
+        document.title = 'Новая публикация'
         const {id, edit} = this.state
         if (edit) this.loadData(id)
     }
@@ -87,6 +88,7 @@ class Publish extends Component {
     loadData(id) {
         getPostById(id).then(response => {
             const category = response.category;
+            document.title = 'Редактирование - ' +response.title
             this.setState({
                 post: {
                     post: response,

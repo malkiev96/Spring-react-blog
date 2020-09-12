@@ -48,7 +48,7 @@ class Home extends Component {
             <div>
                 <PostsView posts={posts}/>
                 {
-                    posts.page.totalPages > 1 &&
+                    posts.page && posts.page.totalPages > 1 &&
                     <div style={{textAlign: 'center', paddingTop: '15px'}}>
                         <Link to={'/posts/2'}>
                             <Button style={{backgroundColor: '#175e6b'}} primary size='medium'>Показать еще</Button>

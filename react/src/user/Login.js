@@ -29,7 +29,7 @@ class Login extends Component {
                     state: {from: this.props.location}
                 }}/>;
         }
-
+        document.title = 'Войти'
         return (
             <Segment>
                 <OauthButtons title={'Войти с помощью'}/>

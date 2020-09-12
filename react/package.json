@@ -3,14 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@types/react": "^16.9.46",
-    "ajv": "^6.12.4",
-    "history": "^5.0.0",
     "moment": "^2.27.0",
     "pure-react-carousel": "^1.27.1",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
-    "react-grid-gallery": "^0.5.5",
     "react-images-upload": "^1.2.8",
     "react-markdown": "^4.3.1",
     "react-photo-gallery": "^8.0.0",
@@ -19,8 +15,6 @@
     "react-scripts": "^3.4.3",
     "react-select": "^3.1.0",
     "react-simplemde-editor": "^4.1.3",
-    "react-slick": "^0.27.10",
-    "react-star-ratings": "^2.3.0",
     "react-tabs": "^3.1.1",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^1.2.1",
@@ -31,9 +25,6 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
   },
   "browserslist": {
     "production": [

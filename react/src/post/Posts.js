@@ -44,6 +44,7 @@ class Posts extends Component {
     }
 
     componentDidMount() {
+        document.title = 'Публикации'
         const {page, size, sort, tagCode, categoryCode} = this.state;
         this.loadPosts(page, size, sort, tagCode, categoryCode)
     }

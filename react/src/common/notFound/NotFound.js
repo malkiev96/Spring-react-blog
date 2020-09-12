@@ -5,6 +5,7 @@ import {Button, Segment} from "semantic-ui-react";
 
 class NotFound extends Component {
     render() {
+        document.title = 'Страница не найдена'
         return (
             <Segment className='page-not-found'>
                 <h1 className="title">404</h1>

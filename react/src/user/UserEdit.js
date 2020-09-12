@@ -66,6 +66,7 @@ class UserEdit extends Component {
     render() {
         const {id, name, city, birthDate, about, imageUrl,currentUser} = this.state
         if (currentUser.id !== id) return <NotFound/>
+        document.title = 'Редактирование профиля - '+ name
         return (
             <div>
                 <Segment>
