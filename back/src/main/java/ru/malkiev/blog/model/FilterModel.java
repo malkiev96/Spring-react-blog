@@ -22,14 +22,14 @@ public class FilterModel extends RepresentationModel<FilterModel> {
 
     public FilterModel(List<Category> categories, List<Tag> tags) {
         this.roles = Arrays.asList(Role.values());
-        this.statuses = Post.Status.all;
+        this.statuses = Arrays.asList(Post.Status.values());
         this.providers = Arrays.asList(AuthProvider.values());
         this.categories = categories.stream().map(CategoryItem::new).collect(Collectors.toList());
         this.tags = tags.stream().map(DataItem::new).collect(Collectors.toList());
     }
 
     @Getter
-    public static class CategoryItem extends DataItem{
+    public static class CategoryItem extends DataItem {
 
         private final List<CategoryItem> childs;
 

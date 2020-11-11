@@ -54,6 +54,7 @@ public class CommentController {
         return postRepository.findById(id)
                 .map(post -> Pair.of(post, message))
                 .map(createOperation)
+                .map(repository::save)
                 .map(assembler::toModel)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new CommentNotFoundException(id));
@@ -68,6 +69,7 @@ public class CommentController {
         return repository.findById(parentId)
                 .map(parent -> Pair.of(Pair.of(post, message), parent))
                 .map(replyOperation)
+                .map(repository::save)
                 .map(assembler::toModel)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new CommentNotFoundException(parentId));
@@ -80,6 +82,7 @@ public class CommentController {
         return repository.findById(id)
                 .filter(comment -> comment.canEdit(principal.getUser()))
                 .map(deleteOperation)
+                .map(repository::save)
                 .map(assembler::toModel)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new CommentNotFoundException(id));

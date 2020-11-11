@@ -15,7 +15,7 @@ import ru.malkiev.blog.exception.PostNotFoundException;
 import ru.malkiev.blog.model.PostDetailModel;
 import ru.malkiev.blog.model.PostModel;
 import ru.malkiev.blog.repository.PostRepository;
-import ru.malkiev.blog.specification.PostSpecification;
+import ru.malkiev.blog.spec.PostSpec;
 
 @RestController
 @AllArgsConstructor
@@ -36,7 +36,7 @@ public class PostController {
     }
 
     @GetMapping("/posts")
-    public ResponseEntity<PagedModel<PostModel>> getPosts(PostSpecification spec,
+    public ResponseEntity<PagedModel<PostModel>> getPosts(PostSpec spec,
                                                           @PageableDefault Pageable pageable) {
         return spec.get()
                 .map(s -> repository.findAll(s, pageable))

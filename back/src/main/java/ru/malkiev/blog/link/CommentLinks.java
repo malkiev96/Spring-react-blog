@@ -1,5 +1,7 @@
 package ru.malkiev.blog.link;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.springframework.hateoas.Link;
 import ru.malkiev.blog.controller.CommentController;
 import ru.malkiev.blog.entity.Comment;
@@ -7,6 +9,7 @@ import ru.malkiev.blog.entity.Comment;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CommentLinks {
 
     public static Link linkToComment(Comment entity) {

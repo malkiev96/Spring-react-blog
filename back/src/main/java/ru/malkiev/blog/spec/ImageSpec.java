@@ -1,19 +1,20 @@
-package ru.malkiev.blog.specification;
+package ru.malkiev.blog.spec;
 
 import lombok.Data;
 import org.springframework.data.jpa.domain.Specification;
 import ru.malkiev.blog.entity.Image;
 import ru.malkiev.blog.entity.Image_;
+import ru.malkiev.blog.util.SpecBuilder;
 
 import java.util.Optional;
 import java.util.function.Supplier;
 
 @Data
-public class ImageSpecification implements Supplier<Optional<Specification<Image>>> {
+public class ImageSpec implements Supplier<Optional<Specification<Image>>> {
 
     @Override
     public Optional<Specification<Image>> get() {
-        SpecificationBuilder<Image> specBuilder = new SpecificationBuilder<>();
+        SpecBuilder<Image> specBuilder = new SpecBuilder<>();
         specBuilder.accept(emptySpecification);
         return specBuilder.build();
     }

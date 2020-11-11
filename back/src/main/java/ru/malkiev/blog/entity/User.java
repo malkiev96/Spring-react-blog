@@ -37,10 +37,10 @@ public class User {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "PROVIDER")
+    @Column(name = "PROVIDER", nullable = false)
     private AuthProvider provider;
 
-    @Column(name = "ROLE")
+    @Column(name = "ROLE", nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
 

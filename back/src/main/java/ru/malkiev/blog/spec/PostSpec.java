@@ -1,9 +1,10 @@
-package ru.malkiev.blog.specification;
+package ru.malkiev.blog.spec;
 
 import lombok.Data;
 import org.springframework.data.jpa.domain.Specification;
 import ru.malkiev.blog.entity.*;
 import ru.malkiev.blog.entity.Post.Status;
+import ru.malkiev.blog.util.SpecBuilder;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +13,7 @@ import java.util.function.Supplier;
 import static java.util.Collections.singletonList;
 
 @Data
-public class PostSpecification implements Supplier<Optional<Specification<Post>>> {
+public class PostSpec implements Supplier<Optional<Specification<Post>>> {
 
     private Integer userId;
     private Integer tagId;
@@ -24,7 +25,7 @@ public class PostSpecification implements Supplier<Optional<Specification<Post>>
 
     @Override
     public Optional<Specification<Post>> get() {
-        SpecificationBuilder<Post> specBuilder = new SpecificationBuilder<>();
+        SpecBuilder<Post> specBuilder = new SpecBuilder<>();
         specBuilder.accept(emptySpecification);
         Optional.ofNullable(userId).ifPresent(p -> specBuilder.accept(byUserId(p)));
         Optional.ofNullable(tagId).ifPresent(p -> specBuilder.accept(byTagId(p)));

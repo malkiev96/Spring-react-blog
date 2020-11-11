@@ -1,5 +1,7 @@
 package ru.malkiev.blog.link;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.springframework.hateoas.Link;
 import ru.malkiev.blog.controller.CommentController;
 import ru.malkiev.blog.controller.PostController;
@@ -9,6 +11,7 @@ import ru.malkiev.blog.entity.Post;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PostLinks {
 
     public static Link linkToDetailPost(Post entity) {
@@ -48,6 +51,6 @@ public class PostLinks {
     }
 
     public static Link linkToAddRatingPost(Post entity) {
-        return linkTo(methodOn(PostOperationController.class).rating(entity.getId(),5)).withRel("star");
+        return linkTo(methodOn(PostOperationController.class).rating(entity.getId(), 5)).withRel("star");
     }
 }

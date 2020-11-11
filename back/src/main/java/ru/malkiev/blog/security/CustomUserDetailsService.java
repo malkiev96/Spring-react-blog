@@ -18,7 +18,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email) {
         User user = userService.findByEmail(email).orElseThrow(() ->
                 new UsernameNotFoundException("User not found with email : " + email)
         );
@@ -26,7 +26,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     @Transactional
-    public UserDetails loadUserById(int id) throws UsernameNotFoundException {
+    public UserDetails loadUserById(int id) {
         User user = userService.findById(id).orElseThrow(() ->
                 new UsernameNotFoundException("User not found with id : " + id)
         );

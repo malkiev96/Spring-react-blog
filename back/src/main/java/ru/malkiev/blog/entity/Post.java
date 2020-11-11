@@ -4,7 +4,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -20,7 +21,7 @@ public class Post extends Auditable {
     @Column(name = "TITLE", nullable = false)
     private String title;
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION", nullable = false)
     private String description;
 
     @Column(name = "POST_TEXT", nullable = false)
@@ -30,7 +31,7 @@ public class Post extends Auditable {
     @JoinColumn(name = "PREVIEW_IMG_ID")
     private Image preview;
 
-    @Column(name = "POST_STATUS")
+    @Column(name = "POST_STATUS", nullable = false)
     @Enumerated(EnumType.STRING)
     private Status status;
 
@@ -48,12 +49,6 @@ public class Post extends Auditable {
             inverseJoinColumns = @JoinColumn(name = "TAG_ID")
     )
     private List<Tag> tags = new ArrayList<>();
-
-    @OneToMany(mappedBy = "post")
-    private List<PostRating> postRatings = new ArrayList<>();
-
-    @OneToMany(mappedBy = "post")
-    private List<PostLike> postLikes = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -81,7 +76,5 @@ public class Post extends Auditable {
          * Пост удален
          */
         DELETED;
-
-        public static final List<Status> all = Arrays.asList(values());
     }
 }

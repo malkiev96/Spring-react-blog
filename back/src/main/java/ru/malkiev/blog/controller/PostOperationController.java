@@ -52,6 +52,7 @@ public class PostOperationController {
     public ResponseEntity<Link> hide(@PathVariable int id) {
         return repository.findById(id)
                 .map(hideOperation)
+                .map(repository::save)
                 .map(PostLinks::linkToHidePost)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new PostNotFoundException(id));
@@ -61,6 +62,7 @@ public class PostOperationController {
     public ResponseEntity<Link> publish(@PathVariable int id) {
         return repository.findById(id)
                 .map(publishOperation)
+                .map(repository::save)
                 .map(PostLinks::linkToPublishPost)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new PostNotFoundException(id));
@@ -70,6 +72,7 @@ public class PostOperationController {
     public ResponseEntity<Link> delete(@PathVariable int id) {
         return repository.findById(id)
                 .map(deleteOperation)
+                .map(repository::save)
                 .map(PostLinks::linkToDeletePost)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new PostNotFoundException(id));
@@ -77,6 +80,10 @@ public class PostOperationController {
 
     @PostMapping("/posts")
     public PostDetailModel createPost(@Valid @RequestBody PostDto postDto) {
-        return detailAssembler.toModel(createOperation.apply(postDto));
+        return detailAssembler.toModel(
+                repository.save(
+                        createOperation.apply(postDto)
+                )
+        );
     }
 }

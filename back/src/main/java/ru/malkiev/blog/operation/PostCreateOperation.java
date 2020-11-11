@@ -1,9 +1,12 @@
 package ru.malkiev.blog.operation;
 
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
+import ru.malkiev.blog.entity.Category;
+import ru.malkiev.blog.entity.Image;
 import ru.malkiev.blog.entity.Post;
-import ru.malkiev.blog.entity.Tag;
 import ru.malkiev.blog.exception.CategoryNotFoundException;
 import ru.malkiev.blog.exception.ImageNotFoundException;
 import ru.malkiev.blog.exception.PostNotFoundException;
@@ -14,7 +17,6 @@ import ru.malkiev.blog.repository.PostRepository;
 import ru.malkiev.blog.repository.TagRepository;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.function.Function;
 
 import static ru.malkiev.blog.entity.Post.Status.CREATED;
@@ -31,26 +33,35 @@ public class PostCreateOperation implements Function<PostDto, Post> {
 
     @Override
     public Post apply(@Valid PostDto postDto) {
-        Post post;
-        if (postDto.getId() != null) post = repository.findById(postDto.getId())
-                .orElseThrow(() -> new PostNotFoundException(postDto.getId()));
-        else post = new Post();
+        Post post = getPost(postDto.getId());
 
         post.setTitle(postDto.getTitle());
         post.setDescription(postDto.getDescription());
         post.setText(postDto.getText());
-        post.setPreview(postDto.getPreviewId() != null ? imageRepository
-                .findById(postDto.getPreviewId())
-                .orElseThrow(() -> new ImageNotFoundException(postDto.getPreviewId())) : null);
-        post.setImages(imageRepository.findAllById(postDto.getImageIds()));
-        post.setCategory(categoryRepository
-                .findById(postDto.getCategoryId())
-                .orElseThrow(() -> new CategoryNotFoundException(postDto.getCategoryId())));
+        post.setPreview(getPreview(postDto.getPreviewId()));
+        post.setCategory(getCategory(postDto.getId()));
 
-        List<Tag> tags = tagRepository.findAllById(postDto.getTagIds());
-        post.setTags(tags);
+        post.setImages(imageRepository.findAllById(postDto.getImageIds()));
+        post.setTags(tagRepository.findAllById(postDto.getTagIds()));
         post.setStatus(postDto.isPosted() ? PUBLISHED : CREATED);
 
         return repository.save(post);
+    }
+
+    private Category getCategory(@NonNull Integer catId) {
+        return categoryRepository.findById(catId)
+                .orElseThrow(() -> new CategoryNotFoundException(catId));
+    }
+
+    private Post getPost(@Nullable Integer postId) {
+        return postId != null
+                ? repository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId))
+                : new Post();
+    }
+
+    private Image getPreview(@Nullable Integer previewId) {
+        return previewId != null
+                ? imageRepository.findById(previewId).orElseThrow(() -> new ImageNotFoundException(previewId))
+                : null;
     }
 }

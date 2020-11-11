@@ -15,14 +15,14 @@ public class PostRating extends Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "POST_ID")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "POST_ID", nullable = false)
     private Post post;
 
     @Column(name = "STAR")
     private int star;
 
-    public static PostRating of(Post post, int star){
+    public static PostRating of(Post post, int star) {
         PostRating rating = new PostRating();
         rating.setPost(post);
         rating.setStar(star);

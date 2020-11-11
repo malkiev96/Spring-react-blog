@@ -41,7 +41,4 @@ public class Image {
     @Column(name = "WIDTH", nullable = false)
     private Integer width;
 
-    @ManyToMany(mappedBy = "images")
-    private List<Post> posts = new ArrayList<>();
-
 }

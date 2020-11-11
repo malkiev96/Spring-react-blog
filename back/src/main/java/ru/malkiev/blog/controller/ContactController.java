@@ -28,7 +28,7 @@ public class ContactController {
     @GetMapping("/contacts")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<PagedModel<ContactMessageModel>> messages(@PageableDefault Pageable pageable) {
-        return Optional.ofNullable(repository.findAll(pageable))
+        return Optional.of(repository.findAll(pageable))
                 .map(assembler::toPagedModel)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.noContent().build());
@@ -36,7 +36,7 @@ public class ContactController {
 
     @PostMapping("/contacts/{id}/delete")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<?> delete(@PathVariable Integer id) {
+    public ResponseEntity<String> delete(@PathVariable Integer id) {
         repository.deleteById(id);
         return ResponseEntity.accepted().build();
     }

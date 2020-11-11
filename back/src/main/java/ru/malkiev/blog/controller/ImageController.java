@@ -18,7 +18,7 @@ import ru.malkiev.blog.exception.ImageNotFoundException;
 import ru.malkiev.blog.model.ImageModel;
 import ru.malkiev.blog.repository.ImageRepository;
 import ru.malkiev.blog.service.ImageStorageService;
-import ru.malkiev.blog.specification.ImageSpecification;
+import ru.malkiev.blog.spec.ImageSpec;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -43,7 +43,7 @@ public class ImageController {
     }
 
     @GetMapping("/images")
-    public ResponseEntity<PagedModel<ImageModel>> page(ImageSpecification spec,
+    public ResponseEntity<PagedModel<ImageModel>> page(ImageSpec spec,
                                                        @PageableDefault Pageable pageable) {
         return spec.get()
                 .map(s -> repository.findAll(s, pageable))

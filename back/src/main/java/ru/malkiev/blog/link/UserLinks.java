@@ -1,15 +1,18 @@
 package ru.malkiev.blog.link;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.Link;
 import ru.malkiev.blog.controller.PostController;
 import ru.malkiev.blog.controller.UserController;
 import ru.malkiev.blog.entity.User;
-import ru.malkiev.blog.specification.PostSpecification;
+import ru.malkiev.blog.spec.PostSpec;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserLinks {
 
     public static Link linkToUser(User entity) {
@@ -17,7 +20,7 @@ public class UserLinks {
     }
 
     public static Link linkToPosts(User entity) {
-        PostSpecification specification = new PostSpecification();
+        PostSpec specification = new PostSpec();
         specification.setUserId(entity.getId());
         return linkTo(methodOn(PostController.class).getPosts(specification, Pageable.unpaged()))
                 .withRel("posts");

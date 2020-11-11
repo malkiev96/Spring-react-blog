@@ -19,7 +19,7 @@ public abstract class Auditable {
 
     @CreatedBy
     @ManyToOne
-    @JoinColumn(name = "USER_CREATED_ID")
+    @JoinColumn(name = "USER_CREATED_ID", nullable = false)
     private User createdBy;
 
     @LastModifiedBy
@@ -28,7 +28,7 @@ public abstract class Auditable {
     private User lastModifiedBy;
 
     @CreatedDate
-    @Column(name = "CREATED_DATE")
+    @Column(name = "CREATED_DATE", nullable = false)
     private Date createdDate;
 
     @LastModifiedDate

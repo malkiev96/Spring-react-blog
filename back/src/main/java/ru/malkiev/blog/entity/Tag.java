@@ -3,8 +3,6 @@ package ru.malkiev.blog.entity;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "TAGS")
@@ -20,8 +18,5 @@ public class Tag {
 
     @Column(name = "DESCRIPTION", nullable = false, unique = true)
     private String description;
-
-    @ManyToMany(mappedBy = "tags")
-    private List<Post> posts = new ArrayList<>();
 
 }

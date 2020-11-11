@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Data
 @Entity
 @Table(name = "POST_LIKES")
-public class PostLike extends Auditable{
+public class PostLike extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +19,7 @@ public class PostLike extends Auditable{
     @JoinColumn(name = "POST_ID")
     private Post post;
 
-    public static PostLike of(Post post){
+    public static PostLike of(Post post) {
         PostLike like = new PostLike();
         like.setPost(post);
         return like;

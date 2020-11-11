@@ -1,4 +1,4 @@
-package ru.malkiev.blog.specification;
+package ru.malkiev.blog.util;
 
 import org.springframework.data.jpa.domain.Specification;
 
@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class SpecificationBuilder<T> implements Consumer<Specification<T>> {
+public class SpecBuilder<T> implements Consumer<Specification<T>> {
 
     private final List<Specification<T>> specs = new ArrayList<>();
 

@@ -30,8 +30,7 @@ public class ImageStorageService {
     public void init() {
         try {
             Files.createDirectory(root);
-        } catch (IOException ignored) {
-        }
+        } catch (IOException ignored) {}
     }
 
     public Image save(MultipartFile file) {
