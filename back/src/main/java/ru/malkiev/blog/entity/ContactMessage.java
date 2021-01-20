@@ -7,6 +7,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 
 @Entity
@@ -22,15 +24,18 @@ public class ContactMessage {
     private Integer id;
 
     @Column(name = "NAME", nullable = false)
+    @NotEmpty
     private String name;
 
     @Column(name = "EMAIL", nullable = false)
+    @Email
     private String email;
 
     @Column(name = "MESSAGE", nullable = false)
+    @NotEmpty
     private String message;
 
     @CreatedDate
-    @Column(name = "CREATED_DATE")
+    @Column(name = "CREATED_DATE", nullable = false)
     private Date createdDate;
 }

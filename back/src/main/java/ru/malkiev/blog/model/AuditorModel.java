@@ -7,6 +7,8 @@ import ru.malkiev.blog.entity.Auditable;
 import ru.malkiev.blog.entity.User;
 import ru.malkiev.blog.util.DateFormatter;
 
+import java.util.Optional;
+
 @Data
 public class AuditorModel {
 
@@ -19,14 +21,14 @@ public class AuditorModel {
         this.createdBy = new UserModel(auditable.getCreatedBy());
         this.createdDate = new DateFormatter(auditable.getCreatedDate()).get();
         this.lastModifiedDate = new DateFormatter(auditable.getLastModifiedDate()).get();
-        if (auditable.getLastModifiedBy() != null) {
-            this.lastModifiedBy = new UserModel(auditable.getLastModifiedBy());
-        }
+        this.lastModifiedBy = Optional.ofNullable(auditable.getLastModifiedBy())
+                .map(UserModel::new)
+                .orElse(null);
     }
 
     @Getter
     public static class UserModel {
-        private final int id;
+        private final Integer id;
         private final String name;
         private final String imageUrl;
 

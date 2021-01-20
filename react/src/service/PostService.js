@@ -1,8 +1,8 @@
-import {HOST} from "../util/Constants";
+import {BASE_API} from "../util/Constants";
 import {hateoasRequest, jsonRequest} from "../util/APIUtils";
 
 export function getPostById(id) {
-    return hateoasRequest(HOST + "/posts/" + id)
+    return hateoasRequest(BASE_API + "/posts/" + id)
 }
 
 export function getPosts(page = 1,
@@ -14,16 +14,16 @@ export function getPosts(page = 1,
                          userId,
                          liked) {
     page -= 1
-    let url = HOST + "/posts?page=" + page + "&size=" + size + "&sort=" + sort + "&statuses=" + statuses
-    if (tagNames) url += "&tagNames=" + tagNames
-    if (catIds) url += "&catIds=" + catIds
-    if (userId) url += "&userId=" + userId
+    let url = `${BASE_API}/posts?page=${page}&size=${size}&sort=${sort}&statuses=${statuses}`
+    if (tagNames) url += `&tagNames=${tagNames}`
+    if (catIds) url += `&catIds=${catIds}`
+    if (userId) url += `&userId=${userId}`
     if (liked) url += "&liked=true"
     return hateoasRequest(url)
 }
 
 export function addStar(postId, star) {
-    return hateoasRequest(HOST + "/posts/" + postId + "/rating?star=" + star)
+    return hateoasRequest(`${BASE_API}/posts/${postId}/rating?star=${star}`)
 }
 
 export function getPostsByUrl(url) {
@@ -32,22 +32,22 @@ export function getPostsByUrl(url) {
 
 export function createPost(postRequest) {
     return jsonRequest({
-        url: HOST + "/posts", method: "POST", body: JSON.stringify(postRequest)
+        url: `${BASE_API}/posts`, method: "POST", body: JSON.stringify(postRequest)
     })
 }
 
 export function likePost(id) {
-    return hateoasRequest(HOST + "/posts/" + id + "/like")
+    return hateoasRequest(`${BASE_API}/posts/${id}/like`)
 }
 
 export function publishPost(id) {
-    return hateoasRequest(HOST + "/posts/" + id + "/publish")
+    return hateoasRequest(`${BASE_API}/posts/${id}/publish`)
 }
 
 export function hidePost(id) {
-    return hateoasRequest(HOST + "/posts/" + id + "/hide")
+    return hateoasRequest(`${BASE_API}/posts/${id}/hide`)
 }
 
 export function deletePost(id) {
-    return hateoasRequest(HOST + "/posts/" + id + "/delete")
+    return hateoasRequest(`${BASE_API}/posts/${id}/delete`)
 }

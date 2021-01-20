@@ -22,8 +22,8 @@ public class Category {
     @Size(min = 3, max = 255)
     private String name;
 
-    @Column(name = "DESCRIPTION", nullable = false, unique = true)
-    private String description;
+    @Column(name = "CODE", nullable = false, unique = true)
+    private String code;
 
     @ManyToOne
     @JoinColumn(name = "PARENT_ID")

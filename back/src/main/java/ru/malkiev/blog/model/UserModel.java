@@ -11,7 +11,7 @@ import ru.malkiev.blog.entity.User;
 @NoArgsConstructor
 public class UserModel extends RepresentationModel<UserModel> {
 
-    private int id;
+    private Integer id;
     private String name;
     private String email;
     private String imageUrl;

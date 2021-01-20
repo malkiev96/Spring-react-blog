@@ -1,9 +1,9 @@
 spring:
     datasource:
-        url: jdbc:postgresql://localhost:5432/springreact
-        username: postgres
-        password: root
-        driver-class-name: org.postgresql.Driver
+      url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/springreact}
+      username: ${DATABASE_USER:postgres}
+      password: ${DATABASE_PASSWORD:root}
+      driver-class-name: org.postgresql.Driver
     jpa:
         show-sql: false
         hibernate:
@@ -13,22 +13,22 @@ spring:
         client:
           registration:
             google:
-              clientId: 5014057553-8gm9um6vnli3cle5rgigcdjpdrid14m9.apps.googleusercontent.com
-              clientSecret: tWZKVLxaD_ARWsriiiUFYoIk
+              clientId: ${GOOGLE_CLIENT_ID:5014057553-8gm9um6vnli3cle5rgigcdjpdrid14m9.apps.googleusercontent.com}
+              clientSecret: ${GOOGLE_CLIENT_SECRET:tWZKVLxaD_ARWsriiiUFYoIk}
               redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
               scope:
                 - email
                 - profile
             facebook:
-              clientId: 939970443154332
-              clientSecret: ddb7715a49e16291dbf6e2f2ddb54cbb
+              clientId: ${FACEBOOK_CLIENT_ID:939970443154332}
+              clientSecret: ${FACEBOOK_CLIENT_SECRET:ddb7715a49e16291dbf6e2f2ddb54cbb}
               redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
               scope:
                 - email
                 - public_profile
             github:
-              clientId: 874abe0c163d45ef41d6
-              clientSecret: 776065bdadbf99ba834efdfd3053c9c8a8651c4c
+              clientId: ${GITHUB_CLIENT_ID:874abe0c163d45ef41d6}
+              clientSecret: ${GITHUB_CLIENT_SECRET:776065bdadbf99ba834efdfd3053c9c8a8651c4c}
               redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
               scope:
                 - user
@@ -39,7 +39,7 @@ spring:
               userInfoUri: https://graph.facebook.com/v3.0/me?fields=id,first_name,middle_name,last_name,name,email,verified,is_verified,picture.width(250).height(250)
 app:
   auth:
-    tokenSecret: 926D96C90030DD58429D2751AC1BDBBC
+    tokenSecret: ${TOKEN_SECRET:926D96C90030DD58429D2751AC1BDBBC}
     tokenExpirationMsec: 864000000
   oauth2:
-    authorizedRedirectUris: http://localhost:3000/oauth2/redirect
+    authorizedRedirectUris: ${FRONT_HOST:http://localhost:3000}/oauth2/redirect

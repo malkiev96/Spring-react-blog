@@ -4,11 +4,12 @@ import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import Select from 'react-select'
 import ImageUploader from "react-images-upload";
-import {saveImages} from '../service/ImageService';
+import {saveImages} from '../service/DocumentService';
 import {createPost, getPostById} from '../service/PostService';
 import Alert from "react-s-alert";
 import {Redirect} from "react-router-dom";
 import NotFound from "../common/notFound/NotFound";
+import {BASE_API} from "../util/Constants";
 
 const defaultState = () => ({
     title: '',
@@ -88,22 +89,22 @@ class Publish extends Component {
     loadData(id) {
         getPostById(id).then(response => {
             const category = response.category;
-            document.title = 'Редактирование - ' +response.title
+            document.title = 'Редактирование - ' + response.title
             this.setState({
                 post: {
                     post: response,
                     error: false,
                     postLoading: false
                 },
-                posted: response.status==='PUBLISHED',
+                posted: response.status === 'PUBLISHED',
                 title: response.title,
                 description: response.description,
                 text: response.text,
                 preview: response.preview,
                 category: {id: category.id, value: category.id, label: category.name},
                 tags: response.tags.map(({id, name}) => ({id: id, value: id, label: name})),
-                postImages: response.images.map(({id, url}) => ({id: id, url: url})),
-                imageIds: response.images.map(({id}) => id)
+                postImages: response.documents.map(({id, url}) => ({id: id, url: url})),
+                imageIds: response.documents.map(({id}) => id)
             })
         }).catch((error) => {
             this.setState({
@@ -201,7 +202,7 @@ class Publish extends Component {
             posted: posted,
             previewId: preview ? preview.id : null,
             categoryId: category.id,
-            imageIds: imageIds,
+            documentIds: imageIds,
             tagIds: tags.map(tag => tag.id)
         }
         this.savePost(postRequest)
@@ -261,7 +262,7 @@ class Publish extends Component {
                                        as: 'a', color: 'red', corner: 'right', icon: 'remove',
                                        onClick: () => this.setState({preview: null})
                                    }}
-                                   src={preview.url}/>
+                                   src={`${BASE_API}/documents/${preview.id}/download`}/>
                         }
                     </Form.Field>
                     <Form.Field required error={textError}>
@@ -294,13 +295,13 @@ class Publish extends Component {
                     </Form.Field>
                     <Image.Group size='medium'>
                         {
-                            postImages.map(({id, url}) => {
+                            postImages.map(({id}) => {
                                 return <Image key={id} label={{
                                     as: 'a', color: 'red', corner: 'right', icon: 'remove',
                                     onClick: () => {
                                         this.deleteImageId(id)
                                     }
-                                }} bordered src={url}/>
+                                }} bordered src={`${BASE_API}/documents/${id}/download`}/>
                             })
                         }
                     </Image.Group>

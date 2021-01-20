@@ -1,6 +1,7 @@
 package ru.malkiev.blog.config;
 
 import lombok.AllArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,13 +25,13 @@ public class JpaConfig {
         return new AuditorAwareImpl();
     }
 
-    static class AuditorAwareImpl implements AuditorAware<User> {
+    public static class AuditorAwareImpl implements AuditorAware<User> {
 
         @Autowired
         private UserRepository userRepository;
 
         @Override
-        public Optional<User> getCurrentAuditor() {
+        public @NotNull Optional<User> getCurrentAuditor() {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication == null || !authentication.isAuthenticated()) {
                 return Optional.empty();

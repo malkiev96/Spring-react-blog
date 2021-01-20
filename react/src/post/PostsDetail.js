@@ -11,6 +11,7 @@ import Alert from "react-s-alert";
 import "pure-react-carousel/dist/react-carousel.es.css";
 import {CarouselProvider, Image, Slide, Slider} from "pure-react-carousel";
 import ReactMarkdown from "react-markdown";
+import {getDocumentSrc} from "../service/DocumentService";
 
 class PostsDetail extends Component {
 
@@ -237,7 +238,7 @@ class PostsDetail extends Component {
                 <Segment>
                     {
                         canEdit &&
-                        <Link to={'/post/' + post.id + '/edit'}>
+                        <Link to={`/post/${post.id}/edit`}>
                             <Button style={{backgroundColor: '#175e6b'}} floated='right'
                                     size='mini' primary>Редактировать
                             </Button>
@@ -278,26 +279,27 @@ class PostsDetail extends Component {
                     <Header as='h1' dividing>{post.title}</Header>
                     {
                         post.preview !== null &&
-                        <Item.Image src={post.preview.url} size='large' bordered/>
+                        <Item.Image src={getDocumentSrc(post.preview.id)} size='large' bordered/>
                     }
                     <div id={'post-text'}>
                         <ReactMarkdown source={post.text}/>
                     </div>
                 </Segment>
                 {
-                    post.images.length !== 0 &&
+                    post.documents && post.documents.length !== 0 &&
                     <Segment>
                         <Header as='h3' dividing>Прикрепленные изображения</Header>
                         <CarouselProvider
                             naturalSlideWidth={100}
                             naturalSlideHeight={50}
-                            totalSlides={post.images.length}>
+                            totalSlides={post.documents.length}>
                             <Slider>
                                 {
-                                    post.images.map((img, index) =>
+                                    post.documents.map((doc, index) =>
                                         <Slide index={index}>
-                                            <Image src={img.url} hasMasterSpinner/>
-                                        </Slide>)
+                                            <Image src={getDocumentSrc(doc.id)} hasMasterSpinner/>
+                                        </Slide>
+                                    )
                                 }
                             </Slider>
                         </CarouselProvider>
@@ -308,7 +310,7 @@ class PostsDetail extends Component {
                         <Item>
                             <Item.Content>
                                 <Item.Meta>
-                                    <Link to={'/category/' + post.category.description}>
+                                    <Link to={'/category/' + post.category.code}>
                                         <Icon name='folder'/>
                                         {' ' + post.category.name}
                                     </Link>
@@ -354,7 +356,7 @@ class PostsDetail extends Component {
                         {post.tags.map(tag => {
                             return (
                                 <List.Item key={tag.id}>
-                                    <Link to={'/tags/' + tag.description}>
+                                    <Link to={'/tags/' + tag.code}>
                                         <Button compact active size={'tiny'} basic>{tag.name}</Button>
                                     </Link>
                                 </List.Item>
@@ -374,7 +376,7 @@ class PostsDetail extends Component {
                         }
                     </Comment.Group>
                     {
-                        currentUser.authenticated ?
+                        this.props.currentUser.authenticated ?
                             <Form reply onSubmit={this.createHandler}>
                                 <Form.TextArea value={this.state.message} rows={10}
                                                required

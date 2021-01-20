@@ -7,10 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.malkiev.blog.assembler.PostDetailAssembler;
+import ru.malkiev.blog.dto.PostDto;
 import ru.malkiev.blog.exception.PostNotFoundException;
 import ru.malkiev.blog.link.PostLinks;
 import ru.malkiev.blog.model.PostDetailModel;
-import ru.malkiev.blog.model.payload.PostDto;
 import ru.malkiev.blog.operation.*;
 import ru.malkiev.blog.repository.PostRepository;
 

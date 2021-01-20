@@ -35,8 +35,6 @@ class AppHeader extends Component {
                                 <Menu.Item active={pathname === '/posts'}
                                            as={Link} to='/posts' name='Статьи'/>
                                 <HeaderCategory categories={this.props.categories}/>
-                                <Menu.Item active={pathname === '/gallery'}
-                                           as={Link} to='/gallery' name='Галерея'/>
                                 <Menu.Item active={pathname === '/contacts'}
                                            as={Link} to='/contacts' name='Контакты'/>
                                 {
@@ -90,8 +88,6 @@ class AppHeader extends Component {
                                     <Menu.Item active={pathname === '/posts'}
                                                as={Link} to='/posts' name='Статьи'/>
                                     <HeaderCategory categories={this.props.categories}/>
-                                    <Menu.Item active={pathname === '/gallery'}
-                                               as={Link} to='/gallery' name='Галерея'/>
                                     <Menu.Item active={pathname === '/contacts'}
                                                as={Link} to='/contacts' name='Контакты'/>
                                     {
@@ -140,14 +136,14 @@ class AppHeader extends Component {
 
 const HeaderCategory = ({categories}) => {
     return categories.map(cat => !(cat.childs && cat.childs.length !== 0) ? (
-        <Menu.Item as={Link}  to={'/category/' + cat.description} name={cat.name}/>
+        <Menu.Item as={Link} to={'/category/' + cat.code} name={cat.name}/>
     ) : (
-        <Dropdown key={cat.id} item simple text={cat.name} as={Link} to={'/category/' + cat.description}>
+        <Dropdown key={cat.id} item simple text={cat.name} as={Link} to={'/category/' + cat.code}>
             <Dropdown.Menu style={{backgroundColor: '#175e6b'}}>
                 {
                     cat.childs.map(c => {
                         return (
-                            <Dropdown.Item key={c.id} as={Link} to={'/category/' + c.description}>
+                            <Dropdown.Item key={c.id} as={Link} to={'/category/' + c.code}>
                                 <div style={{color: 'white'}}>{c.name}</div>
                             </Dropdown.Item>
                         )

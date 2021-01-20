@@ -8,15 +8,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.malkiev.blog.assembler.ContactMessageAssembler;
+import ru.malkiev.blog.dto.ContactMessageDto;
 import ru.malkiev.blog.model.ContactMessageModel;
-import ru.malkiev.blog.model.payload.ContactMessageDto;
 import ru.malkiev.blog.repository.ContactMessageRepository;
 
 import javax.validation.Valid;
-
 import java.util.Optional;
 
-import static ru.malkiev.blog.model.payload.ContactMessageDto.from;
+import static ru.malkiev.blog.dto.ContactMessageDto.from;
 
 @RestController
 @AllArgsConstructor

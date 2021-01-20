@@ -16,7 +16,7 @@ public class Tag {
     @Column(name = "NAME", nullable = false, unique = true)
     private String name;
 
-    @Column(name = "DESCRIPTION", nullable = false, unique = true)
-    private String description;
+    @Column(name = "CODE", nullable = false, unique = true)
+    private String code;
 
 }

@@ -1,4 +1,4 @@
-package ru.malkiev.blog.model.payload;
+package ru.malkiev.blog.dto;
 
 import lombok.Data;
 
@@ -25,7 +25,7 @@ public class PostDto {
 
     private boolean posted;
 
-    private Integer previewId;
+    private Long previewId;
 
     @NotNull
     private Integer categoryId;
@@ -33,6 +33,6 @@ public class PostDto {
     @NotEmpty
     private List<Integer> tagIds = new ArrayList<>();
 
-    private List<Integer> imageIds = new ArrayList<>();
+    private List<Long> documentIds = new ArrayList<>();
 
 }

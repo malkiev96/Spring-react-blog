@@ -8,10 +8,10 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 import ru.malkiev.blog.entity.Post;
+import ru.malkiev.blog.entity.PostStatus;
 import ru.malkiev.blog.entity.User;
 import ru.malkiev.blog.model.PostModel;
 import ru.malkiev.blog.repository.PostLikeRepository;
-import ru.malkiev.blog.repository.PostRatingRepository;
 import ru.malkiev.blog.service.UserService;
 
 import static ru.malkiev.blog.link.PostLinks.*;
@@ -50,17 +50,17 @@ public class PostAssembler implements RepresentationModelAssembler<Post, PostMod
     }
 
     public static boolean canDeletePost(Post entity, User user) {
-        return !entity.getStatus().equals(Post.Status.DELETED) &&
+        return !entity.getStatus().equals(PostStatus.DELETED) &&
                 (user.isAdmin() || user.equals(entity.getCreatedBy()));
     }
 
     public static boolean canHidePost(Post entity, User user) {
-        return entity.getStatus().equals(Post.Status.PUBLISHED) &&
+        return entity.getStatus().equals(PostStatus.PUBLISHED) &&
                 (user.isAdmin() || user.equals(entity.getCreatedBy()));
     }
 
     public static boolean canPublishPost(Post entity, User user) {
-        return entity.getStatus().equals(Post.Status.CREATED) &&
+        return entity.getStatus().equals(PostStatus.CREATED) &&
                 (user.isAdmin() || user.equals(entity.getCreatedBy()));
     }
 

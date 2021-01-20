@@ -14,11 +14,11 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class UserDetailModel extends RepresentationModel<UserDetailModel> {
 
-    private int id;
+    private Integer id;
     private String name;
     private String email;
     private String imageUrl;
-    private boolean emailVerified;
+    private Boolean emailVerified;
     private boolean isAdmin;
     private String city;
     private String about;

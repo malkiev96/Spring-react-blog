@@ -2,21 +2,26 @@ package ru.malkiev.blog.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import org.springframework.hateoas.RepresentationModel;
 import ru.malkiev.blog.entity.Post;
+import ru.malkiev.blog.entity.PostStatus;
+
+import java.util.Optional;
 
 @EqualsAndHashCode(callSuper = false)
 @Data
+@NoArgsConstructor
 public class PostModel extends RepresentationModel<PostModel> {
 
-    private int id;
+    private Integer id;
     private String title;
     private String description;
     private int viewCount;
     private boolean liked;
     private Integer likedCount;
-    private Post.Status status;
-    private ImageModel preview;
+    private PostStatus status;
+    private DocumentModel preview;
     private AuditorModel auditor;
 
     public PostModel(Post post) {
@@ -26,6 +31,7 @@ public class PostModel extends RepresentationModel<PostModel> {
         this.viewCount = post.getViewCount();
         this.auditor = new AuditorModel(post);
         this.status = post.getStatus();
-        if (post.getPreview() != null) this.preview = new ImageModel(post.getPreview());
+        this.preview = Optional.ofNullable(post.getPreview())
+                .map(DocumentModel::new).orElse(null);
     }
 }

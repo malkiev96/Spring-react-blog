@@ -6,6 +6,7 @@ import {Button, ButtonGroup, Divider, Header, Icon, Image, Segment} from "semant
 import {Link} from "react-router-dom";
 import Alert from 'react-s-alert';
 import './posts.css'
+import {getDocumentSrc} from "../service/DocumentService";
 
 class PostsItem extends Component {
 
@@ -58,7 +59,7 @@ class PostsItem extends Component {
                 </Header>
                 {
                     post.preview !== null &&
-                    <Image size={"large"} src={post.preview.url}/>
+                    <Image size={"large"} src={getDocumentSrc(post.preview.id)}/>
                 }
                 <Divider hidden/>
                 <p>{post.description}</p>

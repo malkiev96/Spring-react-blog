@@ -1,4 +1,4 @@
-package ru.malkiev.blog.model.payload;
+package ru.malkiev.blog.dto;
 
 import lombok.Data;
 
@@ -11,7 +11,6 @@ public class UserEditDto {
     @NotEmpty
     private String name;
 
-    @NotEmpty
     private String imageUrl;
 
     private String city;

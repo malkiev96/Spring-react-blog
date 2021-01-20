@@ -1,4 +1,4 @@
-import {HOST} from "../util/Constants";
+import {BASE_API} from "../util/Constants";
 import {hateoasRequest} from "../util/APIUtils";
 
 export function saveImages(files) {
@@ -11,11 +11,9 @@ export function saveImages(files) {
         formData.append('files', file)
     })
     const options = {
-        method: 'POST',
-        headers: headers,
-        body: formData
+        method: 'POST', headers: headers, body: formData
     };
-    return fetch(HOST + '/images', options).then(response =>
+    return fetch(`${BASE_API}/documents`, options).then(response =>
         response.json().then(json => {
             if (!response.ok) {
                 return Promise.reject(json);
@@ -25,10 +23,12 @@ export function saveImages(files) {
     )
 }
 
-export function getImages(page = 1,
-                          size = 10,
-                          sort = "uploadedDate") {
+export function getDocuments(page = 1, size = 10, sort = "uploadedDate") {
     page -= 1
-    const url = HOST + "/images?page=" + page + "&size=" + size + "&sort=" + sort
+    const url = `${BASE_API}/documents?page=${page}&size=${size}&sort=${sort}`
     return hateoasRequest(url)
+}
+
+export function getDocumentSrc(id) {
+    return `${BASE_API}/documents/${id}/download`
 }

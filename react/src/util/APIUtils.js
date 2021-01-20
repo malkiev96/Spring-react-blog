@@ -1,4 +1,4 @@
-import {ACCESS_TOKEN, HOST} from './Constants';
+import {ACCESS_TOKEN} from './Constants';
 
 export const jsonRequest = (options) => {
     const headers = new Headers({
@@ -36,8 +36,4 @@ export const hateoasRequest = (url) => {
     return fetch(url, {headers: headers, method: 'GET'}).then(response =>
         response.json().then(json => !response.ok ? Promise.reject(json) : json)
     )
-}
-
-export function getFilters() {
-    return hateoasRequest(HOST + "/filters")
 }

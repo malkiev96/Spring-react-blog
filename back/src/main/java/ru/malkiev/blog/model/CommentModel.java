@@ -11,7 +11,7 @@ import ru.malkiev.blog.entity.Comment;
 @Data
 public class CommentModel extends RepresentationModel<CommentModel> {
 
-    private int id;
+    private Integer id;
     private String message;
     private boolean deleted;
     private AuditorModel auditor;

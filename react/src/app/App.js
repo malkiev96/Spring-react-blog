@@ -5,7 +5,7 @@ import Login from '../user/Login';
 import Signup from '../user/Signup';
 import OAuth2RedirectHandler from '../util/OAuth2RedirectHandler';
 import NotFound from '../common/notFound/NotFound';
-import {getFilters} from '../util/APIUtils';
+import {getCategories} from '../service/CategoryService';
 import {getCurrentUser} from "../service/UserService";
 import {ACCESS_TOKEN} from '../util/Constants';
 import PrivateRoute from '../common/PrivateRoute';
@@ -21,9 +21,9 @@ import UserEdit from "../user/UserEdit";
 import Publish from "../post/Publish";
 import AppFooter from "../common/footer/AppFooter";
 import Home from "./Home";
-import ImgGallery from "./ImgGallery";
 import Admin from "../admin/Admin";
 import AdminRoute from "../common/AdminRoute";
+import {getTags} from "../service/TagService";
 
 class App extends Component {
     constructor(props) {
@@ -35,12 +35,13 @@ class App extends Component {
                 loading: false,
                 admin: false
             },
-            loading: true,
+            categoriesLoading: true,
+            tagsLoading: true,
             categories: [],
             tags: []
         }
         this.loadCurrentlyLoggedInUser = this.loadCurrentlyLoggedInUser.bind(this);
-        this.loadFilters = this.loadFilters.bind(this);
+        this.loadData = this.loadData.bind(this);
         this.handleLogout = this.handleLogout.bind(this);
     }
 
@@ -66,16 +67,25 @@ class App extends Component {
         })
     }
 
-    loadFilters() {
-        getFilters().then(response => {
+    loadData() {
+        getCategories().then(response => {
             this.setState({
-                categories: response.categories,
-                tags: response.tags,
-                loading: false
+                categories: response.content,
+                categoriesLoading: false
             })
-        }).catch(error => {
+        }).catch(() => {
             this.setState({
-                loading: false
+                categoriesLoading: false
+            })
+        })
+        getTags().then(response => {
+            this.setState({
+                tags: response.content,
+                tagsLoading: false
+            })
+        }).catch(() => {
+            this.setState({
+                tagsLoading: false
             })
         })
     }
@@ -92,12 +102,12 @@ class App extends Component {
 
     componentDidMount() {
         this.loadCurrentlyLoggedInUser()
-        this.loadFilters()
+        this.loadData()
     }
 
     render() {
-        const {currentUser, loading, categories, tags} = this.state
-        if (currentUser.loading || loading) return <Loader/>
+        const {currentUser, categoriesLoading, tagsLoading, categories, tags} = this.state
+        if (currentUser.loading || categoriesLoading || tagsLoading) return <Loader/>
 
         return (
             <div>
@@ -115,8 +125,6 @@ class App extends Component {
                                       currentUser={currentUser} component={Publish}/>
                         <Route exact path="/contacts" render={(props) =>
                             <Contacts currentUser={currentUser} {...props}/>}/>
-                        <Route exact path="/gallery" render={(props) =>
-                            <ImgGallery currentUser={currentUser} {...props}/>}/>
                         <Route exact path="/post/:id" render={(props) =>
                             <PostsDetail categories={categories} currentUser={currentUser} {...props} />}/>
                         <PrivateRoute path="/post/:id/edit" categories={categories} tags={tags}

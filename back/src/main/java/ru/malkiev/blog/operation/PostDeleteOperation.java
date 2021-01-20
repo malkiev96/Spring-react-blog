@@ -10,7 +10,7 @@ import ru.malkiev.blog.service.UserService;
 
 import java.util.function.UnaryOperator;
 
-import static ru.malkiev.blog.entity.Post.Status.DELETED;
+import static ru.malkiev.blog.entity.PostStatus.DELETED;
 
 @Component
 @AllArgsConstructor

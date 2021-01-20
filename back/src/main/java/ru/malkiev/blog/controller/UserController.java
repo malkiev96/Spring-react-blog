@@ -8,15 +8,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.malkiev.blog.assembler.UserAssembler;
 import ru.malkiev.blog.assembler.UserDetailAssembler;
-import ru.malkiev.blog.entity.User;
+import ru.malkiev.blog.dto.UserEditDto;
 import ru.malkiev.blog.exception.UserNotFoundException;
 import ru.malkiev.blog.model.UserDetailModel;
 import ru.malkiev.blog.model.UserModel;
-import ru.malkiev.blog.model.payload.UserEditDto;
 import ru.malkiev.blog.operation.UserEditOperation;
 import ru.malkiev.blog.repository.UserRepository;
-import ru.malkiev.blog.security.CurrentUser;
-import ru.malkiev.blog.security.UserPrincipal;
 
 import javax.validation.Valid;
 import java.util.Optional;
@@ -31,12 +28,6 @@ public class UserController {
     private final UserDetailAssembler detailAssembler;
     private final UserAssembler userAssembler;
     private final UserEditOperation editOperation;
-
-    @GetMapping("/user/me")
-    @PreAuthorize("isAuthenticated()")
-    public User getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
-        return userPrincipal.getUser();
-    }
 
     @GetMapping("/users/{id}")
     public ResponseEntity<UserDetailModel> getOne(@PathVariable int id) {

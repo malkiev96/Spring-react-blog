@@ -4,30 +4,30 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
+import ru.malkiev.blog.dto.PostDto;
 import ru.malkiev.blog.entity.Category;
-import ru.malkiev.blog.entity.Image;
+import ru.malkiev.blog.entity.Document;
 import ru.malkiev.blog.entity.Post;
 import ru.malkiev.blog.exception.CategoryNotFoundException;
-import ru.malkiev.blog.exception.ImageNotFoundException;
+import ru.malkiev.blog.exception.DocumentNotFoundException;
 import ru.malkiev.blog.exception.PostNotFoundException;
-import ru.malkiev.blog.model.payload.PostDto;
 import ru.malkiev.blog.repository.CategoryRepository;
-import ru.malkiev.blog.repository.ImageRepository;
+import ru.malkiev.blog.repository.DocumentRepository;
 import ru.malkiev.blog.repository.PostRepository;
 import ru.malkiev.blog.repository.TagRepository;
 
 import javax.validation.Valid;
 import java.util.function.Function;
 
-import static ru.malkiev.blog.entity.Post.Status.CREATED;
-import static ru.malkiev.blog.entity.Post.Status.PUBLISHED;
+import static ru.malkiev.blog.entity.PostStatus.CREATED;
+import static ru.malkiev.blog.entity.PostStatus.PUBLISHED;
 
 @Component
 @AllArgsConstructor
 public class PostCreateOperation implements Function<PostDto, Post> {
 
     private final PostRepository repository;
-    private final ImageRepository imageRepository;
+    private final DocumentRepository documentRepository;
     private final CategoryRepository categoryRepository;
     private final TagRepository tagRepository;
 
@@ -39,9 +39,8 @@ public class PostCreateOperation implements Function<PostDto, Post> {
         post.setDescription(postDto.getDescription());
         post.setText(postDto.getText());
         post.setPreview(getPreview(postDto.getPreviewId()));
-        post.setCategory(getCategory(postDto.getId()));
-
-        post.setImages(imageRepository.findAllById(postDto.getImageIds()));
+        post.setCategory(getCategory(postDto.getCategoryId()));
+        post.setDocuments(documentRepository.findAllById(postDto.getDocumentIds()));
         post.setTags(tagRepository.findAllById(postDto.getTagIds()));
         post.setStatus(postDto.isPosted() ? PUBLISHED : CREATED);
 
@@ -54,14 +53,12 @@ public class PostCreateOperation implements Function<PostDto, Post> {
     }
 
     private Post getPost(@Nullable Integer postId) {
-        return postId != null
-                ? repository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId))
-                : new Post();
+        return postId == null ? new Post() : repository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException(postId));
     }
 
-    private Image getPreview(@Nullable Integer previewId) {
-        return previewId != null
-                ? imageRepository.findById(previewId).orElseThrow(() -> new ImageNotFoundException(previewId))
-                : null;
+    private Document getPreview(@Nullable Long previewId) {
+        return previewId == null ? null : documentRepository.findById(previewId)
+                .orElseThrow(() -> new DocumentNotFoundException(previewId));
     }
 }

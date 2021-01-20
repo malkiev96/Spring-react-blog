@@ -1,4 +1,4 @@
-package ru.malkiev.blog.model.payload;
+package ru.malkiev.blog.dto;
 
 import lombok.Getter;
 import ru.malkiev.blog.entity.ContactMessage;

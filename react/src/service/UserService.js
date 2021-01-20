@@ -1,8 +1,8 @@
-import {ACCESS_TOKEN, HOST} from "../util/Constants";
+import {ACCESS_TOKEN, BASE_API} from "../util/Constants";
 import {hateoasRequest, jsonRequest} from "../util/APIUtils";
 
 export function getUser(id) {
-    return hateoasRequest(HOST + "/users/" + id)
+    return hateoasRequest(BASE_API + "/users/" + id)
 }
 
 export function getCurrentUser() {
@@ -10,18 +10,18 @@ export function getCurrentUser() {
         return Promise.reject("No access token set.");
     }
     return jsonRequest({
-        url: HOST + "/user/me",
+        url: BASE_API + "/auth/user/me",
         method: 'GET'
     });
 }
 
 export function getAdmins() {
-    return hateoasRequest(HOST + "/users/admins")
+    return hateoasRequest(BASE_API + "/users/admins")
 }
 
 export function sendContactMessage(msg) {
     return jsonRequest({
-        url: HOST + "/contacts",
+        url: `${BASE_API}/contacts`,
         method: "POST",
         body: JSON.stringify(msg)
     })
@@ -29,7 +29,7 @@ export function sendContactMessage(msg) {
 
 export function login(loginRequest) {
     return jsonRequest({
-        url: HOST + "/auth/login",
+        url: `${BASE_API}/auth/login`,
         method: 'POST',
         body: JSON.stringify(loginRequest)
     });
@@ -37,7 +37,7 @@ export function login(loginRequest) {
 
 export function signup(signupRequest) {
     return jsonRequest({
-        url: HOST + "/auth/signup",
+        url: `${BASE_API}/auth/signup`,
         method: 'POST',
         body: JSON.stringify(signupRequest)
     });
@@ -45,7 +45,7 @@ export function signup(signupRequest) {
 
 export function updateUser(id, userRequest) {
     return jsonRequest({
-        url: HOST + '/users/' + id,
+        url: `${BASE_API}/users/${id}`,
         method: 'POST',
         body: JSON.stringify(userRequest)
     })

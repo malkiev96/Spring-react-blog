@@ -9,8 +9,10 @@ class AppFooter extends Component {
         return (
             <div className='app-footer'>
                 <Container>
-                    © 2020. Created by
-                    <Link to={'/user/' + ADMIN_ID}><span id='footer-user-link'> {ADMIN_NAME}</span></Link>
+                    © {new Date().getFullYear()}. Created by
+                    <Link to={`/user/${ADMIN_ID}`}>
+                        <span id='footer-user-link'> {ADMIN_NAME}</span>
+                    </Link>
                 </Container>
             </div>
         );

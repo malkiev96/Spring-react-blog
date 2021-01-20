@@ -4,7 +4,7 @@ import {updateUser} from '../service/UserService';
 import {Button, Form, Grid, Header, Image, Segment} from "semantic-ui-react";
 import ImageUploader from 'react-images-upload';
 import Alert from "react-s-alert";
-import {saveImages} from "../service/ImageService";
+import {getDocumentSrc, saveImages} from "../service/DocumentService";
 
 class UserEdit extends Component {
 
@@ -36,7 +36,7 @@ class UserEdit extends Component {
             this.setState({imageLoading: true})
             saveImages(image).then(result => {
                 this.setState({
-                    imageUrl: result['content'][0].url,
+                    imageUrl: getDocumentSrc(result['content'][0].id),
                     imageLoading: false
                 })
             }).catch(error => {

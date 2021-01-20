@@ -1,15 +1,15 @@
 package ru.malkiev.blog.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.malkiev.blog.dto.SignUpDto;
 import ru.malkiev.blog.entity.AuthProvider;
 import ru.malkiev.blog.entity.Role;
 import ru.malkiev.blog.entity.User;
 import ru.malkiev.blog.exception.UserNotFoundException;
-import ru.malkiev.blog.model.payload.SignUpDto;
 import ru.malkiev.blog.repository.UserRepository;
 import ru.malkiev.blog.security.UserPrincipal;
 import ru.malkiev.blog.security.oauth2.user.OAuth2UserInfo;
@@ -17,21 +17,17 @@ import ru.malkiev.blog.security.oauth2.user.OAuth2UserInfo;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
-
     public Optional<User> getCurrentUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal instanceof UserPrincipal) {
-            return Optional.of(((UserPrincipal) principal).getUser());
+            User user = ((UserPrincipal) principal).getUser();
+            return Optional.of(user);
         }
         return Optional.empty();
     }

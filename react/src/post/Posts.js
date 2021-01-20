@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import PostsView from "./PostsView";
 import {getPosts} from "../service/PostService";
 import {Button, Pagination, Segment} from "semantic-ui-react";
-import {SORT_DATE, SORT_POPULAR, SORT_TYPE, SORT_VIEW} from "../util/Constants";
+import {SORT_DATE, SORT_TYPE} from "../util/Constants";
 
 class Posts extends Component {
 
@@ -27,9 +27,6 @@ class Posts extends Component {
         this.onTagClick = this.onTagClick.bind(this);
         this.loadPosts = this.loadPosts.bind(this);
         this.pageChange = this.pageChange.bind(this);
-        this.onPopularClick = this.onPopularClick.bind(this);
-        this.onNewClick = this.onNewClick.bind(this);
-        this.onViewClick = this.onViewClick.bind(this);
         this.getIds = this.getIds.bind(this);
     }
 
@@ -47,27 +44,6 @@ class Posts extends Component {
         document.title = 'Публикации'
         const {page, size, sort, tagCode, categoryCode} = this.state;
         this.loadPosts(page, size, sort, tagCode, categoryCode)
-    }
-
-    onPopularClick() {
-        localStorage.setItem(SORT_TYPE, SORT_POPULAR)
-        this.setState({sort: SORT_POPULAR, page: 1})
-        const {size, tagCode, categoryCode} = this.state;
-        this.loadPosts(1, size, SORT_POPULAR, tagCode, categoryCode)
-    }
-
-    onNewClick() {
-        localStorage.setItem(SORT_TYPE, SORT_DATE)
-        this.setState({sort: SORT_DATE, page: 1})
-        const {size, tagCode, categoryCode} = this.state;
-        this.loadPosts(1, size, SORT_DATE, tagCode, categoryCode)
-    }
-
-    onViewClick() {
-        localStorage.setItem(SORT_TYPE, SORT_VIEW)
-        this.setState({sort: SORT_VIEW, page: 1})
-        const {size, tagCode, categoryCode} = this.state;
-        this.loadPosts(1, size, SORT_VIEW, tagCode, categoryCode)
     }
 
     onTagClick(code) {
@@ -115,13 +91,13 @@ class Posts extends Component {
             let ids = []
             this.props.categories.forEach(cat => {
                 let childs = cat.childs;
-                if (cat.description === categoryCode) {
+                if (cat.code === categoryCode) {
                     ids.push(cat.id)
                     childs.forEach(child => ids.push(child.id))
                     exist = true
                 }
                 childs.forEach(child => {
-                    if (child.description === categoryCode) {
+                    if (child.code === categoryCode) {
                         ids.push(child.id)
                         exist = true
                     }
@@ -135,31 +111,17 @@ class Posts extends Component {
     }
 
     render() {
-        const {posts, sort, selectedTags} = this.state
+        const {posts, selectedTags} = this.state
         return (
             <div>
-                <Segment textAlign={'center'}>
-                    <Button primary={sort === SORT_DATE}
-                            basic={sort !== SORT_DATE}
-                            size={"tiny"} onClick={this.onNewClick}
-                            style={{backgroundColor: '#175e6b'}}>Сначала новые</Button>
-                    <Button primary={sort === SORT_POPULAR}
-                            basic={sort !== SORT_POPULAR}
-                            size={"tiny"} onClick={this.onPopularClick}
-                            style={{backgroundColor: '#175e6b'}}>Популярное</Button>
-                    <Button primary={sort === SORT_VIEW}
-                            basic={sort !== SORT_VIEW}
-                            size={"tiny"} onClick={this.onViewClick}
-                            style={{backgroundColor: '#175e6b'}}>Просматриваемое</Button>
-                </Segment>
                 <Segment>
                     {
                         this.props.tags.map(tag => {
-                            const selected = selectedTags.includes(tag.description)
+                            const selected = selectedTags.includes(tag.code)
                             return (
                                 <Button primary={selected} basic={!selected} size={"tiny"}
                                         style={{backgroundColor: '#175e6b'}}
-                                        onClick={() => this.onTagClick(tag.description)}>{tag.name}
+                                        onClick={() => this.onTagClick(tag.code)}>{tag.name}
                                 </Button>
                             )
                         })
@@ -168,8 +130,11 @@ class Posts extends Component {
                 <PostsView posts={posts}/>
                 {
                     posts.page && posts.page.totalPages > 1 &&
-                    <Pagination style={{marginTop: '15px'}} activePage={posts.page.number + 1}
-                                firstItem={null} lastItem={null} onPageChange={this.pageChange}
+                    <Pagination style={{marginTop: '15px'}}
+                                activePage={posts.page.number + 1}
+                                firstItem={null}
+                                lastItem={null}
+                                onPageChange={this.pageChange}
                                 totalPages={posts.page.totalPages}/>
                 }
             </div>
@@ -179,9 +144,9 @@ class Posts extends Component {
     pageChange(e, {activePage}) {
         this.setState({page: activePage})
         const {tagCode, categoryCode} = this.state
-        if (tagCode) this.props.history.push("/tags/" + tagCode + "/" + activePage)
-        else if (categoryCode) this.props.history.push("/category/" + categoryCode + "/" + activePage)
-        else this.props.history.push("/posts/" + activePage)
+        if (tagCode) this.props.history.push(`/tags/${tagCode}/${activePage}`)
+        else if (categoryCode) this.props.history.push(`/category/${categoryCode}/${activePage}`)
+        else this.props.history.push(`/posts/${activePage}`)
     }
 }
 

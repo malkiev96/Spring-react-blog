@@ -6,8 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.Link;
 import ru.malkiev.blog.controller.PostController;
 import ru.malkiev.blog.controller.UserController;
+import ru.malkiev.blog.entity.PostSpecification;
 import ru.malkiev.blog.entity.User;
-import ru.malkiev.blog.spec.PostSpec;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -20,7 +20,7 @@ public class UserLinks {
     }
 
     public static Link linkToPosts(User entity) {
-        PostSpec specification = new PostSpec();
+        PostSpecification specification = new PostSpecification();
         specification.setUserId(entity.getId());
         return linkTo(methodOn(PostController.class).getPosts(specification, Pageable.unpaged()))
                 .withRel("posts");

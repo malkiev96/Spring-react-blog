@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 @Entity
 @Table(name = "POSTS")
 @Data
@@ -21,19 +21,19 @@ public class Post extends Auditable {
     @Column(name = "TITLE", nullable = false)
     private String title;
 
-    @Column(name = "DESCRIPTION", nullable = false)
+    @Column(name = "DESCRIPTION", nullable = false, length = 512)
     private String description;
 
-    @Column(name = "POST_TEXT", nullable = false)
+    @Column(name = "POST_TEXT", nullable = false, length = 4000)
     private String text;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "PREVIEW_IMG_ID")
-    private Image preview;
+    private Document preview;
 
     @Column(name = "POST_STATUS", nullable = false)
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private PostStatus status;
 
     @Column(name = "VIEW_COUNT")
     private int viewCount;
@@ -50,31 +50,12 @@ public class Post extends Auditable {
     )
     private List<Tag> tags = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
-            name = "POST_IMAGES",
+            name = "POST_DOCUMENTS",
             joinColumns = @JoinColumn(name = "POST_ID"),
-            inverseJoinColumns = @JoinColumn(name = "IMAGE_ID")
+            inverseJoinColumns = @JoinColumn(name = "DOCUMENT_ID")
     )
-    private List<Image> images = new ArrayList<>();
+    private List<Document> documents = new ArrayList<>();
 
-    public static Post incrementView(Post post) {
-        post.setViewCount(post.getViewCount() + 1);
-        return post;
-    }
-
-    public enum Status {
-        /**
-         * Пост создан, но не опубликован
-         */
-        CREATED,
-        /**
-         * Пост опубликован
-         */
-        PUBLISHED,
-        /**
-         * Пост удален
-         */
-        DELETED;
-    }
 }
