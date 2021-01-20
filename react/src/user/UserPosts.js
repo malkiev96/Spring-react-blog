@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
-import {Loader, Pagination} from "semantic-ui-react";
+import {Pagination} from "semantic-ui-react";
 import {getPosts} from "../service/PostService";
 import PostsView from "../post/PostsView";
+import DataLoader from "../common/DataLoader";
 
 class UserPosts extends Component {
 
@@ -24,21 +25,21 @@ class UserPosts extends Component {
     }
 
     componentDidMount() {
-        this.loadPosts(this.state.id, this.state.page, this.state.status,this.state.liked)
+        this.loadPosts(this.state.id, this.state.page, this.state.status, this.state.liked)
     }
 
     loadPosts(userId, page, status, liked) {
         getPosts(page, 10, 'createdDate', null, null, status, userId, liked)
             .then(response => {
-            this.setState({
-                posts: {
-                    posts: response['content'],
-                    page: response['page'],
-                    self: response['links'][0],
-                    loading: false
-                }
-            })
-        }).catch(error => {
+                this.setState({
+                    posts: {
+                        posts: response['content'],
+                        page: response['page'],
+                        self: response['links'][0],
+                        loading: false
+                    }
+                })
+            }).catch(error => {
             this.setState({
                 posts: {
                     posts: [],
@@ -50,7 +51,7 @@ class UserPosts extends Component {
 
     render() {
         const {posts, profile} = this.state
-        if (posts.loading) return <Loader active inline='centered'/>
+        if (posts.loading) return <DataLoader/>
         return (
             <div>
                 <PostsView showActions={profile} posts={posts}/>

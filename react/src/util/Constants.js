@@ -4,7 +4,7 @@ export const ACCESS_TOKEN = 'accessToken';
 export const SORT_TYPE = 'sortType';
 export const SORT_DATE = 'createdDate,desc';
 
-export const BASE_API = '';
+export const BASE_API = 'http://localhost:8080';
 export const HOST = 'http://localhost:8080';
 export const OAUTH2_REDIRECT_URI = 'http://localhost:3000/oauth2/redirect'
 export const GOOGLE_AUTH_URL = HOST + '/oauth2/authorize/google?redirect_uri=' + OAUTH2_REDIRECT_URI;

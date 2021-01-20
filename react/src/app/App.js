@@ -12,7 +12,7 @@ import PrivateRoute from '../common/PrivateRoute';
 import Alert from 'react-s-alert';
 import 'react-s-alert/dist/s-alert-default.css';
 import 'react-s-alert/dist/s-alert-css-effects/slide.css';
-import {Container, Loader} from "semantic-ui-react";
+import {Container} from "semantic-ui-react";
 import Posts from "../post/Posts";
 import PostsDetail from "../post/PostsDetail";
 import UserDetail from "../user/UserDetail";
@@ -24,6 +24,7 @@ import Home from "./Home";
 import Admin from "../admin/Admin";
 import AdminRoute from "../common/AdminRoute";
 import {getTags} from "../service/TagService";
+import DataLoader from "../common/DataLoader";
 
 class App extends Component {
     constructor(props) {
@@ -107,7 +108,7 @@ class App extends Component {
 
     render() {
         const {currentUser, categoriesLoading, tagsLoading, categories, tags} = this.state
-        if (currentUser.loading || categoriesLoading || tagsLoading) return <Loader/>
+        if (currentUser.loading || categoriesLoading || tagsLoading) return <DataLoader/>
 
         return (
             <div>

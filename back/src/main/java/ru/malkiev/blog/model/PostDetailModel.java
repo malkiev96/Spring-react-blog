@@ -3,10 +3,8 @@ package ru.malkiev.blog.model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.springframework.hateoas.CollectionModel;
 import ru.malkiev.blog.entity.Post;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -17,14 +15,12 @@ public class PostDetailModel extends PostModel {
     private Double rating;
     private CategoryModel category;
     private String text;
-    private List<TagModel> tags = new ArrayList<>();
-    private List<DocumentModel> documents = new ArrayList<>();
+    private CollectionModel<TagModel> tags;
+    private CollectionModel<DocumentModel> documents;
 
     public PostDetailModel(Post post) {
         super(post);
         this.text = post.getText();
         this.category = new CategoryModel(post.getCategory());
-        post.getTags().forEach(tag -> this.tags.add(new TagModel(tag)));
-        post.getDocuments().forEach(doc -> this.documents.add(new DocumentModel(doc)));
     }
 }

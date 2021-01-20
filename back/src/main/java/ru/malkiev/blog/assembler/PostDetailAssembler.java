@@ -21,12 +21,16 @@ public class PostDetailAssembler implements RepresentationModelAssembler<Post, P
     private final UserService userService;
     private final PostLikeRepository likeRepository;
     private final PostRatingRepository ratingRepository;
+    private final DocumentAssembler documentAssembler;
+    private final TagModelAssembler tagModelAssembler;
 
     @Override
     public @NotNull PostDetailModel toModel(@NotNull Post entity) {
         PostDetailModel model = new PostDetailModel(entity);
         model.setRating(ratingRepository.getAvgRatingByPost(entity));
         model.setLikedCount(likeRepository.countByPost(entity));
+        model.setDocuments(documentAssembler.toCollectionModel(entity.getDocuments()));
+        model.setTags(tagModelAssembler.toCollectionModel(entity.getTags()));
 
         model.add(linkToDetailPost(entity).withSelfRel());
         model.add(linkToComments(entity));

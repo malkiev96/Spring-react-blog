@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Button, Comment, Confirm, Form, Header, Icon, Item, List, Loader, Rating, Segment} from "semantic-ui-react";
+import {Button, Comment, Confirm, Form, Header, Icon, Item, List, Rating, Segment} from "semantic-ui-react";
 import {addStar, deletePost, getPostById, hidePost, likePost, publishPost} from "../service/PostService";
 import {addComment, deleteComment, getComments} from '../service/CommentService'
 import moment from "moment";
@@ -12,6 +12,7 @@ import "pure-react-carousel/dist/react-carousel.es.css";
 import {CarouselProvider, Image, Slide, Slider} from "pure-react-carousel";
 import ReactMarkdown from "react-markdown";
 import {getDocumentSrc} from "../service/DocumentService";
+import DataLoader from "../common/DataLoader";
 
 class PostsDetail extends Component {
 
@@ -223,9 +224,9 @@ class PostsDetail extends Component {
         const {loading, error, post} = this.state.post
         const {
             comments, postStarred, rating, openDel, openPublish,
-            openHide, currentUser, liked, likedCount
+            openHide, liked, likedCount
         } = this.state
-        if (loading) return <Loader active inline='centered'/>
+        if (loading) return <DataLoader/>
         if (error) return <NotFound/>
         const createdDate = moment(post.auditor.createdDate, "DD-MM-YYYY hh:mm", locale).fromNow()
         const canEdit = post.links.find(link => link.rel === 'edit')
@@ -286,16 +287,16 @@ class PostsDetail extends Component {
                     </div>
                 </Segment>
                 {
-                    post.documents && post.documents.length !== 0 &&
+                    post.documents && post.documents.content.length !== 0 &&
                     <Segment>
                         <Header as='h3' dividing>Прикрепленные изображения</Header>
                         <CarouselProvider
                             naturalSlideWidth={100}
                             naturalSlideHeight={50}
-                            totalSlides={post.documents.length}>
+                            totalSlides={post.documents.content.length}>
                             <Slider>
                                 {
-                                    post.documents.map((doc, index) =>
+                                    post.documents.content.map((doc, index) =>
                                         <Slide index={index}>
                                             <Image src={getDocumentSrc(doc.id)} hasMasterSpinner/>
                                         </Slide>
@@ -353,7 +354,7 @@ class PostsDetail extends Component {
 
                     <Header as='h3' dividing>Теги</Header>
                     <List selection horizontal>
-                        {post.tags.map(tag => {
+                        {post.tags.content.map(tag => {
                             return (
                                 <List.Item key={tag.id}>
                                     <Link to={'/tags/' + tag.code}>

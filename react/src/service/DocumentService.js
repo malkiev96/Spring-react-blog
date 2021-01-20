@@ -1,14 +1,18 @@
 import {BASE_API} from "../util/Constants";
-import {hateoasRequest} from "../util/APIUtils";
 
-export function saveImages(files) {
+export const DEFAULT_FILE_TYPE = 'FILE'
+export const IMAGE_TYPE = 'IMAGE'
+export const ZIP_FILE = 'ZIP'
+
+export function saveDocument(files, type = DEFAULT_FILE_TYPE) {
     const headers = new Headers({
         Accept: 'application/x-spring-data-verbose+json',
         Authorization: 'Bearer ' + localStorage.getItem('accessToken')
     })
     const formData = new FormData();
+    formData.append('type', type)
     files.forEach(file => {
-        formData.append('files', file)
+        formData.append('file', file)
     })
     const options = {
         method: 'POST', headers: headers, body: formData
@@ -21,12 +25,6 @@ export function saveImages(files) {
             return json;
         })
     )
-}
-
-export function getDocuments(page = 1, size = 10, sort = "uploadedDate") {
-    page -= 1
-    const url = `${BASE_API}/documents?page=${page}&size=${size}&sort=${sort}`
-    return hateoasRequest(url)
 }
 
 export function getDocumentSrc(id) {

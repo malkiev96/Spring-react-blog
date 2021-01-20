@@ -4,6 +4,7 @@ import {Segment} from "semantic-ui-react";
 import Alert from 'react-s-alert';
 import './posts.css'
 import PostsItem from "./PostsItem";
+import DataLoader from "../common/DataLoader";
 
 class PostsView extends Component {
 
@@ -29,6 +30,7 @@ class PostsView extends Component {
 
     render() {
         const {posts, showActions} = this.state
+        if (posts.loading) return <DataLoader/>
         if (posts.posts.length === 0) return <Segment>Статей нет</Segment>
         return (
             <div>

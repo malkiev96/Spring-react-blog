@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
 import {getUser} from '../service/UserService';
-import {Button, Divider, Header, Icon, Image, Loader, Segment, Table} from "semantic-ui-react";
+import {Button, Divider, Header, Icon, Image, Segment, Table} from "semantic-ui-react";
 import NotFound from "../common/notFound/NotFound";
 import {Link} from "react-router-dom";
 import {Tab, TabList, TabPanel, Tabs} from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import UserPosts from "./UserPosts";
+import DataLoader from "../common/DataLoader";
 
 class UserDetail extends Component {
 
@@ -37,7 +38,7 @@ class UserDetail extends Component {
 
     loadUser(id) {
         getUser(id).then(response => {
-            document.title = 'Профиль - '+ response.name
+            document.title = 'Профиль - ' + response.name
             this.setState({
                 user: {
                     user: response,
@@ -58,7 +59,7 @@ class UserDetail extends Component {
 
     render() {
         const {user, profile} = this.state
-        if (user.loading) return <Loader active inline='centered'/>
+        if (user.loading) return <DataLoader/>
         if (user.error) return <NotFound/>
         const admin = this.props.currentUser.admin;
         return (

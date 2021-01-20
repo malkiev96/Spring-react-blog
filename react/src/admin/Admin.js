@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
-import {Button, Header, Loader, Message, Pagination, Table} from 'semantic-ui-react'
+import {Button, Header, Message, Pagination, Table} from 'semantic-ui-react'
 import {deleteMessage, getMessages} from "../service/ContactService";
 import NotFound from "../common/notFound/NotFound";
 import Alert from "react-s-alert";
+import DataLoader from "../common/DataLoader";
 
 class Admin extends Component {
 
@@ -62,7 +63,7 @@ class Admin extends Component {
 
     render() {
         const {messages, page, loading, error} = this.state.messages
-        if (loading) return <Loader active inline='centered'/>
+        if (loading) return <DataLoader/>
         if (error) return <NotFound/>
 
         return (

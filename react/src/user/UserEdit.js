@@ -4,7 +4,7 @@ import {updateUser} from '../service/UserService';
 import {Button, Form, Grid, Header, Image, Segment} from "semantic-ui-react";
 import ImageUploader from 'react-images-upload';
 import Alert from "react-s-alert";
-import {getDocumentSrc, saveImages} from "../service/DocumentService";
+import {getDocumentSrc, saveDocument} from "../service/DocumentService";
 
 class UserEdit extends Component {
 
@@ -34,7 +34,7 @@ class UserEdit extends Component {
     loadAvatar(image) {
         if (image) {
             this.setState({imageLoading: true})
-            saveImages(image).then(result => {
+            saveDocument(image).then(result => {
                 this.setState({
                     imageUrl: getDocumentSrc(result['content'][0].id),
                     imageLoading: false

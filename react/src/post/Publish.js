@@ -1,15 +1,16 @@
 import React, {Component} from 'react';
-import {Button, Checkbox, Form, Image, Loader, Segment} from "semantic-ui-react";
+import {Button, Checkbox, Form, Image, Segment} from "semantic-ui-react";
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import Select from 'react-select'
 import ImageUploader from "react-images-upload";
-import {saveImages} from '../service/DocumentService';
+import {IMAGE_TYPE, saveDocument} from '../service/DocumentService';
 import {createPost, getPostById} from '../service/PostService';
 import Alert from "react-s-alert";
 import {Redirect} from "react-router-dom";
 import NotFound from "../common/notFound/NotFound";
 import {BASE_API} from "../util/Constants";
+import DataLoader from "../common/DataLoader";
 
 const defaultState = () => ({
     title: '',
@@ -102,9 +103,9 @@ class Publish extends Component {
                 text: response.text,
                 preview: response.preview,
                 category: {id: category.id, value: category.id, label: category.name},
-                tags: response.tags.map(({id, name}) => ({id: id, value: id, label: name})),
-                postImages: response.documents.map(({id, url}) => ({id: id, url: url})),
-                imageIds: response.documents.map(({id}) => id)
+                tags: response.tags.content.map(({id, name}) => ({id: id, value: id, label: name})),
+                postImages: response.documents.content.map(({id, url}) => ({id: id, url: url})),
+                imageIds: response.documents.content.map(({id}) => id)
             })
         }).catch((error) => {
             this.setState({
@@ -120,9 +121,9 @@ class Publish extends Component {
     loadPreview(image) {
         if (image) {
             this.setState({previewLoading: true})
-            saveImages(image).then(result => {
+            saveDocument(image, IMAGE_TYPE).then(result => {
                 this.setState({
-                    preview: result['content'][0],
+                    preview: result,
                     previewLoading: false
                 })
             }).catch(error => {
@@ -149,13 +150,11 @@ class Publish extends Component {
         Array.from(files).forEach(file => image.push(file))
         if (image) {
             this.setState({loading: true})
-            saveImages(image).then(result => {
-                const images = result['content']
+            saveDocument(image, IMAGE_TYPE).then(result => {
+                const image = result
                 const {postImages, imageIds} = this.state
-                images.forEach(({id, url}) => {
-                    postImages.push({id: id, url: url})
-                    imageIds.push(id)
-                })
+                postImages.push({id: image.id})
+                imageIds.push(image.id)
                 this.setState({
                     loading: false,
                     imageIds: imageIds,
@@ -225,7 +224,7 @@ class Publish extends Component {
             allCategories, allTags, title, description, text, edit, tags, preview, posted,
             textError, categoryError, tagsError, loading, createdPost, category, postImages
         } = this.state
-        if (postLoading && edit) return <Loader active inline='centered'/>
+        if (postLoading && edit) return <DataLoader/>
         if (error) return <NotFound/>
 
         if (createdPost != null) return <Redirect to={{pathname: "/post/" + createdPost.id}}/>

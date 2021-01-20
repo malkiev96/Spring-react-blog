@@ -2,7 +2,6 @@ package ru.malkiev.blog.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.util.InMemoryResource;
@@ -10,14 +9,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.malkiev.blog.assembler.DocumentAssembler;
 import ru.malkiev.blog.entity.Document;
+import ru.malkiev.blog.entity.DocumentType;
 import ru.malkiev.blog.exception.DocumentNotFoundException;
 import ru.malkiev.blog.model.DocumentModel;
 import ru.malkiev.blog.service.DocumentService;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -45,11 +42,8 @@ public class DocumentController {
     }
 
     @PostMapping("/documents")
-    public ResponseEntity<CollectionModel<DocumentModel>> upload(@RequestParam("files") MultipartFile[] files) {
-        List<Document> documents = new ArrayList<>();
-        Arrays.stream(files).forEach(file -> documents.add(documentService.save(file)));
-        return ResponseEntity.ok(
-                assembler.toCollectionModel(documents)
-        );
+    public ResponseEntity<DocumentModel> upload(@RequestParam("file") MultipartFile file,
+                                                @RequestParam("type") DocumentType type) {
+        return ResponseEntity.ok(assembler.toModel(documentService.save(file, type)));
     }
 }

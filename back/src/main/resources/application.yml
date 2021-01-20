@@ -4,6 +4,8 @@ spring:
       username: ${DATABASE_USER:postgres}
       password: ${DATABASE_PASSWORD:root}
       driver-class-name: org.postgresql.Driver
+      hikari:
+        auto-commit: false
     jpa:
         show-sql: false
         hibernate:

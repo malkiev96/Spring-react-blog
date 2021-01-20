@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
 import {getPosts} from "../service/PostService";
-import {Button, Loader} from "semantic-ui-react";
+import {Button} from "semantic-ui-react";
 import PostsView from "../post/PostsView";
 import {Link} from "react-router-dom";
+import DataLoader from "../common/DataLoader";
 
 class Home extends Component {
 
@@ -43,7 +44,7 @@ class Home extends Component {
 
     render() {
         const {posts} = this.state
-        if (posts.loading) return <Loader active inline='centered'/>
+        if (posts.loading) return <DataLoader/>
 
         return (
             <div>

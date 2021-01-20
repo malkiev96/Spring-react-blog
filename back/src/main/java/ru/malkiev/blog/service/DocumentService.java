@@ -17,11 +17,11 @@ public class DocumentService {
     private final DocumentRepository repository;
 
     @SneakyThrows
-    public Document save(MultipartFile file) {
+    public Document save(MultipartFile file, DocumentType type) {
         Document document = new Document();
         document.setFilename(file.getOriginalFilename());
         document.setBody(file.getBytes());
-        document.setType(DocumentType.FILE);
+        document.setType(type);
         return repository.save(document);
     }
 
