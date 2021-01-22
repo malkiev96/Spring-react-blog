@@ -53,4 +53,8 @@ public class PostLinks {
     public static Link linkToAddRatingPost(Post entity) {
         return linkTo(methodOn(PostOperationController.class).rating(entity.getId(), 5)).withRel("star");
     }
+
+    public static Link linkToDeleteRatingPost(Post entity) {
+        return linkTo(methodOn(PostOperationController.class).deleteStarOfUser(entity.getId())).withRel("deleteStar");
+    }
 }

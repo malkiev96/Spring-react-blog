@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.malkiev.blog.assembler.PostDetailAssembler;
 import ru.malkiev.blog.dto.PostDto;
+import ru.malkiev.blog.entity.Post;
 import ru.malkiev.blog.exception.PostNotFoundException;
 import ru.malkiev.blog.link.PostLinks;
 import ru.malkiev.blog.model.PostDetailModel;
@@ -27,6 +28,7 @@ public class PostOperationController {
     private final PostPublishOperation publishOperation;
     private final AddLikeOperation likeOperation;
     private final AddStarOperation starOperation;
+    private final DeleteStarOperation deleteStarOperation;
     private final PostCreateOperation createOperation;
     private final PostDetailAssembler detailAssembler;
 
@@ -40,12 +42,19 @@ public class PostOperationController {
 
     @GetMapping("/posts/{id}/rating")
     public ResponseEntity<Double> rating(@PathVariable int id,
-                                       @RequestParam int star) {
+                                         @RequestParam int star) {
         return repository.findById(id)
                 .map(post -> Pair.of(post, star))
                 .map(starOperation)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new PostNotFoundException(id));
+    }
+
+    @DeleteMapping("/posts/{id}/rating")
+    public ResponseEntity<Double> deleteStarOfUser(@PathVariable int id) {
+        Post post = repository.findById(id)
+                .orElseThrow(() -> new PostNotFoundException(id));
+        return ResponseEntity.ok(deleteStarOperation.apply(post));
     }
 
     @GetMapping("/posts/{id}/hide")

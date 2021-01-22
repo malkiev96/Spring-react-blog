@@ -36,7 +36,7 @@ class UserEdit extends Component {
             this.setState({imageLoading: true})
             saveDocument(image).then(result => {
                 this.setState({
-                    imageUrl: getDocumentSrc(result['content'][0].id),
+                    imageUrl: getDocumentSrc(result.id),
                     imageLoading: false
                 })
             }).catch(error => {

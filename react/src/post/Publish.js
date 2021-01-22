@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
-import {Button, Checkbox, Form, Image, Segment} from "semantic-ui-react";
+import {Button, Checkbox, Form, Header, Icon, Image, Segment} from "semantic-ui-react";
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import Select from 'react-select'
 import ImageUploader from "react-images-upload";
-import {IMAGE_TYPE, saveDocument} from '../service/DocumentService';
+import {deleteDocument, FILE_TYPE, getDocumentSrc, IMAGE_TYPE, saveDocument} from '../service/DocumentService';
 import {createPost, getPostById} from '../service/PostService';
 import Alert from "react-s-alert";
 import {Redirect} from "react-router-dom";
@@ -20,8 +20,7 @@ const defaultState = () => ({
     category: null,
     tags: [],
     images: [],
-    imageIds: [],
-    postImages: [],
+    documents: [],
     preview: null,
     previewLoading: false,
     loading: false,
@@ -104,10 +103,10 @@ class Publish extends Component {
                 preview: response.preview,
                 category: {id: category.id, value: category.id, label: category.name},
                 tags: response.tags.content.map(({id, name}) => ({id: id, value: id, label: name})),
-                postImages: response.documents.content.map(({id, url}) => ({id: id, url: url})),
-                imageIds: response.documents.content.map(({id}) => id)
+                images: response.documents.content.filter(img => img.type === 'IMAGE'),
+                documents: response.documents.content.filter(img => img.type !== 'IMAGE')
             })
-        }).catch((error) => {
+        }).catch(() => {
             this.setState({
                 post: {
                     post: null,
@@ -138,42 +137,69 @@ class Publish extends Component {
     }
 
     deleteImageId(id) {
-        const postImages = this.state.postImages.filter(item => item.id !== id)
+        deleteDocument(id).catch(error => {
+            Alert.error((error && error.message) || 'Не удалось удалить изображение')
+        })
         this.setState({
-            postImages: postImages,
-            imageIds: postImages.map(({id}) => id)
+            images: this.state.images.filter(img => img.id !== id)
+        })
+    }
+
+    deleteDocumentId(id) {
+        deleteDocument(id).catch(error => {
+            Alert.error((error && error.message) || 'Не удалось удалить файл')
+        })
+        this.setState({
+            documents: this.state.documents.filter(img => img.id !== id)
         })
     }
 
     loadImages(files) {
         let image = []
         Array.from(files).forEach(file => image.push(file))
-        if (image) {
-            this.setState({loading: true})
-            saveDocument(image, IMAGE_TYPE).then(result => {
-                const image = result
-                const {postImages, imageIds} = this.state
-                postImages.push({id: image.id})
-                imageIds.push(image.id)
-                this.setState({
-                    loading: false,
-                    imageIds: imageIds,
-                    postImages: postImages
-                })
-            }).catch(error => {
-                this.setState({loading: false})
-                Alert.error((error && error.message) || 'Не удалось загрузить изображение, попробуйте еще раз');
-            })
-        } else {
-            this.setState({
-                preview: null
-            })
+        const types = ['image/png', 'image/jpeg', 'image/gif']
+        if (types.every(type => image[0].type !== type)) {
+            Alert.error("Прикрепленный файл не является изображением");
+            return;
         }
+        this.setState({loading: true})
+        saveDocument(image, IMAGE_TYPE).then(result => {
+            const images = this.state.images
+            images.push(result)
+            this.setState({
+                loading: false,
+                images: images
+            })
+        }).catch(error => {
+            this.setState({loading: false})
+            Alert.error((error && error.message) || 'Не удалось загрузить изображение, попробуйте еще раз');
+        })
+    }
+
+    loadDocuments(files) {
+        let document = []
+        Array.from(files).forEach(file => document.push(file))
+        if (!document[0].type.includes("application")) {
+            Alert.error("Недопустимый формат файла");
+            return;
+        }
+        this.setState({loading: true})
+        saveDocument(document, FILE_TYPE).then(result => {
+            const documents = this.state.documents
+            documents.push(result)
+            this.setState({
+                loading: false,
+                documents: documents
+            })
+        }).catch(error => {
+            this.setState({loading: false})
+            Alert.error((error && error.message) || 'Не удалось загрузить файл, попробуйте еще раз');
+        })
     }
 
     submitForm() {
         const {
-            previewLoading, loading, preview, id, imageIds,
+            previewLoading, loading, preview, id, images, documents,
             title, description, text, posted, category, tags,
         } = this.state
         if (title === '' || description === '')
@@ -193,6 +219,7 @@ class Publish extends Component {
         if (previewLoading || loading) {
             return;
         }
+        const documentsIds = []
         let postRequest = {
             id: id,
             title: title,
@@ -201,7 +228,7 @@ class Publish extends Component {
             posted: posted,
             previewId: preview ? preview.id : null,
             categoryId: category.id,
-            documentIds: imageIds,
+            documentIds: documentsIds.concat(images.map(img => img.id), documents.map(doc => doc.id)),
             tagIds: tags.map(tag => tag.id)
         }
         this.savePost(postRequest)
@@ -222,7 +249,7 @@ class Publish extends Component {
         const {postLoading, error} = this.state.post
         const {
             allCategories, allTags, title, description, text, edit, tags, preview, posted,
-            textError, categoryError, tagsError, loading, createdPost, category, postImages
+            textError, categoryError, tagsError, loading, createdPost, category, images, documents
         } = this.state
         if (postLoading && edit) return <DataLoader/>
         if (error) return <NotFound/>
@@ -259,7 +286,15 @@ class Publish extends Component {
                             <Image size='large' centered bordered
                                    label={{
                                        as: 'a', color: 'red', corner: 'right', icon: 'remove',
-                                       onClick: () => this.setState({preview: null})
+                                       onClick: () => {
+                                           deleteDocument(preview.id).catch(err => {
+                                               Alert.error((err && err.message) ||
+                                                   'Не удалось удалить изображение');
+                                           })
+                                           this.setState({
+                                               preview: null
+                                           })
+                                       }
                                    }}
                                    src={`${BASE_API}/documents/${preview.id}/download`}/>
                         }
@@ -294,7 +329,7 @@ class Publish extends Component {
                     </Form.Field>
                     <Image.Group size='medium'>
                         {
-                            postImages.map(({id}) => {
+                            images.map(({id}) => {
                                 return <Image key={id} label={{
                                     as: 'a', color: 'red', corner: 'right', icon: 'remove',
                                     onClick: () => {
@@ -304,6 +339,28 @@ class Publish extends Component {
                             })
                         }
                     </Image.Group>
+                    <Form.Field>
+                        <label>Прикрепить документы</label>
+                        <Form.Input
+                            onChange={(e) => {
+                                this.loadDocuments(e.target.files);
+                                e.target.value = null
+                            }}
+                            type={'file'}
+                        />
+                    </Form.Field>
+                    {
+                        documents && documents.map((doc, index) =>
+                            <Segment id={index} stacked loading={loading}>
+                                <a href={getDocumentSrc(doc.id)}>{doc.filename}</a>
+                                <Button negative size='mini' circular icon
+                                        floated="right"
+                                        onClick={() => this.deleteDocumentId(doc.id)}>
+                                    <Icon name='remove'/>
+                                </Button>
+                            </Segment>
+                        )
+                    }
                     <Form.Input>
                         <Checkbox defaultChecked={posted}
                                   onChange={(e, data) => {
@@ -311,7 +368,7 @@ class Publish extends Component {
                                   }}
                                   label='Опубликовать'/>
                     </Form.Input>
-                    <Button style={{backgroundColor: '#175e6b'}} primary>Cохранить</Button>
+                    <Button style={{backgroundColor: '#175e6b'}} primary>Сохранить</Button>
                 </Form>
             </Segment>
         </div>

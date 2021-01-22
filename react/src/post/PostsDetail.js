@@ -33,6 +33,8 @@ class PostsDetail extends Component {
                 error: false,
                 loading: true
             },
+            images: [],
+            documents: [],
             message: '',
             openDel: false,
             openHide: false,
@@ -77,6 +79,8 @@ class PostsDetail extends Component {
                     error: false,
                     loading: false
                 },
+                images: response.documents.content.filter(img => img.type === 'IMAGE'),
+                documents: response.documents.content.filter(img => img.type !== 'IMAGE'),
                 likedCount: response.likedCount,
                 liked: response.liked,
                 rating: response.rating,
@@ -224,7 +228,7 @@ class PostsDetail extends Component {
         const {loading, error, post} = this.state.post
         const {
             comments, postStarred, rating, openDel, openPublish,
-            openHide, liked, likedCount
+            openHide, liked, likedCount, images, documents
         } = this.state
         if (loading) return <DataLoader/>
         if (error) return <NotFound/>
@@ -234,6 +238,7 @@ class PostsDetail extends Component {
         const canPublish = post.links.find(link => link.rel === 'publish')
         const canDelete = post.links.find(link => link.rel === 'delete')
         const canLike = post.links.find(link => link.rel === 'like')
+        // const canDeleteStar = post.links.find(link => link.rel === 'deleteStar')
         return (
             <div>
                 <Segment>
@@ -287,16 +292,16 @@ class PostsDetail extends Component {
                     </div>
                 </Segment>
                 {
-                    post.documents && post.documents.content.length !== 0 &&
+                    images && images.length !== 0 &&
                     <Segment>
                         <Header as='h3' dividing>Прикрепленные изображения</Header>
                         <CarouselProvider
                             naturalSlideWidth={100}
                             naturalSlideHeight={50}
-                            totalSlides={post.documents.content.length}>
+                            totalSlides={images.length}>
                             <Slider>
                                 {
-                                    post.documents.content.map((doc, index) =>
+                                    images.map((doc, index) =>
                                         <Slide index={index}>
                                             <Image src={getDocumentSrc(doc.id)} hasMasterSpinner/>
                                         </Slide>
@@ -304,6 +309,19 @@ class PostsDetail extends Component {
                                 }
                             </Slider>
                         </CarouselProvider>
+                    </Segment>
+                }
+                {
+                    documents && documents.length !== 0 &&
+                    <Segment>
+                        <Header as='h3' dividing>Прикрепленные документы</Header>
+                        {
+                            documents.map((doc, index) =>
+                                <Segment id={index} raised>
+                                    <a href={getDocumentSrc(doc.id)}>{doc.filename}</a>
+                                </Segment>
+                            )
+                        }
                     </Segment>
                 }
                 <Segment>

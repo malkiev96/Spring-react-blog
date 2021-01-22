@@ -1,5 +1,5 @@
 import {BASE_API} from "../util/Constants";
-import {hateoasRequest, jsonRequest} from "../util/APIUtils";
+import {hateoasRequest, jsonRequest, request} from "../util/APIUtils";
 
 export function getPostById(id) {
     return hateoasRequest(BASE_API + "/posts/" + id)
@@ -24,6 +24,12 @@ export function getPosts(page = 1,
 
 export function addStar(postId, star) {
     return hateoasRequest(`${BASE_API}/posts/${postId}/rating?star=${star}`)
+}
+
+export function deleteStar(postId) {
+    return request({
+        url: `${BASE_API}/posts/${postId}/rating`, method: "DELETE"
+    })
 }
 
 export function getPostsByUrl(url) {

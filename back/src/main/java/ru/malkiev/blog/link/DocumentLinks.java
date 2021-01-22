@@ -17,6 +17,10 @@ public class DocumentLinks {
     }
 
     public static Link linkToDownload(Document entity) {
-        return linkTo(methodOn(DocumentController.class).download(entity.getId(), null)).withRel("download");
+        return linkTo(methodOn(DocumentController.class).download(entity.getId())).withRel("download");
+    }
+
+    public static Link linkToDelete(Document entity) {
+        return linkTo(methodOn(DocumentController.class).delete(entity.getId())).withRel("deleteDocument");
     }
 }

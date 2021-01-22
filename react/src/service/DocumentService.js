@@ -1,10 +1,11 @@
 import {BASE_API} from "../util/Constants";
+import {request} from "../util/APIUtils";
 
-export const DEFAULT_FILE_TYPE = 'FILE'
+export const FILE_TYPE = 'FILE'
 export const IMAGE_TYPE = 'IMAGE'
 export const ZIP_FILE = 'ZIP'
 
-export function saveDocument(files, type = DEFAULT_FILE_TYPE) {
+export function saveDocument(files, type = FILE_TYPE) {
     const headers = new Headers({
         Accept: 'application/x-spring-data-verbose+json',
         Authorization: 'Bearer ' + localStorage.getItem('accessToken')
@@ -25,6 +26,14 @@ export function saveDocument(files, type = DEFAULT_FILE_TYPE) {
             return json;
         })
     )
+}
+
+export function deleteDocument(id) {
+    const options = {
+        method: 'DELETE',
+        url: `${BASE_API}/documents/${id}`
+    }
+    return request(options)
 }
 
 export function getDocumentSrc(id) {

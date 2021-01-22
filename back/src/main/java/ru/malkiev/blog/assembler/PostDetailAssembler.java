@@ -5,10 +5,13 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 import ru.malkiev.blog.entity.Post;
+import ru.malkiev.blog.entity.PostRating;
 import ru.malkiev.blog.model.PostDetailModel;
 import ru.malkiev.blog.repository.PostLikeRepository;
 import ru.malkiev.blog.repository.PostRatingRepository;
 import ru.malkiev.blog.service.UserService;
+
+import java.util.Optional;
 
 import static ru.malkiev.blog.assembler.PostAssembler.*;
 import static ru.malkiev.blog.link.PostLinks.*;
@@ -39,7 +42,10 @@ public class PostDetailAssembler implements RepresentationModelAssembler<Post, P
         userService.getCurrentUser().ifPresent(user -> {
             model.setLiked(likeRepository.findByCreatedByAndPost(user, entity).isPresent());
             ratingRepository.findByCreatedByAndPost(user, entity)
-                    .ifPresent(rating -> model.setMyStar(rating.getStar()));
+                    .ifPresent(rating -> {
+                        model.setMyStar(rating.getStar());
+                        model.add(linkToDeleteRatingPost(entity));
+                    });
             model.add(linkToAddComment(entity));
             model.add(linkToLikePost(entity));
             model.add(linkToAddRatingPost(entity));

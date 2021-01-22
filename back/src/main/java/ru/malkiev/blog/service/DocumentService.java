@@ -28,4 +28,8 @@ public class DocumentService {
     public Optional<Document> findById(Long id) {
         return repository.findById(id);
     }
+
+    public void delete(Document document) {
+        repository.delete(document);
+    }
 }
