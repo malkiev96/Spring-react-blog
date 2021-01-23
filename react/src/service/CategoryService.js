@@ -13,17 +13,10 @@ export function deleteCategory(id) {
     return request(options)
 }
 
-export function createCategory(code, name, parentId = null) {
+export function createOrEditCategory(code, name, parentId = null, categoryId = null) {
     return jsonRequest({
         url: `${BASE_API}/categories`,
         method: "POST",
-        body: JSON.stringify({code, name, parentId})
-    })
-}
-
-export function addChilds(id, childIds = []) {
-    return jsonRequest({
-        url: `${BASE_API}/categories/${id}/childs?childs?=${childIds}`,
-        method: "POST"
+        body: JSON.stringify({code, name, parentId, categoryId})
     })
 }

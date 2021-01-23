@@ -7,5 +7,7 @@ import lombok.EqualsAndHashCode;
 @Data
 public class CategoryDto extends TagDto {
 
+    private Integer categoryId;
+
     private Integer parentId;
 }

@@ -5,11 +5,11 @@ export function getTags() {
     return hateoasRequest(`${BASE_API}/tags`)
 }
 
-export function createTag(code, name) {
+export function createTag(code, name, tagId = null) {
     return jsonRequest({
         url: `${BASE_API}/tags`,
         method: "POST",
-        body: JSON.stringify({code, name})
+        body: JSON.stringify({code, name, tagId})
     })
 }
 

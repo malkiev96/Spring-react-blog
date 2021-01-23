@@ -121,7 +121,8 @@ class App extends Component {
                         <Route exact path="/user/:id" render={(props) =>
                             <UserDetail currentUser={currentUser} {...props}/>}/>
                         <PrivateRoute path="/user/:id/edit" currentUser={currentUser} component={UserEdit}/>
-                        <AdminRoute path="/admin" currentUser={currentUser} component={Admin}/>
+                        <AdminRoute path="/admin" categories={categories} tags={tags} currentUser={currentUser}
+                                    component={Admin}/>
                         <PrivateRoute path="/publish" categories={categories} tags={tags}
                                       currentUser={currentUser} component={Publish}/>
                         <Route exact path="/contacts" render={(props) =>

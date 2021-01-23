@@ -1,13 +1,14 @@
 package ru.malkiev.blog.dto;
 
 import lombok.Data;
-import ru.malkiev.blog.entity.Tag;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Data
 public class TagDto {
+
+    private Integer tagId;
 
     @NotNull
     @Size(min = 3, max = 16)
@@ -17,10 +18,4 @@ public class TagDto {
     @Size(min = 3, max = 32)
     protected String name;
 
-    public Tag createTag() {
-        Tag tag = new Tag();
-        tag.setCode(code);
-        tag.setName(name);
-        return tag;
-    }
 }

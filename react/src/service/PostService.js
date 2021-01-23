@@ -8,14 +8,14 @@ export function getPostById(id) {
 export function getPosts(page = 1,
                          size = 10,
                          sort = "createdDate",
-                         tagNames,
+                         tagCodes,
                          catIds,
                          statuses = 'PUBLISHED',
                          userId,
                          liked) {
     page -= 1
     let url = `${BASE_API}/posts?page=${page}&size=${size}&sort=${sort}&statuses=${statuses}`
-    if (tagNames) url += `&tagNames=${tagNames}`
+    if (tagCodes) url += `&tagCodes=${tagCodes}`
     if (catIds) url += `&catIds=${catIds}`
     if (userId) url += `&userId=${userId}`
     if (liked) url += "&liked=true"
