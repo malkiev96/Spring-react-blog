@@ -41,7 +41,6 @@ public class ContactController {
     }
 
     @PostMapping("/contacts")
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ContactMessageModel> create(@RequestBody @Valid ContactMessageDto request) {
         return ResponseEntity.ok(assembler.toModel(repository.save(from(request))));
     }
