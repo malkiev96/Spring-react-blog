@@ -50,10 +50,10 @@ class UserEdit extends Component {
         }
     }
 
-    submitForm(){
+    submitForm() {
         const {id, name, city, birthDate, about, imageUrl} = this.state
         const userRequest = {name, city, birthDate, about, imageUrl}
-        updateUser(id,userRequest).then(result=>{
+        updateUser(id, userRequest).then(result => {
             Alert.success("Профиль успешно обновлен")
             this.setState({
                 currentUser: result
@@ -64,9 +64,9 @@ class UserEdit extends Component {
     }
 
     render() {
-        const {id, name, city, birthDate, about, imageUrl,currentUser} = this.state
+        const {id, name, city, birthDate, about, imageUrl, currentUser} = this.state
         if (currentUser.id !== id) return <NotFound/>
-        document.title = 'Редактирование профиля - '+ name
+        document.title = 'Редактирование профиля - ' + name
         return (
             <div>
                 <Segment>

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Button, Checkbox, Form, Header, Icon, Image, Segment} from "semantic-ui-react";
+import {Button, Checkbox, Form, Icon, Image, Segment} from "semantic-ui-react";
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import Select from 'react-select'
