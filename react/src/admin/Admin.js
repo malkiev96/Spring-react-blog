@@ -1,12 +1,9 @@
 import React, {Component} from 'react';
 import TagInfo from "./TagInfo";
 import MessageInfo from "./MessageInfo";
+import CategoryInfo from "./CategoryInfo";
 
 class Admin extends Component {
-
-    constructor(props) {
-        super(props);
-    }
 
     componentDidMount() {
         document.title = 'Админка'
@@ -17,6 +14,7 @@ class Admin extends Component {
             <div>
                 <MessageInfo/>
                 <TagInfo tags={this.props.tags}/>
+                <CategoryInfo/>
             </div>
         )
     }

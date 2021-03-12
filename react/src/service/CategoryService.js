@@ -5,6 +5,10 @@ export function getCategories() {
     return hateoasRequest(`${BASE_API}/categories`)
 }
 
+export function getAllCategories() {
+    return hateoasRequest(`${BASE_API}/categories/all`)
+}
+
 export function deleteCategory(id) {
     const options = {
         method: 'DELETE',
@@ -13,10 +17,10 @@ export function deleteCategory(id) {
     return request(options)
 }
 
-export function createOrEditCategory(code, name, parentId = null, categoryId = null) {
+export function createOrEditCategory(code, name, categoryId = null, parentId =null) {
     return jsonRequest({
         url: `${BASE_API}/categories`,
         method: "POST",
-        body: JSON.stringify({code, name, parentId, categoryId})
+        body: JSON.stringify({code, name, categoryId, parentId})
     })
 }
