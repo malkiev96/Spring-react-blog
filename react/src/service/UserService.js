@@ -15,6 +15,10 @@ export function getCurrentUser() {
     });
 }
 
+export function getAllUsers() {
+    return hateoasRequest(BASE_API + "/users")
+}
+
 export function getAdmins() {
     return hateoasRequest(BASE_API + "/users/admins")
 }

@@ -68,7 +68,6 @@ class TagInfo extends Component {
 
         return (
             <Segment>
-                <Header as='h3' dividing>Теги</Header>
                 {
                     tags.length > 0 ?
                         <Table celled>

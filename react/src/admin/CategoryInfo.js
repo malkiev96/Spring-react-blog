@@ -78,7 +78,6 @@ class CategoryInfo extends Component {
 
         return (
             <Segment>
-                <Header as='h3' dividing>Категории</Header>
                 {
                     categories?.length > 0 ?
                         <Table celled>

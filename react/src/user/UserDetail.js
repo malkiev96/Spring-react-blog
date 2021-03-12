@@ -70,7 +70,7 @@ class UserDetail extends Component {
                         {user.user.name}
                         {
                             profile &&
-                            <Link to={'/user/' + user.user.id + '/edit'}>
+                            <Link to={`/user/${user.user.id}/edit`}>
                                 <Button style={{backgroundColor: '#175e6b'}}
                                         floated='right'
                                         size='mini' primary>Настроить профиль

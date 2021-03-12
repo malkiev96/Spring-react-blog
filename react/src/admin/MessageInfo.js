@@ -67,7 +67,6 @@ class MessageInfo extends Component {
 
         return (
             <Segment>
-                <Header as='h3' dividing>Сообщения</Header>
                 {
                     messages.length > 0 ?
                         <Table celled>
@@ -92,7 +91,9 @@ class MessageInfo extends Component {
                                             <Table.Cell>{msg.createdDate}</Table.Cell>
                                             <Table.Cell>{msg.message}</Table.Cell>
                                             <Table.Cell>
-                                                <Button onClick={() => this.onDeleteMessage(msg.id)} negative
+                                                <Button onClick={() => {
+                                                    if (window.confirm("Are you sure?")) this.onDeleteMessage(msg.id)
+                                                }} negative
                                                         icon='delete'/>
                                             </Table.Cell>
                                         </Table.Row>

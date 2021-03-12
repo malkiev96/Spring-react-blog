@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.util.Pair;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.malkiev.blog.assembler.UserAssembler;
@@ -28,6 +29,15 @@ public class UserController {
     private final UserDetailAssembler detailAssembler;
     private final UserAssembler userAssembler;
     private final EditUser editOperation;
+
+    @GetMapping("/users")
+    @Secured("ROLE_ADMIN")
+    public ResponseEntity<CollectionModel<UserModel>> getAllUsers() {
+        return Optional.of(repository.findAll())
+                .map(userAssembler::toCollectionModel)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 
     @GetMapping("/users/{id}")
     public ResponseEntity<UserDetailModel> getOne(@PathVariable int id) {

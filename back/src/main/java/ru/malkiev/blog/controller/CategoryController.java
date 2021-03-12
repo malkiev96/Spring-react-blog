@@ -3,6 +3,7 @@ package ru.malkiev.blog.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import ru.malkiev.blog.assembler.CategoryModelAssembler;
 import ru.malkiev.blog.assembler.CategoryParentModelAssembler;
@@ -44,6 +45,7 @@ public class CategoryController {
         );
     }
 
+    @Secured("ROLE_ADMIN")
     @PostMapping("/categories")
     public ResponseEntity<CategoryModel> create(@Valid @RequestBody CategoryDto dto) {
         return Optional.of(dto)
@@ -54,6 +56,7 @@ public class CategoryController {
                 .orElse(ResponseEntity.noContent().build());
     }
 
+    @Secured("ROLE_ADMIN")
     @DeleteMapping("/categories/{id}")
     public ResponseEntity<String> delete(@PathVariable Integer id) {
         Category category = repository.findById(id).orElseThrow(
