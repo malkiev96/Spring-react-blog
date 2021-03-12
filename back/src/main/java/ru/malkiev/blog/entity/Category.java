@@ -5,6 +5,7 @@ import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,9 +21,11 @@ public class Category {
 
     @Column(name = "NAME", nullable = false, unique = true)
     @Size(min = 3, max = 255)
+    @NotNull
     private String name;
 
     @Column(name = "CODE", nullable = false, unique = true)
+    @NotNull
     private String code;
 
     @ManyToOne

@@ -12,7 +12,7 @@ import java.util.function.Function;
 
 @Component
 @AllArgsConstructor
-public class DeleteStarOperation implements Function<Post, Double> {
+public class DeleteStar implements Function<Post, Double> {
 
     private final PostRatingRepository repository;
     private final UserService userService;

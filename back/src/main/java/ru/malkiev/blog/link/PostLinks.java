@@ -44,7 +44,7 @@ public class PostLinks {
         return linkTo(methodOn(PostOperationController.class).like(entity.getId())).withRel("like");
     }
 
-    public static Link linkToEditPost(Post entity) {
+    public static Link linkToEditPost() {
         return linkTo(methodOn(PostOperationController.class).createPost(null))
                 .withRel("edit")
                 .withType("POST");

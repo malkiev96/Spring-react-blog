@@ -10,20 +10,20 @@ import ru.malkiev.blog.service.UserService;
 
 import java.util.function.UnaryOperator;
 
-import static ru.malkiev.blog.entity.PostStatus.CREATED;
+import static ru.malkiev.blog.entity.PostStatus.DELETED;
 
 @Component
 @AllArgsConstructor
-public class PostHideOperation implements UnaryOperator<Post> {
+public class DeletePost implements UnaryOperator<Post> {
 
     private final UserService userService;
 
     @Override
     public Post apply(@NonNull Post post) {
         User user = userService.getCurrentUserOrError();
-        if (PostAssembler.canHidePost(post, user)) {
-            post.setStatus(CREATED);
+        if (PostAssembler.canDeletePost(post, user)) {
+            post.setStatus(DELETED);
             return post;
-        } else throw new IllegalArgumentException("Can't hide post by status " + post.getStatus());
+        } else throw new IllegalArgumentException("Can't delete post by status : " + post.getStatus());
     }
 }

@@ -9,7 +9,7 @@ import ru.malkiev.blog.entity.Post;
 import java.util.function.Function;
 
 @Component
-public class CommentCreateOperation implements Function<Pair<Post, String>, Comment> {
+public class CreateComment implements Function<Pair<Post, String>, Comment> {
 
     @Override
     public Comment apply(@NonNull Pair<Post, String> pair) {

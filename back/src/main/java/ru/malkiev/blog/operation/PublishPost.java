@@ -14,7 +14,7 @@ import static ru.malkiev.blog.entity.PostStatus.PUBLISHED;
 
 @Component
 @AllArgsConstructor
-public class PostPublishOperation implements UnaryOperator<Post> {
+public class PublishPost implements UnaryOperator<Post> {
 
     private final UserService userService;
 

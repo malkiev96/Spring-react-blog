@@ -6,28 +6,28 @@ import org.springframework.data.util.Pair;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ru.malkiev.blog.assembler.CommentAssembler;
 import ru.malkiev.blog.entity.Post;
 import ru.malkiev.blog.exception.CommentNotFoundException;
 import ru.malkiev.blog.exception.PostNotFoundException;
 import ru.malkiev.blog.model.CommentModel;
-import ru.malkiev.blog.operation.CommentCreateOperation;
-import ru.malkiev.blog.operation.CommentDeleteOperation;
-import ru.malkiev.blog.operation.CommentReplyOperation;
+import ru.malkiev.blog.operation.CreateComment;
+import ru.malkiev.blog.operation.DeleteComment;
+import ru.malkiev.blog.operation.ReplyComment;
 import ru.malkiev.blog.repository.CommentRepository;
 import ru.malkiev.blog.repository.PostRepository;
 import ru.malkiev.blog.security.CurrentUser;
-import ru.malkiev.blog.security.UserPrincipal;
 
 @RestController
 @AllArgsConstructor
 public class CommentController {
 
     private final CommentRepository repository;
-    private final CommentCreateOperation createOperation;
-    private final CommentReplyOperation replyOperation;
-    private final CommentDeleteOperation deleteOperation;
+    private final CreateComment createComment;
+    private final ReplyComment replyComment;
+    private final DeleteComment deleteComment;
     private final PostRepository postRepository;
     private final CommentAssembler assembler;
 
@@ -53,7 +53,7 @@ public class CommentController {
     public ResponseEntity<CommentModel> create(@PathVariable int id, @RequestBody String message) {
         return postRepository.findById(id)
                 .map(post -> Pair.of(post, message))
-                .map(createOperation)
+                .map(createComment)
                 .map(repository::save)
                 .map(assembler::toModel)
                 .map(ResponseEntity::ok)
@@ -68,7 +68,7 @@ public class CommentController {
         Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException(id));
         return repository.findById(parentId)
                 .map(parent -> Pair.of(Pair.of(post, message), parent))
-                .map(replyOperation)
+                .map(replyComment)
                 .map(repository::save)
                 .map(assembler::toModel)
                 .map(ResponseEntity::ok)
@@ -78,10 +78,10 @@ public class CommentController {
     @DeleteMapping("/comments/{id}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<CommentModel> delete(@PathVariable int id,
-                                               @CurrentUser UserPrincipal principal) {
+                                               @AuthenticationPrincipal CurrentUser principal) {
         return repository.findById(id)
                 .filter(comment -> comment.canEdit(principal.getUser()))
-                .map(deleteOperation)
+                .map(deleteComment)
                 .map(repository::save)
                 .map(assembler::toModel)
                 .map(ResponseEntity::ok)

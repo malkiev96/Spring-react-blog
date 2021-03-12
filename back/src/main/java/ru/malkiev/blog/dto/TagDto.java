@@ -12,10 +12,10 @@ public class TagDto {
 
     @NotNull
     @Size(min = 3, max = 16)
-    protected String code;
+    private String code;
 
     @NotNull
     @Size(min = 3, max = 32)
-    protected String name;
+    private String name;
 
 }

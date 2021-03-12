@@ -13,7 +13,7 @@ import java.util.function.Function;
 
 @Component
 @AllArgsConstructor
-public class AddLikeOperation implements Function<Post, Boolean> {
+public class AddLike implements Function<Post, Boolean> {
 
     private final PostLikeRepository likeRepository;
     private final UserService userService;

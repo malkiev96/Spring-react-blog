@@ -11,7 +11,7 @@ import org.springframework.util.StringUtils;
 import ru.malkiev.blog.entity.AuthProvider;
 import ru.malkiev.blog.entity.User;
 import ru.malkiev.blog.exception.OAuth2AuthenticationException;
-import ru.malkiev.blog.security.UserPrincipal;
+import ru.malkiev.blog.security.CurrentUser;
 import ru.malkiev.blog.security.oauth2.user.OAuth2UserInfo;
 import ru.malkiev.blog.security.oauth2.user.OAuth2UserInfoFactory;
 import ru.malkiev.blog.service.UserService;
@@ -23,7 +23,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final UserService userService;
 
     @Override
-    public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws org.springframework.security.oauth2.core.OAuth2AuthenticationException {
+    public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) {
         OAuth2User oAuth2User = super.loadUser(oAuth2UserRequest);
         try {
             return processOAuth2User(oAuth2UserRequest, oAuth2User);
@@ -45,24 +45,24 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             throw new OAuth2AuthenticationException("Email not found from OAuth2 provider");
         }
 
+        AuthProvider provider = getAuthProvider(oAuth2UserRequest);
         User current = userService.findByEmail(oAuth2UserInfo.getEmail()).map(user -> {
-            if (!user.getProvider().equals(AuthProvider.valueOf(
-                    oAuth2UserRequest
-                            .getClientRegistration()
-                            .getRegistrationId()
-                            .toUpperCase()
-            ))) throw new OAuth2AuthenticationException("Looks like you're signed up with " +
-                    user.getProvider() + " account. Please use your " + user.getProvider() + " account to login.");
+            if (!user.getProvider().equals(provider))
+                throw new OAuth2AuthenticationException(
+                        String.format(
+                                "Looks like you're signed up with %s account. " +
+                                        "Please use your %s account to login.",
+                                user.getProvider(), user.getProvider())
+                );
             return userService.updateExistingUser(user, oAuth2UserInfo);
-        }).orElseGet(() -> registerNewUser(oAuth2UserRequest, oAuth2UserInfo));
+        }).orElseGet(() -> userService.registerUser(oAuth2UserInfo, provider));
 
-        return UserPrincipal.create(current, oAuth2User.getAttributes());
+        return CurrentUser.create(current, oAuth2User.getAttributes());
     }
 
-    private User registerNewUser(OAuth2UserRequest oAuth2UserRequest, OAuth2UserInfo oAuth2UserInfo) {
-        AuthProvider provider = AuthProvider
-                .valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId().toUpperCase());
-        return userService.registerUser(oAuth2UserInfo, provider);
+    private AuthProvider getAuthProvider(OAuth2UserRequest oAuth2UserRequest) {
+        String registrationId = oAuth2UserRequest.getClientRegistration().getRegistrationId().toUpperCase();
+        return AuthProvider.valueOf(registrationId);
     }
 
 }

@@ -24,7 +24,7 @@ import static ru.malkiev.blog.entity.PostStatus.PUBLISHED;
 
 @Component
 @AllArgsConstructor
-public class PostCreateOperation implements Function<PostDto, Post> {
+public class CreatePost implements Function<PostDto, Post> {
 
     private final PostRepository repository;
     private final DocumentRepository documentRepository;

@@ -22,7 +22,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userService.findByEmail(email).orElseThrow(() ->
                 new UsernameNotFoundException("User not found with email : " + email)
         );
-        return UserPrincipal.create(user);
+        return CurrentUser.create(user);
     }
 
     @Transactional
@@ -30,6 +30,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userService.findById(id).orElseThrow(() ->
                 new UsernameNotFoundException("User not found with id : " + id)
         );
-        return UserPrincipal.create(user);
+        return CurrentUser.create(user);
     }
 }

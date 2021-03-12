@@ -18,9 +18,11 @@ public class User {
     private Integer id;
 
     @Column(name = "NAME", nullable = false)
+    @NotNull
     private String name;
 
     @Email
+    @NotNull
     @Column(name = "EMAIL", nullable = false, unique = true)
     private String email;
 
@@ -40,6 +42,7 @@ public class User {
     @Column(name = "PROVIDER", nullable = false)
     private AuthProvider provider;
 
+    @NotNull
     @Column(name = "ROLE", nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -54,7 +57,7 @@ public class User {
     private LocalDate birthDate;
 
     public boolean isAdmin(){
-        return role.equals(Role.ROLE_ADMIN);
+        return Role.ROLE_ADMIN.equals(role);
     }
 
 }

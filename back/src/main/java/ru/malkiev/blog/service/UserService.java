@@ -1,6 +1,7 @@
 package ru.malkiev.blog.service;
 
 import lombok.AllArgsConstructor;
+import lombok.var;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -9,9 +10,10 @@ import ru.malkiev.blog.dto.SignUpDto;
 import ru.malkiev.blog.entity.AuthProvider;
 import ru.malkiev.blog.entity.Role;
 import ru.malkiev.blog.entity.User;
+import ru.malkiev.blog.exception.BadRequestException;
 import ru.malkiev.blog.exception.UserNotFoundException;
 import ru.malkiev.blog.repository.UserRepository;
-import ru.malkiev.blog.security.UserPrincipal;
+import ru.malkiev.blog.security.CurrentUser;
 import ru.malkiev.blog.security.oauth2.user.OAuth2UserInfo;
 
 import java.util.Optional;
@@ -24,10 +26,9 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public Optional<User> getCurrentUser() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof UserPrincipal) {
-            User user = ((UserPrincipal) principal).getUser();
-            return Optional.of(user);
+        var principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof CurrentUser) {
+            return Optional.of(((CurrentUser) principal).getUser());
         }
         return Optional.empty();
     }
@@ -45,6 +46,9 @@ public class UserService {
     }
 
     public Optional<User> registerUser(SignUpDto dto) {
+        findByEmail(dto.getEmail()).ifPresent(s -> {
+            throw new BadRequestException("Пользователь с данным Email уже зарегистрирован");
+        });
         User user = new User();
         user.setName(dto.getName().toLowerCase());
         user.setEmail(dto.getEmail().toLowerCase());

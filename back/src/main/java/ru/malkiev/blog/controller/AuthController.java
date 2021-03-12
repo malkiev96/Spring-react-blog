@@ -7,16 +7,15 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.malkiev.blog.assembler.UserDetailAssembler;
 import ru.malkiev.blog.dto.LoginDto;
 import ru.malkiev.blog.dto.SignUpDto;
-import ru.malkiev.blog.exception.BadRequestException;
 import ru.malkiev.blog.model.UserDetailModel;
 import ru.malkiev.blog.security.CurrentUser;
 import ru.malkiev.blog.security.TokenProvider;
-import ru.malkiev.blog.security.UserPrincipal;
 import ru.malkiev.blog.service.UserService;
 
 import javax.validation.Valid;
@@ -33,8 +32,10 @@ public class AuthController {
 
     @GetMapping("/user/me")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<UserDetailModel> getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
-        return ResponseEntity.ok(userDetailAssembler.toModel(userPrincipal.getUser()));
+    public ResponseEntity<UserDetailModel> getCurrentUser(@AuthenticationPrincipal CurrentUser currentUser) {
+        return ResponseEntity.ok(
+                userDetailAssembler.toModel(currentUser.getUser())
+        );
     }
 
     @PostMapping("/login")
@@ -53,9 +54,6 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<UserDetailModel> registerUser(@Valid @RequestBody SignUpDto signUpDto) {
-        userService.findByEmail(signUpDto.getEmail()).ifPresent(s -> {
-            throw new BadRequestException("Пользователь с данным Email уже зарегистрирован");
-        });
         return userService.registerUser(signUpDto)
                 .map(userDetailAssembler::toModel)
                 .map(ResponseEntity::ok)

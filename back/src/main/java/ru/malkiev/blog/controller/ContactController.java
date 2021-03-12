@@ -5,7 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import ru.malkiev.blog.assembler.ContactMessageAssembler;
 import ru.malkiev.blog.dto.ContactMessageDto;
@@ -25,7 +25,7 @@ public class ContactController {
     private final ContactMessageAssembler assembler;
 
     @GetMapping("/contacts")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<PagedModel<ContactMessageModel>> messages(@PageableDefault Pageable pageable) {
         return Optional.of(repository.findAll(pageable))
                 .map(assembler::toPagedModel)
@@ -34,7 +34,7 @@ public class ContactController {
     }
 
     @PostMapping("/contacts/{id}/delete")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<String> delete(@PathVariable Integer id) {
         repository.deleteById(id);
         return ResponseEntity.accepted().build();

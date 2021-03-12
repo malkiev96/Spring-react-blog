@@ -6,7 +6,7 @@ import ru.malkiev.blog.entity.Comment;
 import java.util.function.UnaryOperator;
 
 @Component
-public class CommentDeleteOperation implements UnaryOperator<Comment> {
+public class DeleteComment implements UnaryOperator<Comment> {
 
     @Override
     public Comment apply(Comment comment) {

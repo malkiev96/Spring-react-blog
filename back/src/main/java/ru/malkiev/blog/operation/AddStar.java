@@ -15,7 +15,7 @@ import java.util.function.Function;
 
 @Component
 @AllArgsConstructor
-public class AddStarOperation implements Function<Pair<Post, Integer>, Double> {
+public class AddStar implements Function<Pair<Post, Integer>, Double> {
 
     private final PostRatingRepository repository;
     private final UserService userService;

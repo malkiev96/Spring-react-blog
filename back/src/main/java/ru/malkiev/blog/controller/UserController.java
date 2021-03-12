@@ -12,7 +12,7 @@ import ru.malkiev.blog.dto.UserEditDto;
 import ru.malkiev.blog.exception.UserNotFoundException;
 import ru.malkiev.blog.model.UserDetailModel;
 import ru.malkiev.blog.model.UserModel;
-import ru.malkiev.blog.operation.UserEditOperation;
+import ru.malkiev.blog.operation.EditUser;
 import ru.malkiev.blog.repository.UserRepository;
 
 import javax.validation.Valid;
@@ -27,7 +27,7 @@ public class UserController {
     private final UserRepository repository;
     private final UserDetailAssembler detailAssembler;
     private final UserAssembler userAssembler;
-    private final UserEditOperation editOperation;
+    private final EditUser editOperation;
 
     @GetMapping("/users/{id}")
     public ResponseEntity<UserDetailModel> getOne(@PathVariable int id) {

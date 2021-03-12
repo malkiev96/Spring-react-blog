@@ -9,7 +9,7 @@ import ru.malkiev.blog.entity.User;
 import java.util.function.Function;
 
 @Component
-public class UserEditOperation implements Function<Pair<UserEditDto, User>, User> {
+public class EditUser implements Function<Pair<UserEditDto, User>, User> {
 
     @Override
     public User apply(@NonNull Pair<UserEditDto, User> pair) {

@@ -11,7 +11,7 @@ import java.util.function.Function;
 
 @Component
 @AllArgsConstructor
-public class TagCreateOperation implements Function<TagDto, Tag> {
+public class CreateTag implements Function<TagDto, Tag> {
 
     private final TagRepository repository;
 

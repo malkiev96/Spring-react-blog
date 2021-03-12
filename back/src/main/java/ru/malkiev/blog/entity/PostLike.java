@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @EqualsAndHashCode(callSuper = false)
 @Data
@@ -17,6 +18,7 @@ public class PostLike extends Auditable {
 
     @ManyToOne
     @JoinColumn(name = "POST_ID")
+    @NotNull
     private Post post;
 
     public static PostLike of(Post post) {

@@ -17,7 +17,7 @@ public class CategoryController {
     private final CategoryModelAssembler assembler;
 
     @GetMapping("/categories")
-    public ResponseEntity<CollectionModel<CategoryModel>> callCategories() {
+    public ResponseEntity<CollectionModel<CategoryModel>> categories() {
         return ResponseEntity.ok(
                 assembler.toCollectionModel(
                         repository.findAllByParentIsNull()

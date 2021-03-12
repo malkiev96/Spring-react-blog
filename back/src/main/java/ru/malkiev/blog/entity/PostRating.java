@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @EqualsAndHashCode(callSuper = false)
 @Data
@@ -17,6 +18,7 @@ public class PostRating extends Auditable {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "POST_ID", nullable = false)
+    @NotNull
     private Post post;
 
     @Column(name = "STAR")

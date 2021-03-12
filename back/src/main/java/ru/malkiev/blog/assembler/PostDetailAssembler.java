@@ -5,13 +5,11 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 import ru.malkiev.blog.entity.Post;
-import ru.malkiev.blog.entity.PostRating;
+import ru.malkiev.blog.link.PostLinks;
 import ru.malkiev.blog.model.PostDetailModel;
 import ru.malkiev.blog.repository.PostLikeRepository;
 import ru.malkiev.blog.repository.PostRatingRepository;
 import ru.malkiev.blog.service.UserService;
-
-import java.util.Optional;
 
 import static ru.malkiev.blog.assembler.PostAssembler.*;
 import static ru.malkiev.blog.link.PostLinks.*;
@@ -49,7 +47,7 @@ public class PostDetailAssembler implements RepresentationModelAssembler<Post, P
             model.add(linkToAddComment(entity));
             model.add(linkToLikePost(entity));
             model.add(linkToAddRatingPost(entity));
-            model.addIf(canDeletePost(entity, user), () -> linkToEditPost(entity));
+            model.addIf(canDeletePost(entity, user), PostLinks::linkToEditPost);
             model.addIf(canHidePost(entity, user), () -> linkToHidePost(entity));
             model.addIf(canPublishPost(entity, user), () -> linkToPublishPost(entity));
             model.addIf(canDeletePost(entity, user), () -> linkToDeletePost(entity));
