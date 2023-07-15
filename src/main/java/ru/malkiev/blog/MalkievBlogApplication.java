@@ -9,7 +9,7 @@ import ru.malkiev.blog.config.AppProperties;
 @EnableConfigurationProperties(AppProperties.class)
 public class MalkievBlogApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(MalkievBlogApplication.class, args);
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(MalkievBlogApplication.class, args);
+  }
 }

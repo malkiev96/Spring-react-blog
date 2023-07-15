@@ -1,8 +1,0 @@
-package ru.malkiev.blog.entity;
-
-public enum AuthProvider {
-    LOCAL,
-    FACEBOOK,
-    GOOGLE,
-    GITHUB
-}

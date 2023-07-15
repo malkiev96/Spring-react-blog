@@ -8,11 +8,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Getter
 public class AppProperties {
 
-    private final Auth auth = new Auth();
+  private final Auth auth = new Auth();
 
-    @Data
-    public static class Auth {
-        private String tokenSecret;
-        private long tokenExpirationMsec;
-    }
+  @Data
+  public static class Auth {
+
+    private String tokenSecret;
+    private long tokenExpirationMsec;
+  }
 }
